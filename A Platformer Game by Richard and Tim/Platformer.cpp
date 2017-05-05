@@ -1,5 +1,4 @@
-#include "Mechanics.h"
-#include "gui.h"
+#include "TestUI.h"
 
 int main(){
 	

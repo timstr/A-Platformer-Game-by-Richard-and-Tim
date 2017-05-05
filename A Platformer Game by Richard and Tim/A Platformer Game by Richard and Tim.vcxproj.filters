@@ -56,9 +56,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Mechanics.h">
-      <Filter>Mechanics</Filter>
-    </ClInclude>
     <ClInclude Include="gui.h">
       <Filter>UI</Filter>
     </ClInclude>
@@ -67,6 +64,36 @@
     </ClInclude>
     <ClInclude Include="TestSpace.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="character.h">
+      <Filter>Mechanics</Filter>
+    </ClInclude>
+    <ClInclude Include="creature.h">
+      <Filter>Mechanics</Filter>
+    </ClInclude>
+    <ClInclude Include="entity.h">
+      <Filter>Mechanics</Filter>
+    </ClInclude>
+    <ClInclude Include="item.h">
+      <Filter>Mechanics</Filter>
+    </ClInclude>
+    <ClInclude Include="map.h">
+      <Filter>Mechanics</Filter>
+    </ClInclude>
+    <ClInclude Include="obstacle.h">
+      <Filter>Mechanics</Filter>
+    </ClInclude>
+    <ClInclude Include="player.h">
+      <Filter>Mechanics</Filter>
+    </ClInclude>
+    <ClInclude Include="space.h">
+      <Filter>Mechanics</Filter>
+    </ClInclude>
+    <ClInclude Include="obstruction.h">
+      <Filter>Mechanics</Filter>
+    </ClInclude>
+    <ClInclude Include="renderable.h">
+      <Filter>Mechanics</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

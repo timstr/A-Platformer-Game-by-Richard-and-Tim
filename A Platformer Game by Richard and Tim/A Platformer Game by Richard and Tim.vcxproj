@@ -132,8 +132,17 @@
     <ClCompile Include="space.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="character.h" />
+    <ClInclude Include="creature.h" />
+    <ClInclude Include="entity.h" />
     <ClInclude Include="gui.h" />
-    <ClInclude Include="Mechanics.h" />
+    <ClInclude Include="item.h" />
+    <ClInclude Include="map.h" />
+    <ClInclude Include="obstacle.h" />
+    <ClInclude Include="obstruction.h" />
+    <ClInclude Include="player.h" />
+    <ClInclude Include="renderable.h" />
+    <ClInclude Include="space.h" />
     <ClInclude Include="TestSpace.h" />
     <ClInclude Include="TestUI.h" />
   </ItemGroup>
