@@ -1,5 +1,4 @@
 #pragma once
-
 #include "space.h"
 
 Space::~Space(){
