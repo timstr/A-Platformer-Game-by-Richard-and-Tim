@@ -6,6 +6,7 @@
 // a complicated raster-image physical boundary with 
 // which entities are to interact physically
 struct Obstruction : Renderable {
+
 	// test whether a point collides with the obstruction
 	bool hitTest(vec2 point) const;
 
