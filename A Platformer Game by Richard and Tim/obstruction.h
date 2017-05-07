@@ -43,5 +43,11 @@ struct Obstruction : Renderable {
 	// 1 for totally grippy
 	double friction;
 
+	// returns the normal at a point on a boundary, or the hint direction if
+	// the point is not near a boundary. Always returns a unit vector
 	vec2 getNormalAt(vec2 point, vec2 hint) const;
+
+	// returns the distance along the given direction to the nearest point in
+	// open space, or 0 if the given point is already in open space
+	double getDistanceToBoundary(vec2 point, vec2 direction) const;
 };

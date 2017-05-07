@@ -19,6 +19,8 @@ struct Entity : Renderable {
 	// velocity accordingly
 	void tryCollisionWith(Obstruction* obstruction);
 
+	bool collidesWith(Obstruction* obstruction);
+
 	// translate the entity according to its velocity
 	void move();
 

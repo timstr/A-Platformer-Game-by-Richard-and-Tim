@@ -2,11 +2,11 @@
 #include "obstruction.h"
 
 bool Obstruction::hitTest(vec2 point) const {
-	unsigned int x = floor(point.x + this->pos.x);
-	unsigned int y = floor(point.y + this->pos.y);
+	int x = round(point.x + this->pos.x);
+	int y = round(point.y + this->pos.y);
 
 	// outside the map shall be a solid boundary
-	if (x < 0 || x >= boundary.getSize().x || y < 0 || y >= boundary.getSize().y){
+	if ((x < 0) || (x >= boundary.getSize().x) || (y < 0) || (y >= boundary.getSize().y)){
 		return true;
 	}
 
@@ -18,17 +18,24 @@ bool Obstruction::hitTest(vec2 point) const {
 }
 
 vec2 Obstruction::getCollisionForce(vec2 point, vec2 center, vec2 velocity, double mass) const {
-	vec2 normal = getNormalAt(point, point - center);
+	vec2 normal = getNormalAt(point, center - point);
 
 	vec2 velocity_normal = projectOnto(velocity, normal);
 
 	vec2 velocity_tangent = velocity - velocity_normal;
 
-	vec2 force_normal = (float)mass * velocity_normal * (dot(velocity_normal, normal) > 0 ? 1.0f : -1.0f);
+	double depth = getDistanceToBoundary(point, normal);
 
-	vec2 force_tangent = {0, 0};//-velocity_tangent * (float)(hypot(velocity_normal.x, velocity_normal.y) / hypot(velocity_tangent.x, velocity_tangent.y) * friction);
+	vec2 force_normal = normal * (float)(mass * depth * 0.3 * std::max(0.0, -dot(velocity_normal, normal)));
 
-	return -(force_normal + force_tangent);
+	vec2 force_tangent = {0, 0};
+
+	double velocity_tangent_mag = abs(velocity_tangent);
+	if (velocity_tangent_mag > 0.01){
+		force_tangent = -velocity_tangent * (float)(friction * depth / abs(velocity_tangent));
+	}
+
+	return (force_normal + force_tangent);
 }
 
 void Obstruction::setPos(vec2 _pos){
@@ -49,12 +56,15 @@ void Obstruction::render(sf::RenderWindow& rw, vec2 offset){
 }
 
 vec2 Obstruction::getNormalAt(vec2 point, vec2 hint) const {
-	const double probe_radius = 2.0;
-	const int angle_slices = 20;
-	const double pi = 3.14159265358979323846264338327950288;
+	const double probe_radius = 10.0;
+	const int angle_slices = 30;
 	const double angle_delta = 2 * pi / (double)angle_slices;
 
 	double hint_angle = atan2(hint.y, hint.x);
+
+	if (std::isnan(hint_angle)){
+		hint_angle = 0;
+	}
 
 	double min_angle = hint_angle;
 	double max_angle = hint_angle;
@@ -86,11 +96,34 @@ vec2 Obstruction::getNormalAt(vec2 point, vec2 hint) const {
 	}
 
 	if (min_angle == max_angle){
-		return hint;
+		return hint / (float)hypot(hint.x, hint.y);
 	}
 
 	double normal = (min_angle + max_angle) * 0.5;
 
+	if (std::isnan(normal)){
+		normal = 0;
+	}
+
 	return vec2(cos(normal), sin(normal)) * (max_last ? -1.0f : 1.0f);
 
+}
+
+double Obstruction::getDistanceToBoundary(vec2 point, vec2 direction) const {
+	double mag = abs(direction);
+	if (mag == 0){
+		return 0;
+	}
+	direction /= (float)mag;
+	double dist = 0;
+	while (hitTest(point)){
+		point += direction;
+		dist += 1;
+
+		// if the point goes out of bounds...
+		if (point.x < 0 || point.x >= boundary.getSize().x || point.y < 0 || point.y >= boundary.getSize().y){
+			return 0;
+		}
+	}
+	return dist;
 }
