@@ -9,19 +9,24 @@
 // an Entity has a visual appearance, a rigid physical boundary
 // comprised of one or more circles, and physical mass
 struct Entity : Renderable {
+	Entity(){
+		position = {0, 0};
+		velocity = {0, 0};
+		mass = 1.0;
+	}
 
 	// possibly collide with obstruction and change
 	// velocity accordingly
-	void tryCollisionWith(const Obstruction& obstruction);
+	void tryCollisionWith(Obstruction* obstruction);
 
 	// translate the entity according to its velocity
 	void move();
 
-	protected:
-
 	vec2 position;
 	vec2 velocity;
 	double mass;
+
+	protected:
 
 	struct Circle {
 		Circle(vec2 _center = {0, 0}, double _radius = 20.0){
@@ -33,5 +38,7 @@ struct Entity : Renderable {
 	};
 
 	std::vector<Circle> circles;
+
+	void addCircle(const Circle& circle);
 
 };

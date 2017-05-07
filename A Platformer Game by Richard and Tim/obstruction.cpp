@@ -2,9 +2,95 @@
 #include "obstruction.h"
 
 bool Obstruction::hitTest(vec2 point) const {
-	return false; //TODO
+	unsigned int x = floor(point.x + this->pos.x);
+	unsigned int y = floor(point.y + this->pos.y);
+
+	// outside the map shall be a solid boundary
+	if (x < 0 || x >= boundary.getSize().x || y < 0 || y >= boundary.getSize().y){
+		return true;
+	}
+
+
+	sf::Color pixel = boundary.getPixel(x, y);
+
+	// the boundary image is solid where its colour is dark
+	return pixel.r + pixel.g + pixel.b <= 1.5;
 }
 
-vec2 Obstruction::getCollisionForce(vec2 point, vec2 velocity, double mass) const {
-	return {0, 0}; //TODO
+vec2 Obstruction::getCollisionForce(vec2 point, vec2 center, vec2 velocity, double mass) const {
+	vec2 normal = getNormalAt(point, point - center);
+
+	vec2 velocity_normal = projectOnto(velocity, normal);
+
+	vec2 velocity_tangent = velocity - velocity_normal;
+
+	vec2 force_normal = (float)mass * velocity_normal * (dot(velocity_normal, normal) > 0 ? 1.0f : -1.0f);
+
+	vec2 force_tangent = {0, 0};//-velocity_tangent * (float)(hypot(velocity_normal.x, velocity_normal.y) / hypot(velocity_tangent.x, velocity_tangent.y) * friction);
+
+	return -(force_normal + force_tangent);
+}
+
+void Obstruction::setPos(vec2 _pos){
+	pos = _pos;
+}
+
+void Obstruction::setImage(const sf::Sprite& _image){
+	image = _image;
+}
+
+void Obstruction::setBoundary(const sf::Image& _boundary){
+	boundary = _boundary;
+}
+
+void Obstruction::render(sf::RenderWindow& rw, vec2 offset){
+	image.setPosition(offset + pos);
+	rw.draw(image);
+}
+
+vec2 Obstruction::getNormalAt(vec2 point, vec2 hint) const {
+	const double probe_radius = 2.0;
+	const int angle_slices = 20;
+	const double pi = 3.14159265358979323846264338327950288;
+	const double angle_delta = 2 * pi / (double)angle_slices;
+
+	double hint_angle = atan2(hint.y, hint.x);
+
+	double min_angle = hint_angle;
+	double max_angle = hint_angle;
+
+	bool max_last = false;
+
+	// test if the first point is inside or outside the boundary
+	bool inside = hitTest(point + vec2(probe_radius * cos(hint_angle), probe_radius * sin(hint_angle)));
+	bool first_hit = inside;
+
+	for (double a = angle_delta; a <= 2 * pi; a += angle_delta){
+		double angle = a + hint_angle;
+
+		bool hit = hitTest(point + vec2(probe_radius * cos(angle), probe_radius * sin(angle)));
+		
+		// if the boundary is crossed during this probe:
+		if (inside != hit){
+			if (inside){
+				// if the probe left the boundary
+				max_angle = angle;
+				max_last = true;
+			} else {
+				// if the probe entered the boundary
+				min_angle = angle;
+				max_last = false;
+			}
+			inside = hit;
+		}
+	}
+
+	if (min_angle == max_angle){
+		return hint;
+	}
+
+	double normal = (min_angle + max_angle) * 0.5;
+
+	return vec2(cos(normal), sin(normal)) * (max_last ? -1.0f : 1.0f);
+
 }

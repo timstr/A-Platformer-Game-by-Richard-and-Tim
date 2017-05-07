@@ -8,12 +8,9 @@
 // where interactions and spatial relations are collectively managed
 // A Space consists of a map, a number of obstacles, and a number of
 // entities
-struct Space {
+struct Space : Renderable {
 
 	virtual ~Space();
-
-	// display the space to the screen
-	void render(sf::RenderWindow& rw);
 
 	// simulate interactions
 	void tick();
@@ -23,6 +20,8 @@ struct Space {
 
 	// adopt (and assume memory management of) an entity
 	void addEntity(Entity* entity);
+
+	void render(sf::RenderWindow& rw, vec2 offset) override;
 
 	protected:
 

@@ -130,6 +130,7 @@
     <ClCompile Include="Platformer.cpp" />
     <ClCompile Include="player.cpp" />
     <ClCompile Include="space.cpp" />
+    <ClCompile Include="vec2.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="character.h" />
@@ -145,6 +146,7 @@
     <ClInclude Include="space.h" />
     <ClInclude Include="TestSpace.h" />
     <ClInclude Include="TestUI.h" />
+    <ClInclude Include="vec2.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -10,20 +10,32 @@ Space::~Space(){
 	}
 }
 
-void Space::render(sf::RenderWindow& rw){
-
-}
-
 void Space::tick(){
-
+	for (Entity* entity : entities){
+		for (Obstruction* obstruction : obstructions){
+			entity->tryCollisionWith(obstruction);
+		}
+	}
+	for (Entity* entity : entities){
+		entity->move();
+	}
 }
 
 // adopt (and assume memory management of) an obstruction
 void Space::addObstruction(Obstruction* obstruction){
-
+	obstructions.push_back(obstruction);
 };
 
 // adopt (and assume memory management of) an entity
 void Space::addEntity(Entity* entity){
+	entities.push_back(entity);
+}
 
+void Space::render(sf::RenderWindow& rw, vec2 offset){
+	for (Obstruction* obstruction : obstructions){
+		obstruction->render(rw, offset);
+	}
+	for (Entity* entity : entities){
+		entity->render(rw, offset);
+	}
 }

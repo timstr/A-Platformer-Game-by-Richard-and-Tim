@@ -54,6 +54,9 @@
     <ClCompile Include="space.cpp">
       <Filter>Mechanics</Filter>
     </ClCompile>
+    <ClCompile Include="vec2.cpp">
+      <Filter>Mechanics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="gui.h">
@@ -93,6 +96,9 @@
       <Filter>Mechanics</Filter>
     </ClInclude>
     <ClInclude Include="renderable.h">
+      <Filter>Mechanics</Filter>
+    </ClInclude>
+    <ClInclude Include="vec2.h">
       <Filter>Mechanics</Filter>
     </ClInclude>
   </ItemGroup>

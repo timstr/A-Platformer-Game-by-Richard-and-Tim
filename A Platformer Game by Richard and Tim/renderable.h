@@ -2,7 +2,7 @@
 
 #include <SFML\Graphics.hpp>
 
-typedef sf::Vector2f vec2;
+#include "vec2.h"
 
 // Renderable is the base class to all things having a visual presence
 struct Renderable {
@@ -10,5 +10,5 @@ struct Renderable {
 
 	}
 
-	virtual void render(sf::RenderWindow rw, vec2 offset) = 0;
+	virtual void render(sf::RenderWindow& rw, vec2 offset) = 0;
 };
