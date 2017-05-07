@@ -106,7 +106,6 @@ vec2 Obstruction::getNormalAt(vec2 point, vec2 hint) const {
 	}
 
 	return vec2(cos(normal), sin(normal)) * (max_last ? -1.0f : 1.0f);
-
 }
 
 double Obstruction::getDistanceToBoundary(vec2 point, vec2 direction) const {

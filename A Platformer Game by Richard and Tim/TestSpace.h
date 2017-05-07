@@ -37,7 +37,7 @@ struct TestEntity : Entity {
 
 struct SimpleEntity : TestEntity {
 	SimpleEntity(){
-		addCircle(Circle({0, 0}, 5 + rand() % 25));
+		addCircle(Circle({0, 0}, 5 + rand() % 45));
 		mass = 10.0;
 	}
 };
@@ -54,7 +54,7 @@ struct ComplexEntity : TestEntity {
 
 struct TestSpace : Space {
 	TestSpace(){
-		const int num_entities = 100;
+		const int num_entities = 10;
 		entities.resize(num_entities);
 		for (int i = 0; i < num_entities; i++){
 			entities[i] = new SimpleEntity();

@@ -11,7 +11,7 @@ struct TestSpaceWindow : ui::Window {
 	void render(sf::RenderWindow& rw, vec2 offset) override {
 		space.probe = ui::getMousePos();
 		for (Entity* entity : space.entities){
-			//entity->velocity.y += 0.3;
+			entity->velocity.y += 0.3;
 			//entity->velocity *= 0.99f;
 		}
 		space.tick();

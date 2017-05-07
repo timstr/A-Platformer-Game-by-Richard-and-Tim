@@ -19,7 +19,12 @@ struct Entity : Renderable {
 	// velocity accordingly
 	void tryCollisionWith(Obstruction* obstruction);
 
-	bool collidesWith(Obstruction* obstruction);
+	// returns true if the entity collides with the given obstruction
+	// if hit_point is provided, it shall be written to with the mean
+	// coordinates of collision, relative to the entity
+	bool collidesWith(Obstruction* obstruction, vec2* hit_point = nullptr);
+
+	void backUpFrom(Obstruction* obstruction, vec2 direction);
 
 	// translate the entity according to its velocity
 	void move();
