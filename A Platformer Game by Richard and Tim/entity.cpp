@@ -2,108 +2,111 @@
 #include "entity.h"
 #include <math.h>
 
+namespace {
+	const double precision = 0.25;
+}
 void Entity::tryCollisionWith(Obstruction* obstruction){
-
-	// TODO: instead of testing for collisions along every point in here,
-	// just calculate collision force over all points regardlessly and sum
-	// Modify getCollisionForce to return zero vector if no collision
-
 	vec2 center = {0, 0};
 	for (const Circle& circle : circles){
 		center += circle.center;
 	}
 	center /= (float)circles.size();
 
-	vec2 hit_point;
+	nanCheck(center);
 
-	if (collidesWith(obstruction, &hit_point)){
-		if (abs(velocity) > 50){
-			backUpFrom(obstruction, -velocity);
-		}
-		
+	vec2 delta_velocity = {0, 0};
+	vec2 sum_normals = {0, 0};
+
+	if (collidesWith(obstruction)){
 		vec2 total_force = {0, 0};
 		int hit_points = 0;
 
 		
 		for (const Circle& circle : circles){
-			double angle_delta = 2 * pi / std::max(circle.radius, 4.0);
+			double angle_delta = 2 * pi / std::max(circle.radius * precision, 4.0);
 			for (double angle = 0; angle < 2 * pi; angle += angle_delta){
 				vec2 point = position + circle.center + vec2(cos(angle) * circle.radius, sin(angle) * circle.radius);
 
 				if (obstruction->hitTest(point)){
+					vec2 normal = obstruction->getNormalAt(point, position + center - point - velocity);
+					nanCheck(normal);
+					sum_normals += normal;
+					total_force += obstruction->getCollisionForce(point, normal, this);
 					hit_points += 1;
-					total_force += obstruction->getCollisionForce(point, position + center, velocity, mass);
 				}
 			}
 		}
-		
+
 		if (hit_points > 0){
-			//TODO: is this right?
-			velocity += total_force / (float)(circles.size() * hit_points * mass);
+			nanCheck(total_force);
+
+			vec2 velocity_normal = projectOnto(velocity, sum_normals);
+			vec2 velocity_tangent = velocity - velocity_normal;
+			nanCheck(velocity_normal);
+			nanCheck(velocity_tangent);
+
+			delta_velocity = (velocity_tangent * (float)(1 - friction * obstruction->friction)) + ((float)elasticity * velocity_normal) - velocity;
+
+			nanCheck(delta_velocity);
+
+			delta_velocity += total_force / (float)(hit_points * mass);
+
+			nanCheck(delta_velocity);
+
+			velocity += delta_velocity;
 		}
 	}
+
+	// TODO: zero velocity when appropriate
+
+	nanCheck(velocity);
 }
 
-bool Entity::collidesWith(Obstruction* obstruction, vec2* hit_point){
-	double sumx = 0;
-	double sumy = 0;
-	int count = 0;
-
+bool Entity::collidesWith(Obstruction* obstruction){
 	for (const Circle& circle : circles){
-		double angle_delta = 2 * pi / circle.radius;
+		double angle_delta = 2 * pi / circle.radius / precision;
 		for (double angle = 0; angle < 2 * pi; angle += angle_delta){
 			vec2 point = position + circle.center + vec2(cos(angle) * circle.radius, sin(angle) * circle.radius);
 
 			if (obstruction->hitTest(point)){
-				sumx += point.x;
-				sumy += point.y;
-				count += 1;
+				return true;
 			}
 		}
 	}
 
-	if (count == 0){
-		return false;
-	}
-
-	if (hit_point){
-		hit_point->x = (sumx / (double)count) - position.x;
-		hit_point->y = (sumy / (double)count) - position.y;
-	}
-	return true;
+	return false;
 }
 
-void Entity::backUpFrom(Obstruction* obstruction, vec2 direction){
-	const int max_steps = 15;
+bool Entity::almostCollidesWith(Obstruction* obstruction){
+	for (const Circle& circle : circles){
+		double rad = circle.radius + 2.0;
+		double angle_delta = 2 * pi / rad / precision;
+		for (double angle = 0; angle < 2 * pi; angle += angle_delta){
+			vec2 point = position + circle.center + vec2(cos(angle) * rad, sin(angle) * rad);
 
-	// take a step back...
-	vec2 path = -direction;
-	position -= path;
-
-	if (collidesWith(obstruction)){
-		return;
-	}
-
-	// and take a couple baby steps there again
-	for (int i = 0; i < max_steps; i++){
-		path *= 0.5f;
-		// the entity has not collided yet
-		// move forward
-		position += path;
-		// if it collides:
-		if (collidesWith(obstruction) && i != max_steps - 1){
-			// move back
-			position -= path;
+			if (obstruction->hitTest(point)){
+				return true;
+			}
 		}
 	}
 
+	return false;
 }
 
 void Entity::move(){
-	const double min_velocity = 0.1;
-	if (abs(velocity.x) < min_velocity && abs(velocity.y) < min_velocity){
-		velocity = {0, 0};
+	const double min_velocity = 0.1f;
+	const float max_velocity = 30.0f;
+
+	double mag = abs(velocity);
+	
+	//if (mag < min_velocity){
+	//	velocity = {0, 0};
+	//}
+	
+	if (mag > max_velocity){
+		velocity /= (float)mag;
 	}
+
 	position += velocity;
 }
 

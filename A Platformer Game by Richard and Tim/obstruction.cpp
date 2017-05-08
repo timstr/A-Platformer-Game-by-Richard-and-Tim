@@ -17,25 +17,18 @@ bool Obstruction::hitTest(vec2 point) const {
 	return pixel.r + pixel.g + pixel.b <= 1.5;
 }
 
-vec2 Obstruction::getCollisionForce(vec2 point, vec2 center, vec2 velocity, double mass) const {
-	vec2 normal = getNormalAt(point, center - point);
+vec2 Obstruction::getCollisionForce(vec2 point, vec2 normal, Entity* entity) const {
 
-	vec2 velocity_normal = projectOnto(velocity, normal);
+	nanCheck(point);
+	nanCheck(normal);
 
-	vec2 velocity_tangent = velocity - velocity_normal;
+	vec2 velocity_normal = projectOnto(entity->velocity, normal);
 
 	double depth = getDistanceToBoundary(point, normal);
 
-	vec2 force_normal = normal * (float)(mass * depth * 0.3 * std::max(0.0, -dot(velocity_normal, normal)));
+	vec2 force = normal * (float)(entity->mass * depth * std::max(0.25, entity->elasticity));
 
-	vec2 force_tangent = {0, 0};
-
-	double velocity_tangent_mag = abs(velocity_tangent);
-	if (velocity_tangent_mag > 0.01){
-		force_tangent = -velocity_tangent * (float)(friction * depth / abs(velocity_tangent));
-	}
-
-	return (force_normal + force_tangent);
+	return force;
 }
 
 void Obstruction::setPos(vec2 _pos){
@@ -56,9 +49,11 @@ void Obstruction::render(sf::RenderWindow& rw, vec2 offset){
 }
 
 vec2 Obstruction::getNormalAt(vec2 point, vec2 hint) const {
+	nanCheck(point);
+	nanCheck(hint);
+
 	const double probe_radius = 10.0;
-	const int angle_slices = 30;
-	const double angle_delta = 2 * pi / (double)angle_slices;
+	const double angle_delta = 2 * pi / probe_radius;
 
 	double hint_angle = atan2(hint.y, hint.x);
 
@@ -88,7 +83,7 @@ vec2 Obstruction::getNormalAt(vec2 point, vec2 hint) const {
 				max_last = true;
 			} else {
 				// if the probe entered the boundary
-				min_angle = angle;
+				min_angle = angle - angle_delta;
 				max_last = false;
 			}
 			inside = hit;
@@ -115,14 +110,16 @@ double Obstruction::getDistanceToBoundary(vec2 point, vec2 direction) const {
 	}
 	direction /= (float)mag;
 	double dist = 0;
-	while (hitTest(point)){
+
+	double max_steps = 50;
+
+	for (int i = 0; i < max_steps; i++){
 		point += direction;
 		dist += 1;
 
-		// if the point goes out of bounds...
-		if (point.x < 0 || point.x >= boundary.getSize().x || point.y < 0 || point.y >= boundary.getSize().y){
-			return 0;
+		if (!hitTest(point)){
+			return dist;
 		}
 	}
-	return dist;
+	return 0;
 }

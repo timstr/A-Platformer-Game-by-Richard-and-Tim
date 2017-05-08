@@ -1,8 +1,10 @@
 #pragma once
 
+struct Obstruction;
+
+#include "obstruction.h"
 #include <vector>
 #include "renderable.h"
-#include "obstruction.h"
 
 // Entity is the base class to all things that interact with such
 // obstructions as the map and obstacles
@@ -13,6 +15,8 @@ struct Entity : Renderable {
 		position = {0, 0};
 		velocity = {0, 0};
 		mass = 1.0;
+		friction = 0.5;
+		elasticity = 0.5;
 	}
 
 	// possibly collide with obstruction and change
@@ -20,11 +24,9 @@ struct Entity : Renderable {
 	void tryCollisionWith(Obstruction* obstruction);
 
 	// returns true if the entity collides with the given obstruction
-	// if hit_point is provided, it shall be written to with the mean
-	// coordinates of collision, relative to the entity
-	bool collidesWith(Obstruction* obstruction, vec2* hit_point = nullptr);
+	bool collidesWith(Obstruction* obstruction);
 
-	void backUpFrom(Obstruction* obstruction, vec2 direction);
+	bool almostCollidesWith(Obstruction* obstruction);
 
 	// translate the entity according to its velocity
 	void move();
@@ -32,6 +34,8 @@ struct Entity : Renderable {
 	vec2 position;
 	vec2 velocity;
 	double mass;
+	double friction;
+	double elasticity;
 
 	protected:
 

@@ -9,7 +9,7 @@ struct TestObstruction : Obstruction {
 
 		setImage(sprite);
 		setBoundary(image);
-		friction = 0.25;
+		friction = 1.0;
 	}
 
 	private:
@@ -20,12 +20,15 @@ struct TestObstruction : Obstruction {
 
 struct TestEntity : Entity {
 	TestEntity(){
-			
+		position = {500, 200};
+		elasticity = (rand() % 100) * 0.01;
+		friction = (rand() % 100) * 0.01;
 	}
 
 	void render(sf::RenderWindow& rw, vec2 offset) override {
 		sf::CircleShape circle;
-		circle.setFillColor(sf::Color((uint32_t)std::hash<Entity*>{}(this) | 0xFF));
+		//circle.setFillColor(sf::Color((uint32_t)std::hash<Entity*>{}(this) | 0xFF));
+		circle.setFillColor(sf::Color(255 * friction, 255 * elasticity, 0, 255));
 		for (Circle& c : circles){
 			circle.setRadius(c.radius);
 			circle.setPointCount(2 * pi * c.radius);
@@ -37,37 +40,41 @@ struct TestEntity : Entity {
 
 struct SimpleEntity : TestEntity {
 	SimpleEntity(){
-		addCircle(Circle({0, 0}, 5 + rand() % 45));
+		addCircle(Circle({0, 0}, 10 + rand() % 20));
 		mass = 10.0;
 	}
 };
 
 struct ComplexEntity : TestEntity {
 	ComplexEntity(){
-		addCircle(Circle({-25, -25}, 5 + rand() % 25));
-		addCircle(Circle({25, -25}, 5 + rand() % 25));
-		addCircle(Circle({-25, 25}, 5 + rand() % 25));
-		addCircle(Circle({25, 25}, 5 + rand() % 25));
+		int count = (rand() % 5) + 1;
+		for (int i = 0; i < count; i++){
+			addCircle(Circle(vec2(-25 + rand() % 51, -25 + rand() % 51), 5 + rand() % 25));
+		}
 		mass = 20.0;
 	}
 };
 
 struct TestSpace : Space {
 	TestSpace(){
-		const int num_entities = 10;
-		entities.resize(num_entities);
+		const int num_entities = 50;
+		const int test_entites = 0;
+
+		entities.reserve(num_entities + test_entites);
+
 		for (int i = 0; i < num_entities; i++){
-			entities[i] = new SimpleEntity();
-			entities[i]->position = {500, 200};
-			entities[i]->velocity = vec2((((rand() % 100) - 50) / 5.0), (((rand() % 100) - 50) / 5.0));
-			addEntity(entities[i]);
+			Entity* entity = new SimpleEntity();
+			entity->velocity = vec2((((rand() % 100) - 50) / 5.0), (((rand() % 100) - 50) / 5.0));
+			addEntity(entity);
+			entities.push_back(entity);
 		}
 
-		ComplexEntity* entity = new ComplexEntity();
-		entity->position = {500, 200};
-		entity->velocity = vec2((((rand() % 100) - 50) / 5.0), (((rand() % 100) - 50) / 5.0));
-		entities.push_back(entity);
-		addEntity(entity);
+		for (int i = 0; i < test_entites; i++){
+			Entity* entity = new ComplexEntity();
+			entity->velocity = vec2((((rand() % 100) - 50) / 5.0), (((rand() % 100) - 50) / 5.0));
+			addEntity(entity);
+			entities.push_back(entity);
+		}
 
 		addObstruction(obstruction = new TestObstruction());
 	}
