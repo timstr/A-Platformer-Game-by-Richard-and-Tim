@@ -10,10 +10,22 @@ struct TestSpaceWindow : ui::Window {
 
 	void render(sf::RenderWindow& rw, vec2 offset) override {
 		space.probe = ui::getMousePos();
-		for (Entity* entity : space.entities){
-			entity->velocity.y += 0.3f;
-			entity->velocity *= 0.99f;
+
+		vec2 dir = {0, 0};
+		if (keyDown(sf::Keyboard::Left)){
+			dir.x -= 1;
 		}
+		if (keyDown(sf::Keyboard::Right)){
+			dir.x += 1;
+		}
+		if (keyDown(sf::Keyboard::Up)){
+			dir.y -= 1;
+		}
+		if (keyDown(sf::Keyboard::Down)){
+			dir.y += 1;
+		}
+		space.guy->move(dir);
+
 		space.tick();
 		space.render(rw, offset);
 	}

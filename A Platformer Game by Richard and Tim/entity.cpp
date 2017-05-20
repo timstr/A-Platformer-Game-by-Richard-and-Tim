@@ -2,6 +2,8 @@
 #include "entity.h"
 #include <math.h>
 
+#include <iostream> // TODO: remove
+
 namespace {
 	const double precision = 0.25;
 }
@@ -38,24 +40,30 @@ void Entity::tryCollisionWith(Obstruction* obstruction){
 		}
 
 		if (hit_points > 0){
-			nanCheck(total_force);
 
-			vec2 velocity_normal = projectOnto(velocity, sum_normals);
+			vec2 normal = sum_normals / (float)hit_points;
+
+			vec2 delta_velocity = total_force / (float)(hit_points * mass);
+
+			vec2 delta_velocity_normal = projectOnto(delta_velocity, normal);
+			vec2 delta_velocity_tangent = delta_velocity - delta_velocity_normal;
+
+
+			vec2 velocity_normal = projectOnto(velocity, normal);
 			vec2 velocity_tangent = velocity - velocity_normal;
-			nanCheck(velocity_normal);
-			nanCheck(velocity_tangent);
+			
+			velocity_normal *= (float)elasticity;
 
-			delta_velocity = (velocity_tangent * (float)(1 - friction * obstruction->friction)) + ((float)elasticity * velocity_normal) - velocity;
 
-			nanCheck(delta_velocity);
+			velocity_tangent *= (float)(1 - friction * obstruction->friction);
 
-			delta_velocity += total_force / (float)(hit_points * mass);
+			velocity = velocity_normal + velocity_tangent + delta_velocity_normal + delta_velocity_tangent;
 
-			nanCheck(delta_velocity);
-
-			velocity += delta_velocity;
+			// TODO: found out how to make force of bouncing dependent on elasticity
 		}
 	}
+		
+	velocity.y += 0.1f;
 
 	// TODO: zero velocity when appropriate
 

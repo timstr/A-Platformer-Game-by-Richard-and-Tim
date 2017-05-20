@@ -26,9 +26,9 @@ vec2 Obstruction::getCollisionForce(vec2 point, vec2 normal, Entity* entity) con
 
 	double depth = getDistanceToBoundary(point, normal);
 
-	vec2 force = normal * (float)(entity->mass * depth * std::max(0.25, entity->elasticity));
+	float force = entity->mass * depth * 0.25 * (1 + entity->elasticity);
 
-	return force;
+	return force * normal;
 }
 
 void Obstruction::setPos(vec2 _pos){
@@ -53,7 +53,7 @@ vec2 Obstruction::getNormalAt(vec2 point, vec2 hint) const {
 	nanCheck(hint);
 
 	const double probe_radius = 10.0;
-	const double angle_delta = 2 * pi / probe_radius;
+	const double angle_delta = 2 * pi / probe_radius * 0.5;
 
 	double hint_angle = atan2(hint.y, hint.x);
 

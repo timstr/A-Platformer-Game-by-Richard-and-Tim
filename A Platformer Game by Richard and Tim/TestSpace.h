@@ -3,7 +3,7 @@
 
 struct TestObstruction : Obstruction {
 	TestObstruction(){
-		image.loadFromFile("images/testmapboundary1.png");
+		image.loadFromFile("images/testmapboundary2.png");
 		texture.loadFromImage(image);
 		sprite.setTexture(texture);
 
@@ -20,7 +20,7 @@ struct TestObstruction : Obstruction {
 
 struct TestEntity : Entity {
 	TestEntity(){
-		position = {500, 200};
+		position = {500, 100};
 		elasticity = (rand() % 100) * 0.01;
 		friction = (rand() % 100) * 0.01;
 	}
@@ -55,10 +55,27 @@ struct ComplexEntity : TestEntity {
 	}
 };
 
+struct GuyEntity : TestEntity {
+	GuyEntity(){
+		addCircle(Circle({0, -20}, 20));
+		addCircle(Circle({0, 10}, 15));
+		addCircle(Circle({-20, 5}, 10));
+		addCircle(Circle({20, 5}, 10));
+		addCircle(Circle({-10, 40}, 10));
+		addCircle(Circle({10, 40}, 10));
+		friction = 1.0;
+		elasticity = 0.0;
+	}
+	void move(vec2 direction){
+		velocity += direction;
+		position += direction;
+	}
+};
+
 struct TestSpace : Space {
 	TestSpace(){
-		const int num_entities = 50;
-		const int test_entites = 0;
+		const int num_entities = 20;
+		const int test_entites = 20;
 
 		entities.reserve(num_entities + test_entites);
 
@@ -76,6 +93,9 @@ struct TestSpace : Space {
 			entities.push_back(entity);
 		}
 
+		guy = new GuyEntity();
+		addEntity(guy);
+
 		addObstruction(obstruction = new TestObstruction());
 	}
 
@@ -90,6 +110,7 @@ struct TestSpace : Space {
 	}
 
 	std::vector<Entity*> entities;
+	GuyEntity* guy;
 	TestObstruction* obstruction;
 	vec2 probe;
 };
