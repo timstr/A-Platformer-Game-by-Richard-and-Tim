@@ -12,12 +12,7 @@ Space::~Space(){
 
 void Space::tick(){
 	for (Entity* entity : entities){
-		for (Obstruction* obstruction : obstructions){
-			entity->tryCollisionWith(obstruction);
-		}
-	}
-	for (Entity* entity : entities){
-		entity->move();
+		entity->move(obstructions);
 	}
 }
 

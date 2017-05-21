@@ -20,9 +20,3 @@ vec2 projectOnto(const vec2& v1, const vec2& v2){
 double abs(const vec2& v){
 	return hypot(v.x, v.y);
 }
-
-void nanCheck(vec2& v){
-	if (std::isnan(v.x + v.y)){
-		v = {0, 0};
-	}
-}

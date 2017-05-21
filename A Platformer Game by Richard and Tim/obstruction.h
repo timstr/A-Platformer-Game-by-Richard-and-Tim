@@ -18,9 +18,9 @@ struct Obstruction : Renderable {
 	// test whether a point collides with the obstruction
 	bool hitTest(vec2 point) const;
 
-	// get the force exerted on a body colliding at the given point
+	// get the impulse exerted on a body colliding at the given point
 	// moving at the given velocity having the given mass
-	vec2 getCollisionForce(vec2 point, vec2 normal, Entity* entity) const;
+	vec2 getImpulse(vec2 point, vec2 normal, Entity* entity) const;
 
 	void setPos(vec2 _pos);
 

@@ -29,6 +29,7 @@ struct TestEntity : Entity {
 		sf::CircleShape circle;
 		//circle.setFillColor(sf::Color((uint32_t)std::hash<Entity*>{}(this) | 0xFF));
 		circle.setFillColor(sf::Color(255 * friction, 255 * elasticity, 0, 255));
+		circle.setOutlineThickness(0.0);
 		for (Circle& c : circles){
 			circle.setRadius(c.radius);
 			circle.setPointCount(2 * pi * c.radius);
@@ -63,12 +64,12 @@ struct GuyEntity : TestEntity {
 		addCircle(Circle({20, 5}, 10));
 		addCircle(Circle({-10, 40}, 10));
 		addCircle(Circle({10, 40}, 10));
-		friction = 1.0;
-		elasticity = 0.0;
+		friction = 0.3;
+		elasticity = 0.1;
 	}
 	void move(vec2 direction){
 		velocity += direction;
-		position += direction;
+		//position += direction;
 	}
 };
 

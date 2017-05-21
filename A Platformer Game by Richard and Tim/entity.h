@@ -19,17 +19,8 @@ struct Entity : Renderable {
 		elasticity = 0.5;
 	}
 
-	// possibly collide with obstruction and change
-	// velocity accordingly
-	void tryCollisionWith(Obstruction* obstruction);
-
-	// returns true if the entity collides with the given obstruction
-	bool collidesWith(Obstruction* obstruction);
-
-	bool almostCollidesWith(Obstruction* obstruction);
-
-	// translate the entity according to its velocity
-	void move();
+	// translate the entity according to its velocity and possibly collide with obstructions
+	void move(std::vector<Obstruction*>& const obstructions);
 
 	vec2 position;
 	vec2 velocity;
@@ -48,8 +39,18 @@ struct Entity : Renderable {
 		double radius;
 	};
 
+	void addCircle(const Circle& circle);
+
 	std::vector<Circle> circles;
 
-	void addCircle(const Circle& circle);
+	private:
+
+	// returns true if the entity collides with the given obstruction(s)
+	bool collidesWith(Obstruction* const obstruction) const;
+	bool collidesWith(std::vector<Obstruction*>& const obstructions) const;
+
+	// possibly collide with obstruction and change
+	// velocity accordingly
+	void performCollision(Obstruction* obstruction);
 
 };

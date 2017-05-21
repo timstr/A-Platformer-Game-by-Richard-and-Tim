@@ -2,8 +2,8 @@
 #include "obstruction.h"
 
 bool Obstruction::hitTest(vec2 point) const {
-	int x = round(point.x + this->pos.x);
-	int y = round(point.y + this->pos.y);
+	int x = floor(point.x + this->pos.x);
+	int y = floor(point.y + this->pos.y);
 
 	// outside the map shall be a solid boundary
 	if ((x < 0) || (x >= boundary.getSize().x) || (y < 0) || (y >= boundary.getSize().y)){
@@ -17,18 +17,19 @@ bool Obstruction::hitTest(vec2 point) const {
 	return pixel.r + pixel.g + pixel.b <= 1.5;
 }
 
-vec2 Obstruction::getCollisionForce(vec2 point, vec2 normal, Entity* entity) const {
+vec2 Obstruction::getImpulse(vec2 point, vec2 normal, Entity* entity) const {
 
-	nanCheck(point);
-	nanCheck(normal);
+	float velocity_normal = std::max(0.0, -dot(entity->velocity, normal));
 
-	vec2 velocity_normal = projectOnto(entity->velocity, normal);
+	float impulse_normal = entity->mass * velocity_normal * (1 + entity->elasticity);
 
-	double depth = getDistanceToBoundary(point, normal);
+	vec2 tangent = vec2(normal.y, -normal.x);
 
-	float force = entity->mass * depth * 0.25 * (1 + entity->elasticity);
+	float velocity_tangent = dot(entity->velocity, tangent);
 
-	return force * normal;
+	float impulse_tangent = -velocity_tangent * entity->mass * entity->friction;
+
+	return impulse_normal * normal + impulse_tangent * tangent;
 }
 
 void Obstruction::setPos(vec2 _pos){
@@ -49,8 +50,6 @@ void Obstruction::render(sf::RenderWindow& rw, vec2 offset){
 }
 
 vec2 Obstruction::getNormalAt(vec2 point, vec2 hint) const {
-	nanCheck(point);
-	nanCheck(hint);
 
 	const double probe_radius = 10.0;
 	const double angle_delta = 2 * pi / probe_radius * 0.5;

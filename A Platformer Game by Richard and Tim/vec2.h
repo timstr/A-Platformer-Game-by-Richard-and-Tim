@@ -13,6 +13,3 @@ double cross(const vec2& v1, const vec2& v2);
 vec2 projectOnto(const vec2& v1, const vec2& v2);
 
 double abs(const vec2& v);
-
-// TODO: remove
-void nanCheck(vec2& v);
