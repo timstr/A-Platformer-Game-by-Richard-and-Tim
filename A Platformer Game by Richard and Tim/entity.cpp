@@ -66,8 +66,6 @@ void Entity::performCollision(Obstruction* obstruction){
 				if (obstruction->hitTest(point)){
 					vec2 normal = obstruction->getNormalAt(point, position + center - point - velocity);
 					total_force += obstruction->getImpulse(point, normal, this);
-					total_contact_accel += obstruction->getContactAcceleration(this) * (float)(friction);
-					total_contact_accel += this->getContactAcceleration(obstruction) * (float)(obstruction->friction);
 					sum_normals += normal;
 					hit_points += 1;
 

@@ -28,7 +28,9 @@ vec2 Obstruction::getImpulse(vec2 point, vec2 normal, Entity* entity) const {
 
 	float impulse_tangent = -velocity_tangent * entity->mass * entity->friction * friction;
 
-	return impulse_normal * normal + impulse_tangent * tangent;
+	vec2 impulse_contact = ((getContactAcceleration(entity) * (float)entity->friction) + (entity->getContactAcceleration(this) * (float)friction)) * (float)entity->mass;
+
+	return impulse_normal * normal + impulse_tangent * tangent + impulse_contact;
 }
 
 void Obstruction::setPos(vec2 _pos){

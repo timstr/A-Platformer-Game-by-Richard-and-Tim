@@ -20,10 +20,7 @@ struct TestSpaceWindow : ui::Window {
 				dir.x += 1;
 			}
 			if (keyDown(sf::Keyboard::Up)){
-				dir.y -= 1;
-			}
-			if (keyDown(sf::Keyboard::Down)){
-				dir.y += 1;
+				dir.y -= 10;
 			}
 			space.guy->move(dir);
 

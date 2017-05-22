@@ -45,7 +45,7 @@ struct BoostObstacle : Obstacle {
 
 		setImage(sprite);
 		setBoundary(image);
-		friction = 1.0;
+		friction = 0.0;
 	}
 
 	vec2 getContactAcceleration(const Entity* entity) const override {
