@@ -11,7 +11,7 @@ Space::~Space(){
 }
 
 void Space::tick(){
-	for (Entity* entity : entities){
+	for (Entity* const entity : entities){
 		entity->move(obstructions);
 	}
 }

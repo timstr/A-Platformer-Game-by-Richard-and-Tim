@@ -1,9 +1,11 @@
 #pragma once
 #include "space.h"
+#include "map.h"
+#include "obstacle.h"
 
-struct TestObstruction : Obstruction {
-	TestObstruction(){
-		image.loadFromFile("images/testmapboundary2.png");
+struct TestMap : Map {
+	TestMap(){
+		image.loadFromFile("images/testmapboundary3.png");
 		texture.loadFromImage(image);
 		sprite.setTexture(texture);
 
@@ -18,9 +20,26 @@ struct TestObstruction : Obstruction {
 	sf::Sprite sprite;
 };
 
+struct TestObstacle : Obstacle {
+	TestObstacle(){
+		image.loadFromFile("images/testobstacle1.png");
+		texture.loadFromImage(image);
+		sprite.setTexture(texture);
+		
+		setImage(sprite);
+		setBoundary(image);
+		friction = 0.0;
+	}
+
+	private:
+	sf::Image image;
+	sf::Texture texture;
+	sf::Sprite sprite;
+};
+
 struct TestEntity : Entity {
 	TestEntity(){
-		position = {500, 100};
+		position = {400, 320};
 		elasticity = (rand() % 100) * 0.01;
 		friction = (rand() % 100) * 0.01;
 	}
@@ -75,10 +94,10 @@ struct GuyEntity : TestEntity {
 
 struct TestSpace : Space {
 	TestSpace(){
-		const int num_entities = 20;
-		const int test_entites = 20;
+		const int num_entities = 50;
+		const int test_entites = 0;
 
-		entities.reserve(num_entities + test_entites);
+		entities.reserve(num_entities + test_entites + 1);
 
 		for (int i = 0; i < num_entities; i++){
 			Entity* entity = new SimpleEntity();
@@ -96,13 +115,17 @@ struct TestSpace : Space {
 
 		guy = new GuyEntity();
 		addEntity(guy);
+		entities.push_back(guy);
 
-		addObstruction(obstruction = new TestObstruction());
+		addObstruction(map = new TestMap());
+		addObstruction(obstacle = new TestObstacle());
+
+		obstacle->position = {475, 466};
 	}
 
 	void render(sf::RenderWindow& rw, vec2 offset) override {
 		Space::render(rw, offset);
-		vec2 normal = obstruction->getNormalAt(probe, {0.5, 0.5});
+		vec2 normal = map->getNormalAt(probe, {0.5, 0.5});
 		sf::Vertex points[] = {
 			sf::Vertex(probe + offset, sf::Color(0x00FF00FF)),
 			sf::Vertex(probe + offset + 50.0f * normal, sf::Color(0x00FF00FF))
@@ -112,6 +135,7 @@ struct TestSpace : Space {
 
 	std::vector<Entity*> entities;
 	GuyEntity* guy;
-	TestObstruction* obstruction;
+	TestMap* map;
+	TestObstacle* obstacle;
 	vec2 probe;
 };

@@ -10,8 +10,8 @@ struct Entity;
 // a complicated raster-image physical boundary with 
 // which entities are to interact physically
 struct Obstruction : Renderable {
-	Obstruction(){
-		pos = {0, 0};
+	Obstruction(bool _open_boundary) : open_boundary(_open_boundary) {
+		position = {0, 0};
 		friction = 0.5;
 	}
 
@@ -33,7 +33,7 @@ struct Obstruction : Renderable {
 	//private:
 
 	// the spatial position
-	vec2 pos;
+	vec2 position;
 
 	// the visual appearance
 	sf::Sprite image;
@@ -53,4 +53,8 @@ struct Obstruction : Renderable {
 	// returns the distance along the given direction to the nearest point in
 	// open space, or 0 if the given point is already in open space
 	double getDistanceToBoundary(vec2 point, vec2 direction) const;
+
+	protected:
+	// whether the area outside the obstruction is solid
+	const bool open_boundary;
 };

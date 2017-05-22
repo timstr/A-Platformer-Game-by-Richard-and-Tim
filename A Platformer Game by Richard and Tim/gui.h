@@ -195,7 +195,7 @@ namespace ui {
 				pos -= window->pos;
 				window = window->parent;
 			}
-			return(pos);
+			return pos;
 		}
 		sf::Vector2f absPos(){
 			sf::Vector2f pos = sf::Vector2f();
@@ -204,7 +204,7 @@ namespace ui {
 				pos += window->pos;
 				window = window->parent;
 			}
-			return(pos);
+			return pos;
 		}
 
 		virtual void onLeftClick(int clicks){
@@ -261,9 +261,25 @@ namespace ui {
 		}
 		bool keyDown(sf::Keyboard::Key key){
 			if (Context::get().current_window == this){
-				return(sf::Keyboard::isKeyPressed(key));
+				return sf::Keyboard::isKeyPressed(key);
 			} else {
-				return(false);
+				return false;
+			}
+		}
+
+		bool leftMouseDown(){
+			if (Context::get().current_window == this){
+				return sf::Mouse::isButtonPressed(sf::Mouse::Button::Left);
+			} else {
+				return false;
+			}
+		}
+
+		bool rightMouseDown(){
+			if (Context::get().current_window == this){
+				return sf::Mouse::isButtonPressed(sf::Mouse::Button::Left);
+			} else {
+				return false;
 			}
 		}
 

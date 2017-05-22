@@ -3,7 +3,7 @@
 #include <math.h>
 
 namespace {
-	const double precision = 0.25;
+	const double precision = 1.0;
 }
 
 bool Entity::collidesWith(Obstruction* const obstruction) const {
@@ -32,12 +32,11 @@ bool Entity::collidesWith(std::vector<Obstruction*>& const obstructions) const {
 
 void Entity::move(std::vector<Obstruction*>& const obstructions){
 
-	velocity.y += 0.1f;
+	// This is where gravity happens
+	velocity.y += 0.25f;
 
-	if (collidesWith(obstructions)){
-		for (Obstruction* const obstruction : obstructions){
-			performCollision(obstruction);
-		}
+	for (Obstruction* const obstruction : obstructions){
+		performCollision(obstruction);
 	}
 
 	position += velocity;
@@ -68,6 +67,7 @@ void Entity::performCollision(Obstruction* obstruction){
 					sum_normals += normal;
 					total_force += obstruction->getImpulse(point, normal, this);
 					hit_points += 1;
+					// TODO: try backing up (without changing velocity) right here
 				}
 			}
 		}

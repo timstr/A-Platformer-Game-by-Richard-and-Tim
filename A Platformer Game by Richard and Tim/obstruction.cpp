@@ -2,19 +2,19 @@
 #include "obstruction.h"
 
 bool Obstruction::hitTest(vec2 point) const {
-	int x = floor(point.x + this->pos.x);
-	int y = floor(point.y + this->pos.y);
+	int x = floor(point.x - this->position.x);
+	int y = floor(point.y - this->position.y);
 
-	// outside the map shall be a solid boundary
+	// test whether point is outside the map
 	if ((x < 0) || (x >= boundary.getSize().x) || (y < 0) || (y >= boundary.getSize().y)){
-		return true;
+		return !open_boundary;
 	}
 
 
 	sf::Color pixel = boundary.getPixel(x, y);
 
-	// the boundary image is solid where its colour is dark
-	return pixel.r + pixel.g + pixel.b <= 1.5;
+	// the boundary image is solid where its colour isn't white
+	return (pixel.r + pixel.g + pixel.b) <= 255 * 2.5;
 }
 
 vec2 Obstruction::getImpulse(vec2 point, vec2 normal, Entity* entity) const {
@@ -27,13 +27,13 @@ vec2 Obstruction::getImpulse(vec2 point, vec2 normal, Entity* entity) const {
 
 	float velocity_tangent = dot(entity->velocity, tangent);
 
-	float impulse_tangent = -velocity_tangent * entity->mass * entity->friction;
+	float impulse_tangent = -velocity_tangent * entity->mass * entity->friction * friction;
 
 	return impulse_normal * normal + impulse_tangent * tangent;
 }
 
 void Obstruction::setPos(vec2 _pos){
-	pos = _pos;
+	position = _pos;
 }
 
 void Obstruction::setImage(const sf::Sprite& _image){
@@ -45,7 +45,7 @@ void Obstruction::setBoundary(const sf::Image& _boundary){
 }
 
 void Obstruction::render(sf::RenderWindow& rw, vec2 offset){
-	image.setPosition(offset + pos);
+	image.setPosition(offset + position);
 	rw.draw(image);
 }
 
