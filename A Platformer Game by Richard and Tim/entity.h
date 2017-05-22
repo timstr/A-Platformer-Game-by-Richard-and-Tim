@@ -22,11 +22,20 @@ struct Entity : Renderable {
 	// translate the entity according to its velocity and possibly collide with obstructions
 	void move(std::vector<Obstruction*>& const obstructions);
 
+	virtual vec2 getContactAcceleration(const Obstruction* obstruction) const {
+		return {0, 0};
+	}
+
 	vec2 position;
 	vec2 velocity;
 	double mass;
 	double friction;
 	double elasticity;
+
+	// tick is called once every frame and should be overridden to update the entity's state
+	virtual void tick(){
+
+	}
 
 	protected:
 

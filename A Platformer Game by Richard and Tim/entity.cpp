@@ -52,6 +52,8 @@ void Entity::performCollision(Obstruction* obstruction){
 	vec2 delta_velocity = {0, 0};
 	vec2 sum_normals = {0, 0};
 
+	vec2 total_contact_accel = {0, 0};
+
 	if (collidesWith(obstruction)){
 		vec2 total_force = {0, 0};
 		int hit_points = 0;
@@ -63,12 +65,14 @@ void Entity::performCollision(Obstruction* obstruction){
 
 				if (obstruction->hitTest(point)){
 					vec2 normal = obstruction->getNormalAt(point, position + center - point - velocity);
-					sum_normals += normal;
 					total_force += obstruction->getImpulse(point, normal, this);
+					total_contact_accel += obstruction->getContactAcceleration(this) * (float)(friction);
+					total_contact_accel += this->getContactAcceleration(obstruction) * (float)(obstruction->friction);
+					sum_normals += normal;
 					hit_points += 1;
 
 					double depth = obstruction->getDistanceToBoundary(point, normal);
-					position += (float)(std::max(0.0, depth * 0.5 - 1.0)) * normal;
+					position += (float)(std::max(0.0, depth * 1.0 - 1.0)) * normal;
 				}
 			}
 		}
@@ -76,6 +80,8 @@ void Entity::performCollision(Obstruction* obstruction){
 		if (hit_points > 0){
 
 			vec2 delta_velocity = total_force / (float)(hit_points * mass);
+
+			delta_velocity += total_contact_accel / (float)(hit_points);
 
 			velocity += delta_velocity;
 		}

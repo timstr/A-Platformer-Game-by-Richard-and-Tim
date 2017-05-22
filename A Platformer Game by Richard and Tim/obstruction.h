@@ -30,8 +30,6 @@ struct Obstruction : Renderable {
 
 	void render(sf::RenderWindow& rw, vec2 offset) override;
 
-	//private:
-
 	// the spatial position
 	vec2 position;
 
@@ -45,6 +43,11 @@ struct Obstruction : Renderable {
 	// 0 for totally slippy
 	// 1 for totally grippy
 	double friction;
+
+	// the acceleration exerted upon an entity touching the surface
+	virtual vec2 getContactAcceleration(const Entity* entity) const {
+		return {0, 0};
+	}
 
 	// returns the normal at a point on a boundary, or the hint direction if
 	// the point is not near a boundary. Always returns a unit vector

@@ -20,15 +20,36 @@ struct TestMap : Map {
 	sf::Sprite sprite;
 };
 
-struct TestObstacle : Obstacle {
-	TestObstacle(){
+struct TreeObstacle : Obstacle {
+	TreeObstacle(){
 		image.loadFromFile("images/testobstacle1.png");
 		texture.loadFromImage(image);
 		sprite.setTexture(texture);
-		
+
 		setImage(sprite);
 		setBoundary(image);
 		friction = 0.0;
+	}
+
+	private:
+	sf::Image image;
+	sf::Texture texture;
+	sf::Sprite sprite;
+};
+
+struct BoostObstacle : Obstacle {
+	BoostObstacle(){
+		image.loadFromFile("images/testobstacle2.png");
+		texture.loadFromImage(image);
+		sprite.setTexture(texture);
+
+		setImage(sprite);
+		setBoundary(image);
+		friction = 1.0;
+	}
+
+	vec2 getContactAcceleration(const Entity* entity) const override {
+		return {2, 0};
 	}
 
 	private:
@@ -46,7 +67,6 @@ struct TestEntity : Entity {
 
 	void render(sf::RenderWindow& rw, vec2 offset) override {
 		sf::CircleShape circle;
-		//circle.setFillColor(sf::Color((uint32_t)std::hash<Entity*>{}(this) | 0xFF));
 		circle.setFillColor(sf::Color(255 * friction, 255 * elasticity, 127, 255));
 		circle.setOutlineThickness(0.0);
 		for (Circle& c : circles){
@@ -60,7 +80,7 @@ struct TestEntity : Entity {
 
 struct SimpleEntity : TestEntity {
 	SimpleEntity(){
-		addCircle(Circle({0, 0}, 5 + rand() % 20));
+		addCircle(Circle({0, 0}, 10 + rand() % 20));
 		mass = 10.0;
 	}
 };
@@ -86,10 +106,16 @@ struct GuyEntity : TestEntity {
 		friction = 0.3;
 		elasticity = 0.1;
 	}
-	void move(vec2 direction){
-		velocity += direction;
-		//position += direction;
+
+	vec2 getContactAcceleration(const Obstruction* obstruction) const override {
+		return accel;
 	}
+
+	void move(vec2 direction){
+		accel = direction;
+	}
+
+	vec2 accel = {0, 0};
 };
 
 struct TestSpace : Space {
@@ -118,9 +144,12 @@ struct TestSpace : Space {
 		entities.push_back(guy);
 
 		addObstruction(map = new TestMap());
-		addObstruction(obstacle = new TestObstacle());
 
-		obstacle->position = {475, 500};
+		addObstruction(tree = new TreeObstacle());
+		tree->position = {250, 500};
+
+		addObstruction(boost = new BoostObstacle());
+		boost->position = {600, 500};
 	}
 
 	void render(sf::RenderWindow& rw, vec2 offset) override {
@@ -136,6 +165,7 @@ struct TestSpace : Space {
 	std::vector<Entity*> entities;
 	GuyEntity* guy;
 	TestMap* map;
-	TestObstacle* obstacle;
+	TreeObstacle* tree;
+	BoostObstacle* boost;
 	vec2 probe;
 };
