@@ -42,7 +42,6 @@ void Entity::move(std::vector<Obstruction*>& const obstructions){
 	position += velocity;
 }
 
-// TODO: fix entities sliding through small crevices
 void Entity::performCollision(Obstruction* obstruction){
 	vec2 center = {0, 0};
 	for (const Circle& circle : circles){
@@ -67,7 +66,9 @@ void Entity::performCollision(Obstruction* obstruction){
 					sum_normals += normal;
 					total_force += obstruction->getImpulse(point, normal, this);
 					hit_points += 1;
-					// TODO: try backing up (without changing velocity) right here
+
+					double depth = obstruction->getDistanceToBoundary(point, normal);
+					position += (float)(std::max(0.0, depth * 0.5 - 1.0)) * normal;
 				}
 			}
 		}

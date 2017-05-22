@@ -10,7 +10,6 @@ bool Obstruction::hitTest(vec2 point) const {
 		return !open_boundary;
 	}
 
-
 	sf::Color pixel = boundary.getPixel(x, y);
 
 	// the boundary image is solid where its colour isn't white
@@ -103,7 +102,33 @@ vec2 Obstruction::getNormalAt(vec2 point, vec2 hint) const {
 }
 
 double Obstruction::getDistanceToBoundary(vec2 point, vec2 direction) const {
-	double mag = abs(direction);
+	double length = abs(direction);
+	if (length == 0.0){
+		return 0.0;
+	}
+
+	direction /= (float)length;
+
+	const float max_distance = 5.0;
+	const int max_steps = 10;
+
+	double distance = 0;
+
+	vec2 path = direction * max_distance;
+	double path_length = max_distance;
+
+	for (int i = 0; i < max_steps; i++){
+		if (hitTest(point + path)){
+			point += path;
+			distance += path_length;
+		}
+		path *= 0.5f;
+		path_length *= 0.5;
+	}
+
+	return distance;
+
+	/*double mag = abs(direction);
 	if (mag == 0){
 		return 0;
 	}
@@ -120,5 +145,5 @@ double Obstruction::getDistanceToBoundary(vec2 point, vec2 direction) const {
 			return dist;
 		}
 	}
-	return 0;
+	return 0;*/
 }

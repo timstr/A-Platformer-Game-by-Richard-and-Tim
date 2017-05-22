@@ -39,7 +39,7 @@ struct TestObstacle : Obstacle {
 
 struct TestEntity : Entity {
 	TestEntity(){
-		position = {400, 320};
+		position = {800, 500};
 		elasticity = (rand() % 100) * 0.01;
 		friction = (rand() % 100) * 0.01;
 	}
@@ -47,7 +47,7 @@ struct TestEntity : Entity {
 	void render(sf::RenderWindow& rw, vec2 offset) override {
 		sf::CircleShape circle;
 		//circle.setFillColor(sf::Color((uint32_t)std::hash<Entity*>{}(this) | 0xFF));
-		circle.setFillColor(sf::Color(255 * friction, 255 * elasticity, 0, 255));
+		circle.setFillColor(sf::Color(255 * friction, 255 * elasticity, 127, 255));
 		circle.setOutlineThickness(0.0);
 		for (Circle& c : circles){
 			circle.setRadius(c.radius);
@@ -60,7 +60,7 @@ struct TestEntity : Entity {
 
 struct SimpleEntity : TestEntity {
 	SimpleEntity(){
-		addCircle(Circle({0, 0}, 10 + rand() % 20));
+		addCircle(Circle({0, 0}, 5 + rand() % 20));
 		mass = 10.0;
 	}
 };
@@ -94,21 +94,21 @@ struct GuyEntity : TestEntity {
 
 struct TestSpace : Space {
 	TestSpace(){
-		const int num_entities = 50;
+		const int num_entities = 200;
 		const int test_entites = 0;
 
 		entities.reserve(num_entities + test_entites + 1);
 
 		for (int i = 0; i < num_entities; i++){
 			Entity* entity = new SimpleEntity();
-			entity->velocity = vec2((((rand() % 100) - 50) / 5.0), (((rand() % 100) - 50) / 5.0));
+			entity->velocity = vec2((((rand() % 100) - 50) / 10.0), (((rand() % 100) - 50) / 10.0));
 			addEntity(entity);
 			entities.push_back(entity);
 		}
 
 		for (int i = 0; i < test_entites; i++){
 			Entity* entity = new ComplexEntity();
-			entity->velocity = vec2((((rand() % 100) - 50) / 5.0), (((rand() % 100) - 50) / 5.0));
+			entity->velocity = vec2((((rand() % 100) - 50) / 10.0), (((rand() % 100) - 50) / 10.0));
 			addEntity(entity);
 			entities.push_back(entity);
 		}
@@ -120,7 +120,7 @@ struct TestSpace : Space {
 		addObstruction(map = new TestMap());
 		addObstruction(obstacle = new TestObstacle());
 
-		obstacle->position = {475, 466};
+		obstacle->position = {475, 500};
 	}
 
 	void render(sf::RenderWindow& rw, vec2 offset) override {
