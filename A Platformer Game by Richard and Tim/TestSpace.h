@@ -74,10 +74,6 @@ struct MovingObstacle : Obstacle {
 		friction = 1.0;
 	}
 
-	vec2 getContactAcceleration(const Entity* entity, vec2 normal) const override {
-		return getPosition(phase) - getPosition(phase - speed);
-	}
-
 	void tick() override {
 		phase += speed;
 		position = getPosition(phase);
@@ -195,7 +191,7 @@ struct TestSpace : Space {
 		addObstruction(boost = new BoostObstacle());
 		boost->position = {600, 500};
 
-		addObstruction(mover = new MovingObstacle({700, 200}, {700, 300}, 200));
+		addObstruction(mover = new MovingObstacle({400, 350}, {400, 475}, 100));
 	}
 
 	void render(sf::RenderWindow& rw, vec2 offset) override {
@@ -207,9 +203,6 @@ struct TestSpace : Space {
 		entity->position = position;
 		addEntity(entity);
 		entities.push_back(entity);
-		if (std::isnan(entity->velocity.x + entity->velocity.y + entity->position.x + entity->position.y)){
-			throw std::runtime_error("Wtf now");
-		}
 	}
 
 	std::vector<Entity*> entities;

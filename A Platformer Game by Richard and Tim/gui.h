@@ -3,7 +3,6 @@
 #include <SFML\Graphics.hpp>
 #include <map>
 #include <functional>
-#include <iostream>
 
 // TODO:
 // - find improvements anywhere, really

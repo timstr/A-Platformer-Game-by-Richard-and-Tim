@@ -46,9 +46,9 @@ struct TestSpaceWindow : ui::Window {
 	}
 
 	void onLeftClick(int clicks) override {
-		//if (keyDown(sf::Keyboard::LControl) || keyDown(sf::Keyboard::RControl)){
+		if (keyDown(sf::Keyboard::LControl) || keyDown(sf::Keyboard::RControl)){
 			space.createEntity(localMousePos());
-		//}
+		}
 	}
 
 	TestSpace space;

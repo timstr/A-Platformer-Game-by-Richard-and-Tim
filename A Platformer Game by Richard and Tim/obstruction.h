@@ -12,6 +12,7 @@ struct Entity;
 struct Obstruction : Renderable {
 	Obstruction(bool _open_boundary) : open_boundary(_open_boundary) {
 		position = {0, 0};
+		previous_position = {0, 0};
 		friction = 0.5;
 	}
 
@@ -31,6 +32,11 @@ struct Obstruction : Renderable {
 	void render(sf::RenderWindow& rw, vec2 offset) override;
 
 	// tick shall be called once per frame to possibly update the obstruction's state
+	void update(){
+		previous_position = position;
+		tick();
+	}
+
 	virtual void tick() {
 
 	}
@@ -66,4 +72,6 @@ struct Obstruction : Renderable {
 	protected:
 	// whether the area outside the obstruction is solid
 	const bool open_boundary;
+
+	vec2 previous_position;
 };

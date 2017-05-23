@@ -12,7 +12,7 @@ Space::~Space(){
 
 void Space::tick(){
 	for (Obstruction* obstruction : obstructions){
-		obstruction->tick();
+		obstruction->update();
 	}
 	for (Entity* entity : entities){
 		entity->tick();
