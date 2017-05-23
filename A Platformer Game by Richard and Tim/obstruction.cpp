@@ -26,7 +26,7 @@ vec2 Obstruction::getImpulse(vec2 point, vec2 normal, Entity* entity) const {
 
 	vec2 tangent = vec2(normal.y, -normal.x);
 
-	float velocity_tangent = dot(entity->velocity, tangent);
+	float velocity_tangent = dot(velocity, tangent);
 
 	float impulse_tangent = -velocity_tangent * entity->mass * entity->friction * friction;
 

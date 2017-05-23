@@ -191,7 +191,8 @@ struct TestSpace : Space {
 		addObstruction(boost = new BoostObstacle());
 		boost->position = {600, 500};
 
-		addObstruction(mover = new MovingObstacle({400, 350}, {400, 475}, 100));
+		addObstruction(new MovingObstacle({400, 350}, {400, 475}, 100));
+		addObstruction(new MovingObstacle({600, 300}, {700, 300}, 100));
 	}
 
 	void render(sf::RenderWindow& rw, vec2 offset) override {
@@ -210,5 +211,4 @@ struct TestSpace : Space {
 	TestMap* map;
 	TreeObstacle* tree;
 	BoostObstacle* boost;
-	MovingObstacle* mover;
 };
