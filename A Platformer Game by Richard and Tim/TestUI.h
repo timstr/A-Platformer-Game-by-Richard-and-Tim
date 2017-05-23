@@ -9,25 +9,27 @@ struct TestSpaceWindow : ui::Window {
 	}
 
 	void render(sf::RenderWindow& rw, vec2 offset) override {
-		space.probe = ui::getMousePos();
-
 		if (play){
-			vec2 dir = {0, 0};
+			float speed = 0.0f;
+			float jump = 0.0f;
 			if (keyDown(sf::Keyboard::Left)){
-				dir.x -= 1;
+				speed -= 1;
 			}
 			if (keyDown(sf::Keyboard::Right)){
-				dir.x += 1;
+				speed += 1;
 			}
 			if (keyDown(sf::Keyboard::Up)){
-				dir.y -= 10;
+				jump += 10;
 			}
-			space.guy->move(dir);
+			space.guy->updateMoves(speed, jump);
 
-			if (leftMouseDown()){
+			if (leftMouseDown() && (keyDown(sf::Keyboard::LShift) || keyDown(sf::Keyboard::RShift))){
 				for (Entity* const entity : space.entities){
 					vec2 disp = ui::getMousePos() - entity->position;
-					entity->velocity += disp * (float)(50.0 / pow(abs(disp), 2));
+					double dist = abs(disp);
+					if (dist > 0.0){
+						entity->velocity += disp * (float)(50.0 / pow(dist, 2));
+					}
 				}
 			}
 
@@ -41,6 +43,12 @@ struct TestSpaceWindow : ui::Window {
 		if (key == sf::Keyboard::Space){
 			play = !play;
 		}
+	}
+
+	void onLeftClick(int clicks) override {
+		//if (keyDown(sf::Keyboard::LControl) || keyDown(sf::Keyboard::RControl)){
+			space.createEntity(localMousePos());
+		//}
 	}
 
 	TestSpace space;

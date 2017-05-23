@@ -28,9 +28,24 @@ vec2 Obstruction::getImpulse(vec2 point, vec2 normal, Entity* entity) const {
 
 	float impulse_tangent = -velocity_tangent * entity->mass * entity->friction * friction;
 
-	vec2 impulse_contact = ((getContactAcceleration(entity) * (float)entity->friction) + (entity->getContactAcceleration(this) * (float)friction)) * (float)entity->mass;
+	// TODO: use normal and tangent components of contact acceleration to make it dependent on friction and elasticity
 
-	return impulse_normal * normal + impulse_tangent * tangent + impulse_contact;
+	vec2 ca_obs = getContactAcceleration(entity, normal);
+	vec2 ca_obs_normal = projectOnto(ca_obs, normal);
+	vec2 ca_obs_tangent = ca_obs - ca_obs_normal;
+	//ca_obs_normal = normal * (float)std::max(0.0, dot(ca_obs, normal));
+	ca_obs_tangent *= (float)entity->friction;
+
+	vec2 ca_ent = entity->getContactAcceleration(this, normal);
+	vec2 ca_ent_normal = projectOnto(ca_ent, normal);
+	vec2 ca_ent_tangent = ca_ent - ca_ent_normal;
+	//ca_ent_normal = normal * (float)std::max(0.0, dot(ca_ent, normal));
+	ca_ent_tangent *= (float)friction;
+
+
+	vec2 contact_accel_impulse = (ca_obs_normal + ca_obs_tangent + ca_ent_normal + ca_ent_tangent) * (float)entity->mass;
+
+	return impulse_normal * normal + impulse_tangent * tangent + contact_accel_impulse;
 }
 
 void Obstruction::setPos(vec2 _pos){

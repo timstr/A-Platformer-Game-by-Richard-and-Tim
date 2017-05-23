@@ -22,7 +22,9 @@ struct Entity : Renderable {
 	// translate the entity according to its velocity and possibly collide with obstructions
 	void move(std::vector<Obstruction*>& const obstructions);
 
-	virtual vec2 getContactAcceleration(const Obstruction* obstruction) const {
+	// get the acceleration exerted on the entity when it contacts the given obstruction
+	// normal is assumed to be a unit vector
+	virtual vec2 getContactAcceleration(const Obstruction* obstruction, vec2 normal) const {
 		return {0, 0};
 	}
 

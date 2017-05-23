@@ -30,6 +30,11 @@ struct Obstruction : Renderable {
 
 	void render(sf::RenderWindow& rw, vec2 offset) override;
 
+	// tick shall be called once per frame to possibly update the obstruction's state
+	virtual void tick() {
+
+	}
+
 	// the spatial position
 	vec2 position;
 
@@ -45,7 +50,8 @@ struct Obstruction : Renderable {
 	double friction;
 
 	// the acceleration exerted upon an entity touching the surface
-	virtual vec2 getContactAcceleration(const Entity* entity) const {
+	// normal is assumed to be a unit vector
+	virtual vec2 getContactAcceleration(const Entity* entity, vec2 normal) const {
 		return {0, 0};
 	}
 

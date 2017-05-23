@@ -11,6 +11,12 @@ Space::~Space(){
 }
 
 void Space::tick(){
+	for (Obstruction* obstruction : obstructions){
+		obstruction->tick();
+	}
+	for (Entity* entity : entities){
+		entity->tick();
+	}
 	for (Entity* const entity : entities){
 		entity->move(obstructions);
 	}

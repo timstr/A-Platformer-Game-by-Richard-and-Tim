@@ -48,7 +48,7 @@ struct BoostObstacle : Obstacle {
 		friction = 0.0;
 	}
 
-	vec2 getContactAcceleration(const Entity* entity) const override {
+	vec2 getContactAcceleration(const Entity* entity, vec2 normal) const override {
 		return {2, 0};
 	}
 
@@ -58,9 +58,50 @@ struct BoostObstacle : Obstacle {
 	sf::Sprite sprite;
 };
 
+struct MovingObstacle : Obstacle {
+	MovingObstacle(vec2 _position1, vec2 _position2, double frames){
+		speed = 2 * pi / frames;
+
+		position1 = _position1;
+		position2 = _position2;
+
+		image.loadFromFile("images/testobstacle3.png");
+		texture.loadFromImage(image);
+		sprite.setTexture(texture);
+
+		setImage(sprite);
+		setBoundary(image);
+		friction = 1.0;
+	}
+
+	vec2 getContactAcceleration(const Entity* entity, vec2 normal) const override {
+		return getPosition(phase) - getPosition(phase - speed);
+	}
+
+	void tick() override {
+		phase += speed;
+		position = getPosition(phase);
+	}
+
+	private:
+
+	vec2 getPosition(double _phase) const {
+		return position1 + (position2 - position1) * (float)(0.5 + 0.5 * sin(_phase));
+	}
+
+	double phase;
+	double speed;
+	vec2 position1, position2;
+
+	private:
+	sf::Image image;
+	sf::Texture texture;
+	sf::Sprite sprite;
+};
+
 struct TestEntity : Entity {
 	TestEntity(){
-		position = {800, 500};
+		position = {700, 400};
 		elasticity = (rand() % 100) * 0.01;
 		friction = (rand() % 100) * 0.01;
 	}
@@ -107,23 +148,26 @@ struct GuyEntity : TestEntity {
 		elasticity = 0.1;
 	}
 
-	vec2 getContactAcceleration(const Obstruction* obstruction) const override {
+	vec2 getContactAcceleration(const Obstruction* obstruction, vec2 normal) const override {
+		vec2 accel = {0, 0};
+		accel += run_speed * vec2(1, 0);
+		accel += vec2(0, jump_speed * -std::max(0.0, dot(normal, {0, -1})));
 		return accel;
 	}
 
-	void move(vec2 direction){
-		accel = direction;
+	void updateMoves(float _run_speed, float _jump_speed){
+		run_speed = _run_speed;
+		jump_speed = _jump_speed;
 	}
 
-	vec2 accel = {0, 0};
+	float run_speed = 0.0f;
+	float jump_speed = 0.0f;
 };
 
 struct TestSpace : Space {
 	TestSpace(){
-		const int num_entities = 200;
+		const int num_entities = 10;
 		const int test_entites = 0;
-
-		entities.reserve(num_entities + test_entites + 1);
 
 		for (int i = 0; i < num_entities; i++){
 			Entity* entity = new SimpleEntity();
@@ -150,16 +194,22 @@ struct TestSpace : Space {
 
 		addObstruction(boost = new BoostObstacle());
 		boost->position = {600, 500};
+
+		addObstruction(mover = new MovingObstacle({700, 200}, {700, 300}, 200));
 	}
 
 	void render(sf::RenderWindow& rw, vec2 offset) override {
 		Space::render(rw, offset);
-		vec2 normal = map->getNormalAt(probe, {0.5, 0.5});
-		sf::Vertex points[] = {
-			sf::Vertex(probe + offset, sf::Color(0x00FF00FF)),
-			sf::Vertex(probe + offset + 50.0f * normal, sf::Color(0x00FF00FF))
-		};
-		rw.draw(points, 2, sf::PrimitiveType::Lines);
+	}
+
+	void createEntity(vec2 position){
+		SimpleEntity* entity = new SimpleEntity();
+		entity->position = position;
+		addEntity(entity);
+		entities.push_back(entity);
+		if (std::isnan(entity->velocity.x + entity->velocity.y + entity->position.x + entity->position.y)){
+			throw std::runtime_error("Wtf now");
+		}
 	}
 
 	std::vector<Entity*> entities;
@@ -167,5 +217,5 @@ struct TestSpace : Space {
 	TestMap* map;
 	TreeObstacle* tree;
 	BoostObstacle* boost;
-	vec2 probe;
+	MovingObstacle* mover;
 };
