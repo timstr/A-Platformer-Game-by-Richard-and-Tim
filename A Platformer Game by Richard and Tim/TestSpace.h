@@ -58,6 +58,24 @@ struct BoostObstacle : Obstacle {
 	sf::Sprite sprite;
 };
 
+
+struct RampObstacle : Obstacle {
+	RampObstacle(){
+		image.loadFromFile("images/testobstacle4.png");
+		texture.loadFromImage(image);
+		sprite.setTexture(texture);
+
+		setImage(sprite);
+		setBoundary(image);
+		friction = 0.0;
+	}
+
+	private:
+	sf::Image image;
+	sf::Texture texture;
+	sf::Sprite sprite;
+};
+
 struct MovingObstacle : Obstacle {
 	MovingObstacle(vec2 _position1, vec2 _position2, double frames){
 		speed = 2 * pi / frames;
@@ -97,7 +115,7 @@ struct MovingObstacle : Obstacle {
 
 struct TestEntity : Entity {
 	TestEntity(){
-		position = {700, 400};
+		position = {470, 50};
 		elasticity = (rand() % 100) * 0.01;
 		friction = (rand() % 100) * 0.01;
 	}
@@ -105,7 +123,9 @@ struct TestEntity : Entity {
 	void render(sf::RenderWindow& rw, vec2 offset) override {
 		sf::CircleShape circle;
 		circle.setFillColor(sf::Color(255 * friction, 255 * elasticity, 127, 255));
-		circle.setOutlineThickness(0.0);
+		//circle.setFillColor(sf::Color((uint32_t)std::hash<TestEntity*>{}(this) | 0xFF));
+		circle.setOutlineThickness(0.5);
+		circle.setOutlineColor(sf::Color(0xFF));
 		for (Circle& c : circles){
 			circle.setRadius(c.radius);
 			circle.setPointCount(2 * pi * c.radius);
@@ -117,7 +137,7 @@ struct TestEntity : Entity {
 
 struct SimpleEntity : TestEntity {
 	SimpleEntity(){
-		addCircle(Circle({0, 0}, 10 + rand() % 20));
+		addCircle(Circle({0, 0},5 + rand() % 25));
 		mass = 10.0;
 	}
 };
@@ -162,8 +182,8 @@ struct GuyEntity : TestEntity {
 
 struct TestSpace : Space {
 	TestSpace(){
-		const int num_entities = 10;
-		const int test_entites = 0;
+		const int num_entities = 20;
+		const int test_entites = 10;
 
 		for (int i = 0; i < num_entities; i++){
 			Entity* entity = new SimpleEntity();
@@ -193,6 +213,9 @@ struct TestSpace : Space {
 
 		addObstruction(new MovingObstacle({400, 350}, {400, 475}, 100));
 		addObstruction(new MovingObstacle({600, 300}, {700, 300}, 100));
+
+		//addObstruction(new RampObstacle());
+		//addObstruction(new MovingObstacle({50, 150}, {700, 300}, 250));
 	}
 
 	void render(sf::RenderWindow& rw, vec2 offset) override {

@@ -3,9 +3,20 @@
 #include "gui.h"
 #include "TestSpace.h"
 
+sf::Font& getFont(){
+	static sf::Font font;
+	static bool loaded;
+	if (!loaded){
+		font.loadFromFile("fonts/JosefinSans-Bold.ttf");
+		loaded = true;
+	}
+	return font;
+}
+
 struct TestSpaceWindow : ui::Window {
 	TestSpaceWindow(){
 		size = {1000, 700};
+		addChildWindow(label = new ui::Text("-", getFont()));
 	}
 
 	void render(sf::RenderWindow& rw, vec2 offset) override {
@@ -37,6 +48,10 @@ struct TestSpaceWindow : ui::Window {
 		}
 
 		space.render(rw, offset);
+
+		label->setText(std::to_string(space.entities.size()) + " Entities");
+
+		renderChildWindows(rw, offset);
 	}
 
 	void onKeyDown(sf::Keyboard::Key key) override {
@@ -51,6 +66,7 @@ struct TestSpaceWindow : ui::Window {
 		}
 	}
 
+	ui::Text* label;
 	TestSpace space;
 	bool play = true;
 };
