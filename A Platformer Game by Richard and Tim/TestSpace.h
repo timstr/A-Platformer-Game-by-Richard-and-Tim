@@ -182,8 +182,8 @@ struct GuyEntity : TestEntity {
 
 struct TestSpace : Space {
 	TestSpace(){
-		const int num_entities = 20;
-		const int test_entites = 10;
+		const int num_entities = 2000;
+		const int test_entites = 0;
 
 		for (int i = 0; i < num_entities; i++){
 			Entity* entity = new SimpleEntity();

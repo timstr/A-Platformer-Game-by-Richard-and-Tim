@@ -74,7 +74,8 @@ void Obstruction::render(sf::RenderWindow& rw, vec2 offset){
 vec2 Obstruction::getNormalAt(vec2 point, vec2 hint) const {
 
 	const double probe_radius = 10.0;
-	const double angle_delta = 2 * pi / probe_radius * 0.5;
+	const double slices = probe_radius * 2;
+	const double angle_delta = 2 * pi / slices;
 
 	double hint_angle = atan2(hint.y, hint.x);
 
@@ -88,13 +89,17 @@ vec2 Obstruction::getNormalAt(vec2 point, vec2 hint) const {
 	bool max_last = false;
 
 	// test if the first point is inside or outside the boundary
-	bool inside = hitTest(point + vec2(probe_radius * cos(hint_angle), probe_radius * sin(hint_angle)));
+	vec2 rayvec = vec2(probe_radius * cos(hint_angle), probe_radius * sin(hint_angle));
+	mat2x2 mat = rotationMatrix(angle_delta);
+
+	bool inside = hitTest(point + rayvec);
 	bool first_hit = inside;
 
-	for (double a = angle_delta; a <= 2 * pi; a += angle_delta){
-		double angle = a + hint_angle;
+	for (double angle = angle_delta + hint_angle; angle <= 2 * pi + hint_angle; angle += angle_delta){
 
-		bool hit = hitTest(point + vec2(probe_radius * cos(angle), probe_radius * sin(angle)));
+		rayvec = mat * rayvec;
+
+		bool hit = hitTest(point + rayvec);
 		
 		// if the boundary is crossed during this probe:
 		if (inside != hit){

@@ -8,9 +8,14 @@ namespace {
 
 bool Entity::collidesWith(Obstruction* const obstruction) const {
 	for (const Circle& circle : circles){
-		double angle_delta = 2 * pi / circle.radius / precision;
-		for (double angle = 0; angle < 2 * pi; angle += angle_delta){
-			vec2 point = position + circle.center + vec2(cos(angle) * circle.radius, sin(angle) * circle.radius);
+		double slices = circle.radius * precision;
+		double angle_delta = 2 * pi / slices;
+
+		vec2 radvec = vec2(circle.radius, 0);
+		mat2x2 mat = rotationMatrix(angle_delta);
+
+		for (double slice = 0; slice < slices; slice += 1, radvec = mat * radvec){
+			vec2 point = position + circle.center + radvec;
 
 			if (obstruction->hitTest(point)){
 				return true;
@@ -59,9 +64,14 @@ void Entity::performCollision(Obstruction* obstruction){
 		int hit_points = 0;
 
 		for (const Circle& circle : circles){
-			double angle_delta = 2 * pi / circle.radius / precision;
-			for (double angle = 0; angle < 2 * pi; angle += angle_delta){
-				vec2 point = position + circle.center + vec2(cos(angle) * circle.radius, sin(angle) * circle.radius);
+			double slices = circle.radius * precision;
+			double angle_delta = 2 * pi / slices;
+
+			vec2 radvec = vec2(circle.radius, 0);
+			mat2x2 mat = rotationMatrix(angle_delta);
+
+			for (double slice = 0; slice < slices; slice += 1, radvec = mat * radvec){
+				vec2 point = position + circle.center + radvec;
 
 				if (obstruction->hitTest(point)){
 					vec2 normal = obstruction->getNormalAt(point, position + center - point - velocity);
