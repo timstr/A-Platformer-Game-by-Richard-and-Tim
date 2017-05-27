@@ -12,7 +12,11 @@ bool Obstruction::hitTest(vec2 point) const {
 
 	sf::Color pixel = boundary.getPixel(x, y);
 
-	// the boundary image is solid where its colour isn't white
+	if (pixel.a < 255){
+		return false;
+	}
+
+	// the boundary image is solid where its colour isn't solid white
 	return (pixel.r + pixel.g + pixel.b) <= 255 * 2.5;
 }
 
