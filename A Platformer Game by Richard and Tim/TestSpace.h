@@ -1,188 +1,15 @@
 #pragma once
 #include "space.h"
-#include "map.h"
-#include "obstacle.h"
 
-struct TestMap : Map {
-	TestMap(){
-		image.loadFromFile("images/testmapboundary3.png");
-		texture.loadFromImage(image);
-		sprite.setTexture(texture);
+#include "TestObstacles.h"
+#include "TestCreature.h"
+#include "TestEntities.h"
+#include "TestMap.h"
 
-		setImage(sprite);
-		setBoundary(image);
-		friction = 1.0;
-	}
-
-	private:
-	sf::Image image;
-	sf::Texture texture;
-	sf::Sprite sprite;
-};
-
-struct TreeObstacle : Obstacle {
-	TreeObstacle(){
-		image.loadFromFile("images/testobstacle1.png");
-		texture.loadFromImage(image);
-		sprite.setTexture(texture);
-
-		setImage(sprite);
-		setBoundary(image);
-		friction = 0.0;
-	}
-
-	private:
-	sf::Image image;
-	sf::Texture texture;
-	sf::Sprite sprite;
-};
-
-struct BoostObstacle : Obstacle {
-	BoostObstacle(){
-		image.loadFromFile("images/testobstacle2.png");
-		texture.loadFromImage(image);
-		sprite.setTexture(texture);
-
-		setImage(sprite);
-		setBoundary(image);
-		friction = 0.0;
-	}
-
-	vec2 getContactAcceleration(const Entity* entity, vec2 normal) const override {
-		return {2, 0};
-	}
-
-	private:
-	sf::Image image;
-	sf::Texture texture;
-	sf::Sprite sprite;
-};
-
-
-struct RampObstacle : Obstacle {
-	RampObstacle(){
-		image.loadFromFile("images/testobstacle4.png");
-		texture.loadFromImage(image);
-		sprite.setTexture(texture);
-
-		setImage(sprite);
-		setBoundary(image);
-		friction = 0.0;
-	}
-
-	private:
-	sf::Image image;
-	sf::Texture texture;
-	sf::Sprite sprite;
-};
-
-struct MovingObstacle : Obstacle {
-	MovingObstacle(vec2 _position1, vec2 _position2, double frames){
-		speed = 2 * pi / frames;
-
-		position1 = _position1;
-		position2 = _position2;
-
-		image.loadFromFile("images/testobstacle3.png");
-		texture.loadFromImage(image);
-		sprite.setTexture(texture);
-
-		setImage(sprite);
-		setBoundary(image);
-		friction = 1.0;
-	}
-
-	void tick() override {
-		phase += speed;
-		position = getPosition(phase);
-	}
-
-	private:
-
-	vec2 getPosition(double _phase) const {
-		return position1 + (position2 - position1) * (float)(0.5 + 0.5 * sin(_phase));
-	}
-
-	double phase;
-	double speed;
-	vec2 position1, position2;
-
-	private:
-	sf::Image image;
-	sf::Texture texture;
-	sf::Sprite sprite;
-};
-
-struct TestEntity : Entity {
-	TestEntity(){
-		position = {470, 50};
-		elasticity = (rand() % 100) * 0.01;
-		friction = (rand() % 100) * 0.01;
-	}
-
-	void render(sf::RenderWindow& rw, vec2 offset) override {
-		sf::CircleShape circle;
-		circle.setFillColor(sf::Color(255 * friction, 255 * elasticity, 127, 255));
-		//circle.setFillColor(sf::Color((uint32_t)std::hash<TestEntity*>{}(this) | 0xFF));
-		circle.setOutlineThickness(0.5);
-		circle.setOutlineColor(sf::Color(0xFF));
-		for (Circle& c : circles){
-			circle.setRadius(c.radius);
-			circle.setPointCount(2 * pi * c.radius);
-			circle.setPosition(position + offset - vec2(c.radius, c.radius) + c.center);
-			rw.draw(circle);
-		}
-	}
-};
-
-struct SimpleEntity : TestEntity {
-	SimpleEntity(){
-		addCircle(Circle({0, 0},5 + rand() % 25));
-		mass = 10.0;
-	}
-};
-
-struct ComplexEntity : TestEntity {
-	ComplexEntity(){
-		int count = (rand() % 5) + 1;
-		for (int i = 0; i < count; i++){
-			addCircle(Circle(vec2(-25 + rand() % 51, -25 + rand() % 51), 5 + rand() % 25));
-		}
-		mass = 20.0;
-	}
-};
-
-struct GuyEntity : TestEntity {
-	GuyEntity(){
-		addCircle(Circle({0, -20}, 20));
-		addCircle(Circle({0, 10}, 15));
-		addCircle(Circle({-20, 5}, 10));
-		addCircle(Circle({20, 5}, 10));
-		addCircle(Circle({-10, 40}, 10));
-		addCircle(Circle({10, 40}, 10));
-		friction = 0.3;
-		elasticity = 0.1;
-	}
-
-	vec2 getContactAcceleration(const Obstruction* obstruction, vec2 normal) const override {
-		vec2 accel = {0, 0};
-		accel += run_speed * vec2(1, 0);
-		accel += vec2(0, jump_speed * -std::max(0.0, dot(normal, {0, -1})));
-		return accel;
-	}
-
-	void updateMoves(float _run_speed, float _jump_speed){
-		run_speed = _run_speed;
-		jump_speed = _jump_speed;
-	}
-
-	float run_speed = 0.0f;
-	float jump_speed = 0.0f;
-};
 
 struct TestSpace : Space {
 	TestSpace(){
-		const int num_entities = 2000;
+		const int num_entities = 10;
 		const int test_entites = 0;
 
 		for (int i = 0; i < num_entities; i++){
@@ -213,6 +40,13 @@ struct TestSpace : Space {
 
 		addObstruction(new MovingObstacle({400, 350}, {400, 475}, 100));
 		addObstruction(new MovingObstacle({600, 300}, {700, 300}, 100));
+
+		for (int i = 0; i < 100; i++){
+			TestCreature* creature = new TestCreature();
+			creature->position = vec2(100, 100);
+			addEntity(creature);
+			entities.push_back(creature);
+		}
 
 		//addObstruction(new RampObstacle());
 		//addObstruction(new MovingObstacle({50, 150}, {700, 300}, 250));
