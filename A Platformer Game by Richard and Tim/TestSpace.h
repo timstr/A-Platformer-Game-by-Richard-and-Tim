@@ -6,6 +6,7 @@
 #include "TestEntities.h"
 #include "TestMap.h"
 
+#include "sprudo.h"
 
 struct TestSpace : Space {
 	TestSpace(){
@@ -29,6 +30,10 @@ struct TestSpace : Space {
 		guy = new GuyEntity();
 		addEntity(guy);
 		entities.push_back(guy);
+
+		Sprudo* sprudo = new Sprudo();
+		addEntity(sprudo);
+		entities.push_back(sprudo);
 
 		addObstruction(map = new TestMap());
 
