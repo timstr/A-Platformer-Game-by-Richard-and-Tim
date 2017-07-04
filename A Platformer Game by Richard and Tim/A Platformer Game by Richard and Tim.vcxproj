@@ -148,9 +148,11 @@
     <ClInclude Include="map.h" />
     <ClInclude Include="obstacle.h" />
     <ClInclude Include="obstruction.h" />
+    <ClInclude Include="ImageStore.h" />
     <ClInclude Include="player.h" />
     <ClInclude Include="renderable.h" />
     <ClInclude Include="space.h" />
+    <ClInclude Include="sprudo.h" />
     <ClInclude Include="TestCreature.h" />
     <ClInclude Include="TestEntities.h" />
     <ClInclude Include="TestMap.h" />

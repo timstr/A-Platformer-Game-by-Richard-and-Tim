@@ -41,9 +41,10 @@ struct TestSpace : Space {
 		addObstruction(new MovingObstacle({400, 350}, {400, 475}, 100));
 		addObstruction(new MovingObstacle({600, 300}, {700, 300}, 100));
 
-		for (int i = 0; i < 100; i++){
+		for (int i = 0; i < 20; i++){
 			TestCreature* creature = new TestCreature();
-			creature->position = vec2(100, 100);
+			creature->position = vec2(600, 100);
+			creature->velocity = vec2((((rand() % 100) - 50) / 10.0), (((rand() % 100) - 50) / 10.0));
 			addEntity(creature);
 			entities.push_back(creature);
 		}

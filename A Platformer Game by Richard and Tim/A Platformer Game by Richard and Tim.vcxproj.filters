@@ -18,6 +18,9 @@
     <Filter Include="UI">
       <UniqueIdentifier>{021433f2-ebd0-4cb4-a23b-5cb3d04c6485}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Utility">
+      <UniqueIdentifier>{4b611328-d9f6-4922-9062-8f6eb128a0c3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Platformer.cpp">
@@ -51,7 +54,7 @@
       <Filter>Mechanics</Filter>
     </ClCompile>
     <ClCompile Include="vec2.cpp">
-      <Filter>Mechanics</Filter>
+      <Filter>Utility</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -91,12 +94,6 @@
     <ClInclude Include="obstruction.h">
       <Filter>Mechanics</Filter>
     </ClInclude>
-    <ClInclude Include="renderable.h">
-      <Filter>Mechanics</Filter>
-    </ClInclude>
-    <ClInclude Include="vec2.h">
-      <Filter>Mechanics</Filter>
-    </ClInclude>
     <ClInclude Include="TestCreature.h">
       <Filter>Source Files</Filter>
     </ClInclude>
@@ -108,6 +105,18 @@
     </ClInclude>
     <ClInclude Include="TestEntities.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sprudo.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="renderable.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="ImageStore.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="vec2.h">
+      <Filter>Utility</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

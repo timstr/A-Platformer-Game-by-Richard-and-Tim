@@ -3,9 +3,8 @@
 #include <map>
 #include "character.h"
 
-
 namespace Event {
-	struct Event{
+	struct Event {
 		Event() : id(getNextId()) {
 
 		}
