@@ -1,32 +1,20 @@
 #pragma once
 
 #include "obstacle.h"
+#include "ImageStore.h"
 
 struct TreeObstacle : Obstacle {
 	TreeObstacle(){
-		image.loadFromFile("images/testobstacle1.png");
-		texture.loadFromImage(image);
-		sprite.setTexture(texture);
-
-		setImage(sprite);
-		setBoundary(image);
+		setBoundary(ImageStore::getImage("testobstacle1.png"));
+		sprite.setTexture(ImageStore::getTexture("testobstacle1.png"));
 		friction = 0.0;
 	}
-
-	private:
-	sf::Image image;
-	sf::Texture texture;
-	sf::Sprite sprite;
 };
 
 struct BoostObstacle : Obstacle {
 	BoostObstacle(){
-		image.loadFromFile("images/testobstacle2.png");
-		texture.loadFromImage(image);
-		sprite.setTexture(texture);
-
-		setImage(sprite);
-		setBoundary(image);
+		setBoundary(ImageStore::getImage("testobstacle2.png"));
+		sprite.setTexture(ImageStore::getTexture("testobstacle2.png"));
 		friction = 0.0;
 	}
 
@@ -34,29 +22,6 @@ struct BoostObstacle : Obstacle {
 		double align = std::max(0.0, dot(normal, vec2(0, -1)));
 		return vec2(2.0 * align, 0.0);
 	}
-
-	private:
-	sf::Image image;
-	sf::Texture texture;
-	sf::Sprite sprite;
-};
-
-
-struct RampObstacle : Obstacle {
-	RampObstacle(){
-		image.loadFromFile("images/testobstacle4.png");
-		texture.loadFromImage(image);
-		sprite.setTexture(texture);
-
-		setImage(sprite);
-		setBoundary(image);
-		friction = 0.0;
-	}
-
-	private:
-	sf::Image image;
-	sf::Texture texture;
-	sf::Sprite sprite;
 };
 
 struct MovingObstacle : Obstacle {
@@ -66,12 +31,9 @@ struct MovingObstacle : Obstacle {
 		position1 = _position1;
 		position2 = _position2;
 
-		image.loadFromFile("images/testobstacle3.png");
-		texture.loadFromImage(image);
-		sprite.setTexture(texture);
+		setBoundary(ImageStore::getImage("testobstacle3.png"));
+		sprite.setTexture(ImageStore::getTexture("testobstacle3.png"));
 
-		setImage(sprite);
-		setBoundary(image);
 		friction = 1.0;
 	}
 
@@ -89,9 +51,13 @@ struct MovingObstacle : Obstacle {
 	double phase;
 	double speed;
 	vec2 position1, position2;
+};
 
-	private:
-	sf::Image image;
-	sf::Texture texture;
-	sf::Sprite sprite;
+struct RampObstacle : Obstacle {
+	RampObstacle(){
+		setBoundary(ImageStore::getImage("testobstacle4.png"));
+		sprite.setTexture(ImageStore::getTexture("testobstacle4.png"));
+
+		friction = 0.0;
+	}
 };

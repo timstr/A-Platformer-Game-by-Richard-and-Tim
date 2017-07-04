@@ -5,6 +5,7 @@ struct Entity;
 #include "entity.h"
 #include "renderable.h"
 #include "vec2.h"
+#include <functional>
 
 // Obstruction is the base class to all things that have
 // a complicated raster-image physical boundary with 
@@ -25,7 +26,7 @@ struct Obstruction : Renderable {
 
 	void setPos(vec2 _pos);
 
-	void setImage(const sf::Sprite& _image);
+	void setSprite(const sf::Sprite& _image);
 
 	void setBoundary(const sf::Image& _boundary);
 
@@ -45,10 +46,10 @@ struct Obstruction : Renderable {
 	vec2 position;
 
 	// the visual appearance
-	sf::Sprite image;
+	sf::Sprite sprite;
 
 	// the physical boundary
-	sf::Image boundary;
+	const sf::Image* boundary;
 
 	// the coefficient of friction
 	// 0 for totally slippy

@@ -1,20 +1,12 @@
 #pragma once
 
 #include "map.h"
+#include "ImageStore.h"
 
 struct TestMap : Map {
 	TestMap(){
-		image.loadFromFile("images/testmapboundary3.png");
-		texture.loadFromImage(image);
-		sprite.setTexture(texture);
-
-		setImage(sprite);
-		setBoundary(image);
+		sprite.setTexture(ImageStore::getTexture("testmapboundary3.png"));
+		setBoundary(ImageStore::getImage("testmapboundary3.png"));
 		friction = 1.0;
 	}
-
-	private:
-	sf::Image image;
-	sf::Texture texture;
-	sf::Sprite sprite;
 };

@@ -6,11 +6,11 @@ bool Obstruction::hitTest(vec2 point) const {
 	int y = floor(point.y - this->position.y);
 
 	// test whether point is outside the map
-	if ((x < 0) || (x >= boundary.getSize().x) || (y < 0) || (y >= boundary.getSize().y)){
+	if ((x < 0) || (x >= boundary->getSize().x) || (y < 0) || (y >= boundary->getSize().y)){
 		return !open_boundary;
 	}
 
-	sf::Color pixel = boundary.getPixel(x, y);
+	sf::Color pixel = boundary->getPixel(x, y);
 
 	if (pixel.a < 255){
 		return false;
@@ -58,17 +58,17 @@ void Obstruction::setPos(vec2 _pos){
 	position = _pos;
 }
 
-void Obstruction::setImage(const sf::Sprite& _image){
-	image = _image;
+void Obstruction::setSprite(const sf::Sprite& _sprite){
+	sprite = _sprite;
 }
 
 void Obstruction::setBoundary(const sf::Image& _boundary){
-	boundary = _boundary;
+	boundary = &_boundary;
 }
 
 void Obstruction::render(sf::RenderWindow& rw, vec2 offset){
-	image.setPosition(offset + position);
-	rw.draw(image);
+	sprite.setPosition(offset + position);
+	rw.draw(sprite);
 }
 
 vec2 Obstruction::getNormalAt(vec2 point, vec2 hint) const {
