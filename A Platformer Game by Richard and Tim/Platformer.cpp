@@ -10,5 +10,7 @@ int main(){
 
 	ui::run();
 
+	ImageStore::clear();
+
 	return 0;
 }

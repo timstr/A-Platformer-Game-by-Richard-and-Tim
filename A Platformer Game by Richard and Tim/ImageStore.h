@@ -73,6 +73,9 @@ struct ImageStore {
 	ImageStore(){
 
 	}
+	~ImageStore(){
+		clear();
+	}
 
 	static std::map<std::string, sf::Image> image_map;
 	static std::map<std::string, sf::Texture> texture_map;

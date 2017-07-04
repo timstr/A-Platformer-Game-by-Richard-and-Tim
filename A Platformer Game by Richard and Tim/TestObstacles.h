@@ -48,7 +48,7 @@ struct MovingObstacle : Obstacle {
 		return position1 + (position2 - position1) * (float)(0.5 + 0.5 * sin(_phase));
 	}
 
-	double phase;
+	double phase = 0;
 	double speed;
 	vec2 position1, position2;
 };
