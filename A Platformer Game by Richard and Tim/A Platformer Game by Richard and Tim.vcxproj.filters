@@ -1,31 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
-    </Filter>
-    <Filter Include="Mechanics">
-      <UniqueIdentifier>{d0224d0b-1dc5-423b-a294-fee5b16b022e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Inventory">
-      <UniqueIdentifier>{597561f6-ccc4-4000-bf35-f747f0219419}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="UI">
-      <UniqueIdentifier>{021433f2-ebd0-4cb4-a23b-5cb3d04c6485}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Utility">
-      <UniqueIdentifier>{4b611328-d9f6-4922-9062-8f6eb128a0c3}</UniqueIdentifier>
-    </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="Platformer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="character.cpp">
       <Filter>Mechanics</Filter>
     </ClCompile>
@@ -56,17 +31,17 @@
     <ClCompile Include="vec2.cpp">
       <Filter>Utility</Filter>
     </ClCompile>
+    <ClCompile Include="Platformer.cpp">
+      <Filter>Test</Filter>
+    </ClCompile>
+    <ClCompile Include="spritesheet.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="ImageStore.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="gui.h">
-      <Filter>UI</Filter>
-    </ClInclude>
-    <ClInclude Include="TestUI.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TestSpace.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="character.h">
       <Filter>Mechanics</Filter>
     </ClInclude>
@@ -85,38 +60,64 @@
     <ClInclude Include="obstacle.h">
       <Filter>Mechanics</Filter>
     </ClInclude>
+    <ClInclude Include="obstruction.h">
+      <Filter>Mechanics</Filter>
+    </ClInclude>
     <ClInclude Include="player.h">
       <Filter>Mechanics</Filter>
     </ClInclude>
     <ClInclude Include="space.h">
       <Filter>Mechanics</Filter>
     </ClInclude>
-    <ClInclude Include="obstruction.h">
-      <Filter>Mechanics</Filter>
-    </ClInclude>
-    <ClInclude Include="TestCreature.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TestObstacles.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TestMap.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TestEntities.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="sprudo.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="renderable.h">
+    <ClInclude Include="gui.h">
       <Filter>Utility</Filter>
     </ClInclude>
     <ClInclude Include="ImageStore.h">
       <Filter>Utility</Filter>
     </ClInclude>
+    <ClInclude Include="renderable.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="spritesheet.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
     <ClInclude Include="vec2.h">
       <Filter>Utility</Filter>
     </ClInclude>
+    <ClInclude Include="sprudo.h">
+      <Filter>Test</Filter>
+    </ClInclude>
+    <ClInclude Include="TestCreature.h">
+      <Filter>Test</Filter>
+    </ClInclude>
+    <ClInclude Include="TestEntities.h">
+      <Filter>Test</Filter>
+    </ClInclude>
+    <ClInclude Include="TestMap.h">
+      <Filter>Test</Filter>
+    </ClInclude>
+    <ClInclude Include="TestObstacles.h">
+      <Filter>Test</Filter>
+    </ClInclude>
+    <ClInclude Include="TestSpace.h">
+      <Filter>Test</Filter>
+    </ClInclude>
+    <ClInclude Include="TestUI.h">
+      <Filter>Test</Filter>
+    </ClInclude>
+    <ClInclude Include="SpriteSheetStore.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Mechanics">
+      <UniqueIdentifier>{cd9378a3-7e62-487e-b89e-3bae2add5bda}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Test">
+      <UniqueIdentifier>{d9e64519-15ec-48dd-9ce4-a78aa8ec5135}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utility">
+      <UniqueIdentifier>{393a7695-d532-49bc-89d5-6b4b1c7fd45b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

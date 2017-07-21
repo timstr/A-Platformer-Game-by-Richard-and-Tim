@@ -11,7 +11,8 @@
 struct TestSpace : Space {
 	TestSpace(){
 		const int num_entities = 10;
-		const int test_entites = 0;
+		const int test_entites = 10;
+		const int num_sprudos = 10;
 
 		for (int i = 0; i < num_entities; i++){
 			Entity* entity = new SimpleEntity();
@@ -31,19 +32,21 @@ struct TestSpace : Space {
 		addEntity(guy);
 		entities.push_back(guy);
 
-		Sprudo* sprudo = new Sprudo();
-		addEntity(sprudo);
-		entities.push_back(sprudo);
+		for (int i = 0; i < num_sprudos; i++){
+			Sprudo* sprudo = new Sprudo();
+			addEntity(sprudo);
+			entities.push_back(sprudo);
+		}
 
 		addObstruction(map = new TestMap());
 
-		addObstruction(tree = new TreeObstacle());
-		tree->position = {250, 500};
+		//addObstruction(tree = new TreeObstacle());
+		//tree->position = {250, 500};
 
 		addObstruction(boost = new BoostObstacle());
-		boost->position = {600, 500};
+		boost->position = {500, 500};
 
-		addObstruction(new MovingObstacle({400, 350}, {400, 475}, 100));
+		//addObstruction(new MovingObstacle({400, 350}, {400, 475}, 100));
 		addObstruction(new MovingObstacle({600, 300}, {700, 300}, 100));
 
 		for (int i = 0; i < 20; i++){
@@ -63,10 +66,14 @@ struct TestSpace : Space {
 	}
 
 	void createEntity(vec2 position){
-		SimpleEntity* entity = new SimpleEntity();
+		/*SimpleEntity* entity = new SimpleEntity();
 		entity->position = position;
 		addEntity(entity);
-		entities.push_back(entity);
+		entities.push_back(entity);*/
+		Sprudo* sprudo = new Sprudo();
+		sprudo->position = position;
+		addEntity(sprudo);
+		entities.push_back(sprudo);
 	}
 
 	std::vector<Entity*> entities;

@@ -1,5 +1,7 @@
 #include "TestUI.h"
 
+#include "SpriteSheetStore.h"
+
 int main(){
 	
 	ui::init({1000, 700}, "Elf Rat Prom");

@@ -130,6 +130,7 @@
     <ClCompile Include="character.cpp" />
     <ClCompile Include="creature.cpp" />
     <ClCompile Include="entity.cpp" />
+    <ClCompile Include="ImageStore.cpp" />
     <ClCompile Include="item.cpp" />
     <ClCompile Include="map.cpp" />
     <ClCompile Include="obstacle.cpp" />
@@ -137,6 +138,7 @@
     <ClCompile Include="Platformer.cpp" />
     <ClCompile Include="player.cpp" />
     <ClCompile Include="space.cpp" />
+    <ClCompile Include="spritesheet.cpp" />
     <ClCompile Include="vec2.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -152,6 +154,8 @@
     <ClInclude Include="player.h" />
     <ClInclude Include="renderable.h" />
     <ClInclude Include="space.h" />
+    <ClInclude Include="spritesheet.h" />
+    <ClInclude Include="SpriteSheetStore.h" />
     <ClInclude Include="sprudo.h" />
     <ClInclude Include="TestCreature.h" />
     <ClInclude Include="TestEntities.h" />

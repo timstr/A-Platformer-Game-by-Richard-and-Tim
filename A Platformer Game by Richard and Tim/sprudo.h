@@ -12,20 +12,24 @@ struct Sprudo : TestEntity {
 
 		addCircle(Circle(vec2(-3, -10), 35));
 		addCircle(Circle(vec2(0, 45), 20));
-		friction = 0.5;
+		friction = 0.35;
 		elasticity = 0.1;
+
+		frame = rand() % 8;
+
+		previous_position = position;
 	}
 
 	vec2 getContactAcceleration(const Obstruction* obstruction, vec2 normal) const {
-		return vec2(2 * direction * std::max(0.0, dot(normal, vec2(0, -1))), 0);
+		return vec2(direction * std::max(0.0, dot(normal, vec2(0, -1))), 0);
 	}
 
 	void tick() override {
 		cliprect.left = cliprect.width * frame;
 		sprite.setTextureRect(cliprect);
 
-		timer += 1;
-		if (timer > 5){
+		timer += abs(position - previous_position);
+		if (timer > 7){
 			frame = (frame + 1) % 8;
 			timer = 0;
 		}
@@ -33,6 +37,8 @@ struct Sprudo : TestEntity {
 		if (rand() % 100 == 0){
 			direction = -direction;
 		}
+
+		previous_position = position;
 	}
 
 	void render(sf::RenderWindow& rw, vec2 offset) override {
@@ -50,7 +56,8 @@ struct Sprudo : TestEntity {
 
 	sf::Sprite sprite;
 	int frame = 0;
-	int timer = 0;
+	double timer = 0;
 	sf::IntRect cliprect;
 	int direction = 1;
+	vec2 previous_position;
 };
