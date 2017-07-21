@@ -40,6 +40,9 @@
     <ClCompile Include="ImageStore.cpp">
       <Filter>Utility</Filter>
     </ClCompile>
+    <ClCompile Include="SpriteSheetStore.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="character.h">
@@ -107,6 +110,9 @@
     </ClInclude>
     <ClInclude Include="SpriteSheetStore.h">
       <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="bulbous.h">
+      <Filter>Test</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

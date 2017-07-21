@@ -5,21 +5,23 @@
 
 struct SpriteSheet {
 	SpriteSheet();
-	SpriteSheet(const sf::Texture& texture, vec2 _framecenter, vec2 _framesize, int _frames_per_row);
 
-	private:
+	void setTexture(const sf::Texture& _texture);
+
+	void setFrameSize(vec2 _framesize);
+	
+	void setFrameCenter(vec2 _framecenter);
+
+	void setFramesPerRow(int _frames_per_row);
 
 	void addAnimation(std::string name, int start_frame, int end_frame);
 
-	sf::Sprite sprite;
+	private:
 
+	const sf::Texture* texture;
 	vec2 framecenter;
 	vec2 framesize;
 	int frames_per_row;
-
-	sf::IntRect cliprect;
-
-	void render(sf::RenderWindow& rw, vec2 position, int frame);
 
 	struct Animation {
 		Animation(int _start_frame = 0, int _end_frame = 0){
@@ -37,16 +39,22 @@ struct SpriteSheet {
 };
 
 struct SpriteSheetPlayer : Renderable {
+	SpriteSheetPlayer(const std::string& name);
+
 	SpriteSheetPlayer(SpriteSheet& _spritesheet);
 
-	void goTo(std::string animation_name);
+	void play(std::string animation_name);
 
 	void tick();
+
+	void setScale(vec2 scale);
 
 	void render(sf::RenderWindow& rw, vec2 offset) override;
 
 	private:
-	SpriteSheet& spritesheet;
+	const SpriteSheet& spritesheet;
+	sf::Sprite sprite;
+	sf::IntRect cliprect;
 	int current_frame;
 	std::map<std::string, SpriteSheet::Animation>::const_iterator current_animation;
 };

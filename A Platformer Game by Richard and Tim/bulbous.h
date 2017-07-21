@@ -4,16 +4,22 @@
 #include "ImageStore.h"
 #include "SpriteSheetStore.h"
 
-struct Sprudo : TestEntity {
-	Sprudo() : sprite("sprudo") {
-		addCircle(Circle(vec2(-3, -10), 25));
-		addCircle(Circle(vec2(0, 45), 20));
+struct Bulbous : TestEntity {
+	Bulbous() : sprite("bulbous") {
+		addCircle(Circle(vec2(0, 0), 20));
 		friction = 0.35;
 		elasticity = 0.1;
 
-		previous_position = position;
-
 		sprite.play("walking");
+
+		int ticks = rand() % 10;
+		for (int i = 0; i < ticks; i++){
+			sprite.tick();
+		}
+
+		timer = 0;
+
+		sprite.setScale(vec2(0.5, 0.5));
 	}
 
 	vec2 getContactAcceleration(const Obstruction* obstruction, vec2 normal) const {
@@ -21,27 +27,24 @@ struct Sprudo : TestEntity {
 	}
 
 	void tick() override {
-		timer += abs(position - previous_position);
-		if (timer > 7){
+		timer += 0.5;
+		if (timer > 1){
 			sprite.tick();
 			timer = 0;
 		}
 
 		if (rand() % 100 == 0){
 			direction = -direction;
-			sprite.setScale(vec2(direction, 1));
+			sprite.setScale(vec2(-direction * 0.5, 0.5));
 		}
-
-		previous_position = position;
 	}
 
 	void render(sf::RenderWindow& rw, vec2 offset) override {
 		sprite.render(rw, offset + position);
 	}
 
+	double timer;
 	SpriteSheetPlayer sprite;
-	double timer = 0;
 	sf::IntRect cliprect;
 	int direction = 1;
-	vec2 previous_position;
 };

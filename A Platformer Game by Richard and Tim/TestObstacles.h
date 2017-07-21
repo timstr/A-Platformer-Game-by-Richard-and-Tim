@@ -5,16 +5,16 @@
 
 struct TreeObstacle : Obstacle {
 	TreeObstacle(){
-		setBoundary(ImageStore::getImage("testobstacle1.png"));
-		sprite.setTexture(ImageStore::getTexture("testobstacle1.png"));
+		setBoundary(ImageStore::getImage("testobstacle1"));
+		sprite.setTexture(ImageStore::getTexture("testobstacle1"));
 		friction = 0.0;
 	}
 };
 
 struct BoostObstacle : Obstacle {
 	BoostObstacle(){
-		setBoundary(ImageStore::getImage("testobstacle2.png"));
-		sprite.setTexture(ImageStore::getTexture("testobstacle2.png"));
+		setBoundary(ImageStore::getImage("testobstacle2"));
+		sprite.setTexture(ImageStore::getTexture("testobstacle2"));
 		friction = 0.0;
 	}
 
@@ -31,8 +31,8 @@ struct MovingObstacle : Obstacle {
 		position1 = _position1;
 		position2 = _position2;
 
-		setBoundary(ImageStore::getImage("testobstacle3.png"));
-		sprite.setTexture(ImageStore::getTexture("testobstacle3.png"));
+		setBoundary(ImageStore::getImage("testobstacle3"));
+		sprite.setTexture(ImageStore::getTexture("testobstacle3"));
 
 		friction = 1.0;
 	}
@@ -55,8 +55,8 @@ struct MovingObstacle : Obstacle {
 
 struct RampObstacle : Obstacle {
 	RampObstacle(){
-		setBoundary(ImageStore::getImage("testobstacle4.png"));
-		sprite.setTexture(ImageStore::getTexture("testobstacle4.png"));
+		setBoundary(ImageStore::getImage("testobstacle4"));
+		sprite.setTexture(ImageStore::getTexture("testobstacle4"));
 
 		friction = 0.0;
 	}

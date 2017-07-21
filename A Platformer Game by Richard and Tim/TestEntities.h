@@ -1,10 +1,11 @@
 #pragma once
 
 #include "entity.h"
+#include "SpriteSheetStore.h"
 
 struct TestEntity : Entity {
 	TestEntity(){
-		position = {470, 50};
+		position = vec2(470 + (rand() % 100) * 0.01, 50 + (rand() % 100) * 0.01);
 		elasticity = (rand() % 100) * 0.01;
 		friction = (rand() % 100) * 0.01;
 	}
@@ -42,15 +43,12 @@ struct ComplexEntity : TestEntity {
 };
 
 struct GuyEntity : TestEntity {
-	GuyEntity(){
+	GuyEntity() : sprite("char1"){
 		addCircle(Circle({0, -20}, 20));
-		addCircle(Circle({0, 10}, 15));
-		addCircle(Circle({-20, 5}, 10));
-		addCircle(Circle({20, 5}, 10));
-		addCircle(Circle({-10, 40}, 10));
-		addCircle(Circle({10, 40}, 10));
 		friction = 0.3;
 		elasticity = 0.1;
+		sprite.setScale(vec2(0.25, 0.25));
+		sprite.play("walking");
 	}
 
 	vec2 getContactAcceleration(const Obstruction* obstruction, vec2 normal) const override {
@@ -60,11 +58,17 @@ struct GuyEntity : TestEntity {
 		return accel;
 	}
 
+	void render(sf::RenderWindow& rw, vec2 offset) override {
+		sprite.render(rw, offset + position);
+		sprite.tick();
+	}
+
 	void updateMoves(float _run_speed, float _jump_speed){
 		run_speed = _run_speed;
 		jump_speed = _jump_speed;
 	}
 
+	SpriteSheetPlayer sprite;
 	float run_speed = 0.0f;
 	float jump_speed = 0.0f;
 };

@@ -5,7 +5,7 @@
 const sf::Image& ImageStore::getImage(std::string filename){
 	auto it = image_map.find(filename);
 	if (it == image_map.end()){
-		if (!image_map[filename].loadFromFile("images/" + filename)){
+		if (!image_map[filename].loadFromFile("images/" + filename + ".png")){
 			throw std::runtime_error("The image could not be loaded");
 		}
 		return image_map[filename];
@@ -24,12 +24,11 @@ const sf::Texture& ImageStore::getTexture(std::string filename, bool load_image_
 			if (load_image_too){
 				texture_map[filename].loadFromImage(getImage(filename));
 			} else {
-				if (!texture_map[filename].loadFromFile("images/" + filename)){
+				if (!texture_map[filename].loadFromFile("images/" + filename + ".png")){
 					throw std::runtime_error("The texture could not be loaded");
 				}
 			}
 		}
-
 		return texture_map[filename];
 	} else {
 		return it->second;

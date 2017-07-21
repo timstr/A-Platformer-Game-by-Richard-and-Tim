@@ -1,0 +1,5 @@
+framesize 172 300
+framecenter 85 250
+framesperrow 11
+animation walking 1 20
+animation idle 21 36
