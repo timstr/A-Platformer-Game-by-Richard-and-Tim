@@ -6,7 +6,11 @@
 #include <map>
 
 SpriteSheet::SpriteSheet(){
-
+	texture = nullptr;
+	framecenter = {0, 0};
+	framesize = {0, 0};
+	frames_per_row = 0;
+	frames_per_second = 30;
 }
 
 void SpriteSheet::setTexture(const sf::Texture& _texture){
@@ -25,6 +29,10 @@ void SpriteSheet::setFramesPerRow(int _frames_per_row){
 	frames_per_row = _frames_per_row;
 }
 
+void SpriteSheet::setFramesPerSecond(int _frames_per_second){
+	frames_per_second = _frames_per_second;
+}
+
 void SpriteSheet::addAnimation(std::string name, int start_frame, int end_frame){
 	animations[name] = Animation(start_frame - 1, end_frame - 1);
 }
@@ -35,14 +43,8 @@ SpriteSheetPlayer::SpriteSheetPlayer(const std::string& name) : spritesheet(Spri
 	cliprect.height = spritesheet.framesize.y;
 	current_frame = 0;
 	current_animation = spritesheet.animations.end();
-}
-
-SpriteSheetPlayer::SpriteSheetPlayer(SpriteSheet& _spritesheet) : spritesheet(_spritesheet) {
-	sprite.setTexture(*spritesheet.texture);
-	cliprect.width = spritesheet.framesize.x;
-	cliprect.height = spritesheet.framesize.y;
-	current_frame = 0;
-	current_animation = spritesheet.animations.end();
+	timestamp = clock.getElapsedTime();
+	frames_carryover = 0;
 }
 
 void SpriteSheetPlayer::play(std::string animation_name){
@@ -55,13 +57,23 @@ void SpriteSheetPlayer::play(std::string animation_name){
 }
 
 void SpriteSheetPlayer::tick(){
+	sf::Time now = clock.getElapsedTime();
+
 	if (current_animation != spritesheet.animations.end()){
-		current_frame += 1;
-		if (current_frame > current_animation->second.end_frame){
-			//TODO: callback system?
-			current_frame = current_animation->second.start_frame;
+
+		sf::Time elapsed = now - timestamp;
+		float seconds = elapsed.asSeconds();
+		frames_carryover += seconds * spritesheet.frames_per_second;
+
+		for (; frames_carryover > 1; frames_carryover -= 1){
+			current_frame += 1;
+			if (current_frame > current_animation->second.end_frame){
+				//TODO: callback system?
+				current_frame = current_animation->second.start_frame;
+			}
 		}
 	}
+	timestamp = now;
 }
 
 void SpriteSheetPlayer::setScale(vec2 scale){
@@ -75,3 +87,5 @@ void SpriteSheetPlayer::render(sf::RenderWindow& rw, vec2 offset){
 	sprite.setPosition(offset - vec2(spritesheet.framecenter.x * sprite.getScale().x, spritesheet.framecenter.y * sprite.getScale().y));
 	rw.draw(sprite);
 }
+
+sf::Clock SpriteSheetPlayer::clock;

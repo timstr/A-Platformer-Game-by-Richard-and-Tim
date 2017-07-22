@@ -31,16 +31,26 @@ SpriteSheet SpriteSheetStore::loadSpriteSheet(std::string name){
 		std::string tag;
 		ifs >> tag;
 		if (tag == "framesize"){
-			ifs >> spritesheet.framesize.x >> spritesheet.framesize.y;
+			int x, y;
+			ifs >> x >> y;
+			spritesheet.setFrameSize(vec2(x, y));
 		} else if (tag == "framecenter"){
-			ifs >> spritesheet.framecenter.x >> spritesheet.framecenter.y;
+			int x, y;
+			ifs >> x >> y;
+			spritesheet.setFrameCenter(vec2(x, y));
 		} else if (tag == "framesperrow"){
-			ifs >> spritesheet.frames_per_row;
+			int fpr;
+			ifs >> fpr;
+			spritesheet.setFramesPerRow(fpr);
 		} else if (tag == "animation"){
 			std::string anim_name;
 			int startframe, endframe;
 			ifs >> anim_name >> startframe >> endframe;
 			spritesheet.addAnimation(anim_name, startframe, endframe);
+		} else if (tag == "framespersecond"){
+			int fps;
+			ifs >> fps;
+			spritesheet.setFramesPerSecond(fps);
 		} else {
 			ifs.close();
 			throw std::runtime_error("Unrecognized tag while parsing spritesheet file");

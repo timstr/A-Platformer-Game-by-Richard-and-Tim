@@ -11,8 +11,6 @@ struct Sprudo : TestEntity {
 		friction = 0.35;
 		elasticity = 0.1;
 
-		previous_position = position;
-
 		sprite.play("walking");
 	}
 
@@ -21,18 +19,12 @@ struct Sprudo : TestEntity {
 	}
 
 	void tick() override {
-		timer += abs(position - previous_position);
-		if (timer > 7){
-			sprite.tick();
-			timer = 0;
-		}
+		sprite.tick();
 
 		if (rand() % 100 == 0){
 			direction = -direction;
 			sprite.setScale(vec2(direction, 1));
 		}
-
-		previous_position = position;
 	}
 
 	void render(sf::RenderWindow& rw, vec2 offset) override {
@@ -40,8 +32,6 @@ struct Sprudo : TestEntity {
 	}
 
 	SpriteSheetPlayer sprite;
-	double timer = 0;
 	sf::IntRect cliprect;
 	int direction = 1;
-	vec2 previous_position;
 };

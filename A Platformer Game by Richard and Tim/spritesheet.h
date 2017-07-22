@@ -14,6 +14,8 @@ struct SpriteSheet {
 
 	void setFramesPerRow(int _frames_per_row);
 
+	void setFramesPerSecond(int _frames_per_second);
+
 	void addAnimation(std::string name, int start_frame, int end_frame);
 
 	private:
@@ -22,6 +24,7 @@ struct SpriteSheet {
 	vec2 framecenter;
 	vec2 framesize;
 	int frames_per_row;
+	int frames_per_second;
 
 	struct Animation {
 		Animation(int _start_frame = 0, int _end_frame = 0){
@@ -35,13 +38,10 @@ struct SpriteSheet {
 	std::map<std::string, Animation> animations;
 
 	friend struct SpriteSheetPlayer;
-	friend struct SpriteSheetStore;
 };
 
 struct SpriteSheetPlayer : Renderable {
 	SpriteSheetPlayer(const std::string& name);
-
-	SpriteSheetPlayer(SpriteSheet& _spritesheet);
 
 	void play(std::string animation_name);
 
@@ -52,9 +52,13 @@ struct SpriteSheetPlayer : Renderable {
 	void render(sf::RenderWindow& rw, vec2 offset) override;
 
 	private:
+
+	float frames_carryover;
+	sf::Time timestamp;
 	const SpriteSheet& spritesheet;
 	sf::Sprite sprite;
 	sf::IntRect cliprect;
 	int current_frame;
 	std::map<std::string, SpriteSheet::Animation>::const_iterator current_animation;
+	static sf::Clock clock;
 };
