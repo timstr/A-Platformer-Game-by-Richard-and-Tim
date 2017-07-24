@@ -5,7 +5,7 @@
 #include "SpriteSheetStore.h"
 
 struct Bulbous : TestEntity {
-	Bulbous() : sprite("bulbous") {
+	Bulbous() : sprite("bulbous", this) {
 		addCircle(Circle(vec2(0, -15), 20));
 		friction = 0.35;
 		elasticity = 0.1;

@@ -2,80 +2,61 @@
 
 #include <map>
 #include "character.h"
-
-namespace Event {
-	struct Event {
-		Event() : id(getNextId()) {
-
-		}
-
-		const int id;
-
-		private:
-		int getNextId(){
-			static int next_id;
-			next_id += 1;
-			return next_id;
-		}
-	};
-
-	bool operator<(const Event& l, const Event& r);
-
-	/////////////////////////////
-
-
-
-}
+#include "spritesheet.h"
+#include "event.h"
 
 // Creature is an autonomous character that moves around
 // independently and can interact with other characters
 struct Creature : Character {
 
-	// TODO: figure out an extensible and portable method for distinguishing different events
+	Creature(std::string name);
 
-	// possibly change states from a given event
-	virtual void onEvent(Event::Event e){
-		auto begin = state_map.lower_bound(std::make_pair(current_state, e));
-		auto end = state_map.upper_bound(std::make_pair(current_state, e));
+	void onEvent(Event e) override;
 
-		if (begin == end){
-			return;
-		}
+	void tick() override final;
 
-		double total = 0.0;
+	virtual void update();
 
-		for (auto it = begin; it != end; it++){
-			total += it->second.second;
-		}
+	void addStateTransition(int from_state, int to_state, Event trigger_event, double relative_probability = 1.0);
 
-		double rand_val = rand() * total / (double)RAND_MAX;
+	void setState(int state);
 
-		for (auto it = begin; it != end; it++){
-			rand_val -= it->second.second;
-			if (rand_val <= 0){
-				current_state = it->second.first;
-				return;
-			}
-		}
-	}
+	int getState() const;
 
-	void addStateTransition(int from_state, int to_state, Event::Event trigger_event, double relative_probability = 1.0){
-		state_map.insert(std::make_pair(std::make_pair(from_state, trigger_event), std::make_pair(to_state, relative_probability)));
-	}
+	void render(sf::RenderWindow& rw, vec2 offset) override;
 
-	void setState(int state){
-		current_state = state;
-	}
+	protected:
 
-	int getState(){
-		return current_state;
-	}
+	SpriteSheetPlayer sprite;
 
 	private:
 
 	int current_state = -1;
 
-	// The mapping of states is represented as:
-	// (int from_state, EventType trigger_event) -> (int to_state, double relative_probability)
-	std::multimap<std::pair<int, Event::Event>, std::pair<int, double>> state_map;
+	struct Trigger {
+		Trigger(int _from_state, const Event& _event);
+
+		int from_state;
+		int event_id;
+		//const Event::Event& event;
+
+		friend bool operator<(const Trigger& l, const Trigger& r){
+			if (l.from_state < r.from_state){
+				return true;
+			} else if (l.from_state == r.from_state){
+				return l.event_id < r.event_id;
+			} else {
+				return false;
+			}
+		}
+	};
+
+	struct Transition {
+		Transition(int _to_state, double _relative_probability);
+
+		int to_state;
+		double relative_probability;
+	};
+
+	std::multimap<Trigger, Transition> transitions;
 };

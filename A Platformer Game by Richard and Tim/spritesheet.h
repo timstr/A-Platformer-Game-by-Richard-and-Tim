@@ -1,6 +1,8 @@
 #pragma once
 
 #include "renderable.h"
+#include "entity.h"
+#include <functional>
 #include <map>
 
 struct SpriteSheet {
@@ -40,8 +42,10 @@ struct SpriteSheet {
 	friend struct SpriteSheetPlayer;
 };
 
+extern Event AnimationEnd;
+
 struct SpriteSheetPlayer : Renderable {
-	SpriteSheetPlayer(const std::string& name);
+	SpriteSheetPlayer(const std::string& name, Entity* _owner);
 
 	void play(std::string animation_name);
 
@@ -53,6 +57,7 @@ struct SpriteSheetPlayer : Renderable {
 
 	private:
 
+	Entity* const owner;
 	float frames_carryover;
 	sf::Time timestamp;
 	const SpriteSheet& spritesheet;

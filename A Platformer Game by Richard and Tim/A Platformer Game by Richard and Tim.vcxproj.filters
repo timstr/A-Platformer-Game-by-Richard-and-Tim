@@ -43,6 +43,9 @@
     <ClCompile Include="SpriteSheetStore.cpp">
       <Filter>Utility</Filter>
     </ClCompile>
+    <ClCompile Include="event.cpp">
+      <Filter>Mechanics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="character.h">
@@ -90,9 +93,6 @@
     <ClInclude Include="sprudo.h">
       <Filter>Test</Filter>
     </ClInclude>
-    <ClInclude Include="TestCreature.h">
-      <Filter>Test</Filter>
-    </ClInclude>
     <ClInclude Include="TestEntities.h">
       <Filter>Test</Filter>
     </ClInclude>
@@ -113,6 +113,12 @@
     </ClInclude>
     <ClInclude Include="bulbous.h">
       <Filter>Test</Filter>
+    </ClInclude>
+    <ClInclude Include="testcharacter.h">
+      <Filter>Test</Filter>
+    </ClInclude>
+    <ClInclude Include="event.h">
+      <Filter>Mechanics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -130,6 +130,7 @@
     <ClCompile Include="character.cpp" />
     <ClCompile Include="creature.cpp" />
     <ClCompile Include="entity.cpp" />
+    <ClCompile Include="event.cpp" />
     <ClCompile Include="ImageStore.cpp" />
     <ClCompile Include="item.cpp" />
     <ClCompile Include="map.cpp" />
@@ -147,6 +148,7 @@
     <ClInclude Include="character.h" />
     <ClInclude Include="creature.h" />
     <ClInclude Include="entity.h" />
+    <ClInclude Include="event.h" />
     <ClInclude Include="gui.h" />
     <ClInclude Include="item.h" />
     <ClInclude Include="map.h" />
@@ -159,7 +161,7 @@
     <ClInclude Include="spritesheet.h" />
     <ClInclude Include="SpriteSheetStore.h" />
     <ClInclude Include="sprudo.h" />
-    <ClInclude Include="TestCreature.h" />
+    <ClInclude Include="testcharacter.h" />
     <ClInclude Include="TestEntities.h" />
     <ClInclude Include="TestMap.h" />
     <ClInclude Include="TestObstacles.h" />

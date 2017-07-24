@@ -37,7 +37,9 @@ void SpriteSheet::addAnimation(std::string name, int start_frame, int end_frame)
 	animations[name] = Animation(start_frame - 1, end_frame - 1);
 }
 
-SpriteSheetPlayer::SpriteSheetPlayer(const std::string& name) : spritesheet(SpriteSheetStore::getSpriteSheet(name)) {
+Event AnimationEnd;
+
+SpriteSheetPlayer::SpriteSheetPlayer(const std::string& name, Entity* _owner) : spritesheet(SpriteSheetStore::getSpriteSheet(name)), owner(_owner) {
 	sprite.setTexture(*spritesheet.texture);
 	cliprect.width = spritesheet.framesize.x;
 	cliprect.height = spritesheet.framesize.y;
@@ -48,12 +50,17 @@ SpriteSheetPlayer::SpriteSheetPlayer(const std::string& name) : spritesheet(Spri
 }
 
 void SpriteSheetPlayer::play(std::string animation_name){
+	auto prev = current_animation;
 	current_animation = spritesheet.animations.find(animation_name);
+	if (prev == current_animation){
+		return;
+	}
 	if (current_animation == spritesheet.animations.end()){
 		throw std::runtime_error("The animation could not be found");
 	} else {
 		current_frame = current_animation->second.start_frame;
 	}
+	frames_carryover = 0;
 }
 
 void SpriteSheetPlayer::tick(){
@@ -68,7 +75,7 @@ void SpriteSheetPlayer::tick(){
 		for (; frames_carryover > 1; frames_carryover -= 1){
 			current_frame += 1;
 			if (current_frame > current_animation->second.end_frame){
-				//TODO: callback system?
+				owner->onEvent(AnimationEnd);
 				current_frame = current_animation->second.start_frame;
 			}
 		}

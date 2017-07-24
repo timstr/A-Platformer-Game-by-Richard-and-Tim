@@ -6,7 +6,15 @@ namespace {
 	const double precision = 1.0;
 }
 
-bool Entity::collidesWith(Obstruction* const obstruction) const {
+Entity::Entity(){
+	position = {0, 0};
+	velocity = {0, 0};
+	mass = 1.0;
+	friction = 0.5;
+	elasticity = 0.5;
+}
+
+bool Entity::collidesWith(const Obstruction* obstruction) const {
 	for (const Circle& circle : circles){
 		double slices = circle.radius * precision;
 		double angle_delta = 2 * pi / slices;
@@ -26,7 +34,7 @@ bool Entity::collidesWith(Obstruction* const obstruction) const {
 	return false;
 }
 
-bool Entity::collidesWith(std::vector<Obstruction*>& const obstructions) const {
+bool Entity::collidesWith(const std::vector<Obstruction*>& obstructions) const {
 	for (Obstruction* const obstruction : obstructions){
 		if (collidesWith(obstruction)){
 			return true;
@@ -35,7 +43,15 @@ bool Entity::collidesWith(std::vector<Obstruction*>& const obstructions) const {
 	return false;
 }
 
-void Entity::move(std::vector<Obstruction*>& const obstructions){
+void Entity::tick(){
+
+}
+
+void Entity::onEvent(Event e){
+
+}
+
+void Entity::move(const std::vector<Obstruction*>& obstructions){
 
 	// This is where gravity happens
 	velocity.y += 0.25f;
@@ -45,6 +61,10 @@ void Entity::move(std::vector<Obstruction*>& const obstructions){
 	}
 
 	position += velocity;
+}
+
+vec2 Entity::getContactAcceleration(const Obstruction* obstruction, vec2 normal) const {
+	return {0, 0};
 }
 
 void Entity::performCollision(Obstruction* obstruction){
@@ -98,4 +118,9 @@ void Entity::performCollision(Obstruction* obstruction){
 
 void Entity::addCircle(const Entity::Circle& circle){
 	circles.push_back(circle);
+}
+
+Entity::Circle::Circle(vec2 _center, double _radius){
+	center = _center;
+	radius = _radius;
 }

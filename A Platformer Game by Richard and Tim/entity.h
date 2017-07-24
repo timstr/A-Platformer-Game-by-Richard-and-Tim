@@ -3,30 +3,23 @@
 struct Obstruction;
 
 #include "obstruction.h"
-#include <vector>
 #include "renderable.h"
+#include "event.h"
+#include <vector>
 
 // Entity is the base class to all things that interact with such
 // obstructions as the map and obstacles
 // an Entity has a visual appearance, a rigid physical boundary
 // comprised of one or more circles, and physical mass
 struct Entity : Renderable {
-	Entity(){
-		position = {0, 0};
-		velocity = {0, 0};
-		mass = 1.0;
-		friction = 0.5;
-		elasticity = 0.5;
-	}
+	Entity();
 
 	// translate the entity according to its velocity and possibly collide with obstructions
-	void move(std::vector<Obstruction*>& const obstructions);
+	void move(const std::vector<Obstruction*>& obstructions);
 
 	// get the acceleration exerted on the entity when it contacts the given obstruction
 	// normal is assumed to be a unit vector
-	virtual vec2 getContactAcceleration(const Obstruction* obstruction, vec2 normal) const {
-		return {0, 0};
-	}
+	virtual vec2 getContactAcceleration(const Obstruction* obstruction, vec2 normal) const;
 
 	vec2 position;
 	vec2 velocity;
@@ -35,17 +28,15 @@ struct Entity : Renderable {
 	double elasticity;
 
 	// tick is called once every frame and should be overridden to update the entity's state
-	virtual void tick(){
+	virtual void tick();
 
-	}
+	virtual void onEvent(Event e);
 
 	protected:
 
 	struct Circle {
-		Circle(vec2 _center = {0, 0}, double _radius = 20.0){
-			center = _center;
-			radius = _radius;
-		}
+		Circle(vec2 _center = {0, 0}, double _radius = 20.0);
+
 		vec2 center;
 		double radius;
 	};
@@ -57,8 +48,8 @@ struct Entity : Renderable {
 	private:
 
 	// returns true if the entity collides with the given obstruction(s)
-	bool collidesWith(Obstruction* const obstruction) const;
-	bool collidesWith(std::vector<Obstruction*>& const obstructions) const;
+	bool collidesWith(const Obstruction* obstruction) const;
+	bool collidesWith(const std::vector<Obstruction*>& obstructions) const;
 
 	// possibly collide with obstruction and change
 	// velocity accordingly

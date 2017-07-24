@@ -71,6 +71,15 @@ void Obstruction::render(sf::RenderWindow& rw, vec2 offset){
 	rw.draw(sprite);
 }
 
+void Obstruction::update(){
+	previous_position = position;
+	tick();
+}
+
+void Obstruction::tick() {
+
+}
+
 vec2 Obstruction::getNormalAt(vec2 point, vec2 hint) const {
 
 	const double probe_radius = 10.0;

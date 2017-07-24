@@ -5,7 +5,7 @@
 #include "SpriteSheetStore.h"
 
 struct Sprudo : TestEntity {
-	Sprudo() : sprite("sprudo") {
+	Sprudo() : sprite("sprudo", this) {
 		addCircle(Circle(vec2(-3, -10), 25));
 		addCircle(Circle(vec2(0, 45), 20));
 		friction = 0.35;

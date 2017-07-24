@@ -1,5 +1,6 @@
 #pragma once
 #include "spritesheet.h"
+#include <string>
 #include <map>
 
 struct SpriteSheetStore {

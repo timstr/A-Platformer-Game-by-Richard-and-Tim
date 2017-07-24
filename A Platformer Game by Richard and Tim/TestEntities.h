@@ -43,7 +43,7 @@ struct ComplexEntity : TestEntity {
 };
 
 struct GuyEntity : TestEntity {
-	GuyEntity() : sprite("char1"){
+	GuyEntity() : sprite("char1", this){
 		addCircle(Circle({0, -20}, 20));
 		friction = 0.3;
 		elasticity = 0.1;
@@ -58,9 +58,12 @@ struct GuyEntity : TestEntity {
 		return accel;
 	}
 
+	void tick() override {
+		sprite.tick();
+	}
+
 	void render(sf::RenderWindow& rw, vec2 offset) override {
 		sprite.render(rw, offset + position);
-		sprite.tick();
 	}
 
 	void updateMoves(float _run_speed, float _jump_speed){

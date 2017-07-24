@@ -33,14 +33,9 @@ struct Obstruction : Renderable {
 	void render(sf::RenderWindow& rw, vec2 offset) override;
 
 	// tick shall be called once per frame to possibly update the obstruction's state
-	void update(){
-		previous_position = position;
-		tick();
-	}
+	void update();
 
-	virtual void tick() {
-
-	}
+	virtual void tick();
 
 	// the spatial position
 	vec2 position;
