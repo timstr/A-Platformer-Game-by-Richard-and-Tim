@@ -13,6 +13,7 @@ struct Event {
 };
 
 bool operator<(const Event& l, const Event& r);
+bool operator==(const Event& l, const Event& r);
 
 /////////////////////////////
 

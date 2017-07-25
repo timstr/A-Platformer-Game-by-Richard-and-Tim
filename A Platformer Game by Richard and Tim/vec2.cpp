@@ -23,6 +23,10 @@ vec2 operator*(const mat2x2& m, const vec2& v){
 	);
 }
 
+vec2 operator*(const vec2& l, const vec2& r){
+	return vec2(l.x * r.x, l.y * r.y);
+}
+
 double dot(const vec2& v1, const vec2& v2){
 	return (v1.x * v2.x + v1.y * v2.y);
 }

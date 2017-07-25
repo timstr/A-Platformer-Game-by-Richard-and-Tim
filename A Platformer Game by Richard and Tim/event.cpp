@@ -17,6 +17,10 @@ bool operator<(const Event& l, const Event& r){
 	return l.id < r.id;
 }
 
+bool operator==(const Event& l, const Event& r){
+	return l.id == r.id;
+}
+
 Event Tick; // every frame
 Event Flying; // when airborne
 Event Standing; // when grounded

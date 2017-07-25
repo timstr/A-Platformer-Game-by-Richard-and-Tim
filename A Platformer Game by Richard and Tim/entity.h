@@ -32,6 +32,12 @@ struct Entity : Renderable {
 
 	virtual void onEvent(Event e);
 
+	bool standing() const;
+
+	void setScale(float _scale);
+
+	float getScale() const;
+
 	protected:
 
 	struct Circle {
@@ -47,9 +53,12 @@ struct Entity : Renderable {
 
 	private:
 
-	// returns true if the entity collides with the given obstruction(s)
+	bool is_standing = false;
+	int flying_timer = 0;
+	float scale = 1.0f;
+
+	// returns true if the entity collides with the given obstruction
 	bool collidesWith(const Obstruction* obstruction) const;
-	bool collidesWith(const std::vector<Obstruction*>& obstructions) const;
 
 	// possibly collide with obstruction and change
 	// velocity accordingly

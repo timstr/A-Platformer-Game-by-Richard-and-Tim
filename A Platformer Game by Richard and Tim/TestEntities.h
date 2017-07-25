@@ -16,10 +16,11 @@ struct TestEntity : Entity {
 		//circle.setFillColor(sf::Color((uint32_t)std::hash<TestEntity*>{}(this) | 0xFF));
 		circle.setOutlineThickness(0.5);
 		circle.setOutlineColor(sf::Color(0xFF));
+		circle.setScale(vec2(getScale(), getScale()));
 		for (Circle& c : circles){
 			circle.setRadius(c.radius);
 			circle.setPointCount(2 * pi * c.radius);
-			circle.setPosition(position + offset - vec2(c.radius, c.radius) + c.center);
+			circle.setPosition(offset + position + (c.center - vec2(c.radius, c.radius)) * getScale());
 			rw.draw(circle);
 		}
 	}
@@ -44,7 +45,9 @@ struct ComplexEntity : TestEntity {
 
 struct GuyEntity : TestEntity {
 	GuyEntity() : sprite("char1", this){
-		addCircle(Circle({0, -20}, 20));
+		addCircle(Circle({0, -30}, 25));
+		addCircle(Circle({0, 0}, 20));
+		addCircle(Circle({0, 30}, 25));
 		friction = 0.3;
 		elasticity = 0.1;
 		sprite.setScale(vec2(0.25, 0.25));

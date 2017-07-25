@@ -20,6 +20,8 @@ struct SpriteSheet {
 
 	void addAnimation(std::string name, int start_frame, int end_frame);
 
+	void setFlip(bool _flip);
+
 	private:
 
 	const sf::Texture* texture;
@@ -27,6 +29,7 @@ struct SpriteSheet {
 	vec2 framesize;
 	int frames_per_row;
 	int frames_per_second;
+	bool flip;
 
 	struct Animation {
 		Animation(int _start_frame = 0, int _end_frame = 0){

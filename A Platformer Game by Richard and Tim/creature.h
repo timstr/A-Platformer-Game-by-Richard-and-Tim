@@ -17,11 +17,15 @@ struct Creature : Character {
 
 	virtual void update();
 
-	void addStateTransition(int from_state, int to_state, Event trigger_event, double relative_probability = 1.0);
+	void addStateTransition(int from_state, int to_state, Event trigger_event, double relative_probability = 1.0, std::function<void()> onComplete = {});
+
+	void setAnimation(int state, const std::string& animation);
 
 	void setState(int state);
 
 	int getState() const;
+
+	void flip();
 
 	void render(sf::RenderWindow& rw, vec2 offset) override;
 
@@ -32,6 +36,7 @@ struct Creature : Character {
 	private:
 
 	int current_state = -1;
+	int direction = 1;
 
 	struct Trigger {
 		Trigger(int _from_state, const Event& _event);
@@ -52,11 +57,13 @@ struct Creature : Character {
 	};
 
 	struct Transition {
-		Transition(int _to_state, double _relative_probability);
+		Transition(int _to_state, double _relative_probability, std::function<void()> _onComplete);
 
 		int to_state;
 		double relative_probability;
+		std::function<void()> onComplete;
 	};
 
 	std::multimap<Trigger, Transition> transitions;
+	std::map<int, std::string> animations;
 };

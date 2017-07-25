@@ -15,7 +15,7 @@ struct Sprudo : TestEntity {
 	}
 
 	vec2 getContactAcceleration(const Obstruction* obstruction, vec2 normal) const {
-		return vec2(direction * std::max(0.0, dot(normal, vec2(0, -1))), 0);
+		return vec2(direction * 0.6 * std::max(0.0, dot(normal, vec2(0, -1))), 0);
 	}
 
 	void tick() override {

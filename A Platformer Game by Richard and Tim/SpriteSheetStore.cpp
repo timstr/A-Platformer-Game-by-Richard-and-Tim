@@ -51,6 +51,14 @@ SpriteSheet SpriteSheetStore::loadSpriteSheet(std::string name){
 			int fps;
 			ifs >> fps;
 			spritesheet.setFramesPerSecond(fps);
+		} else if (tag == "facing"){
+			std::string dir;
+			ifs >> dir;
+			if (dir == "left"){
+				spritesheet.setFlip(true);
+			} else {
+				spritesheet.setFlip(false);
+			}
 		} else {
 			ifs.close();
 			throw std::runtime_error("Unrecognized tag while parsing spritesheet file");

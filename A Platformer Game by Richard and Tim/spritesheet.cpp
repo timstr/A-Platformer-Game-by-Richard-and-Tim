@@ -11,6 +11,7 @@ SpriteSheet::SpriteSheet(){
 	framesize = {0, 0};
 	frames_per_row = 0;
 	frames_per_second = 30;
+	flip = false;
 }
 
 void SpriteSheet::setTexture(const sf::Texture& _texture){
@@ -35,6 +36,10 @@ void SpriteSheet::setFramesPerSecond(int _frames_per_second){
 
 void SpriteSheet::addAnimation(std::string name, int start_frame, int end_frame){
 	animations[name] = Animation(start_frame - 1, end_frame - 1);
+}
+
+void SpriteSheet::setFlip(bool _flip){
+	flip = _flip;
 }
 
 Event AnimationEnd;
@@ -84,7 +89,11 @@ void SpriteSheetPlayer::tick(){
 }
 
 void SpriteSheetPlayer::setScale(vec2 scale){
-	sprite.setScale(scale);
+	if (spritesheet.flip){
+		sprite.setScale(scale * vec2(-1.0f, 1.0f));
+	} else {
+		sprite.setScale(scale);
+	}
 }
 
 void SpriteSheetPlayer::render(sf::RenderWindow& rw, vec2 offset){

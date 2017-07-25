@@ -1,6 +1,7 @@
 framesize 360 524
-framecenter 180 500
+framecenter 180 262
 framesperrow 11
+facing left
 animation standing 1 1
 animation running 2 21
 animation walking 22 44

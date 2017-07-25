@@ -42,7 +42,7 @@ vec2 Obstruction::getImpulse(vec2 point, vec2 normal, Entity* entity) const {
 	//ca_obs_normal = normal * (float)std::max(0.0, dot(ca_obs, normal));
 	ca_obs_tangent *= (float)entity->friction;
 
-	vec2 ca_ent = entity->getContactAcceleration(this, normal);
+	vec2 ca_ent = entity->getContactAcceleration(this, normal) * entity->getScale();
 	vec2 ca_ent_normal = projectOnto(ca_ent, normal);
 	vec2 ca_ent_tangent = ca_ent - ca_ent_normal;
 	//ca_ent_normal = normal * (float)std::max(0.0, dot(ca_ent, normal));

@@ -19,11 +19,11 @@ bool Entity::collidesWith(const Obstruction* obstruction) const {
 		double slices = circle.radius * precision;
 		double angle_delta = 2 * pi / slices;
 
-		vec2 radvec = vec2(circle.radius, 0);
+		vec2 radvec = vec2(0, circle.radius);
 		mat2x2 mat = rotationMatrix(angle_delta);
 
 		for (double slice = 0; slice < slices; slice += 1, radvec = mat * radvec){
-			vec2 point = position + circle.center + radvec;
+			vec2 point = position + (circle.center + radvec) * scale;
 
 			if (obstruction->hitTest(point)){
 				return true;
@@ -31,15 +31,6 @@ bool Entity::collidesWith(const Obstruction* obstruction) const {
 		}
 	}
 
-	return false;
-}
-
-bool Entity::collidesWith(const std::vector<Obstruction*>& obstructions) const {
-	for (Obstruction* const obstruction : obstructions){
-		if (collidesWith(obstruction)){
-			return true;
-		}
-	}
 	return false;
 }
 
@@ -51,14 +42,33 @@ void Entity::onEvent(Event e){
 
 }
 
+bool Entity::standing() const {
+	return is_standing;
+}
+
+void Entity::setScale(float _scale){
+	scale = _scale;
+}
+
+float Entity::getScale() const {
+	return scale;
+}
+
 void Entity::move(const std::vector<Obstruction*>& obstructions){
 
 	// This is where gravity happens
-	velocity.y += 0.25f;
+	velocity.y += 0.5f;
 
 	for (Obstruction* const obstruction : obstructions){
 		performCollision(obstruction);
 	}
+
+	if (is_standing = flying_timer < 10){
+		onEvent(Standing);
+	} else {
+		onEvent(Flying);
+	}
+	flying_timer += 1;
 
 	position += velocity;
 }
@@ -91,7 +101,7 @@ void Entity::performCollision(Obstruction* obstruction){
 			mat2x2 mat = rotationMatrix(angle_delta);
 
 			for (double slice = 0; slice < slices; slice += 1, radvec = mat * radvec){
-				vec2 point = position + circle.center + radvec;
+				vec2 point = position + (circle.center + radvec) * scale;
 
 				if (obstruction->hitTest(point)){
 					vec2 normal = obstruction->getNormalAt(point, position + center - point - velocity);
@@ -112,6 +122,10 @@ void Entity::performCollision(Obstruction* obstruction){
 			delta_velocity += total_contact_accel / (float)(hit_points);
 
 			velocity += delta_velocity;
+
+			if (dot(sum_normals / (float)hit_points, vec2(0, -1)) > 0){
+				flying_timer = 0;
+			}
 		}
 	}
 }

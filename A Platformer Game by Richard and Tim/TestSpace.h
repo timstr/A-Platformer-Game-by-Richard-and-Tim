@@ -11,11 +11,11 @@
 
 struct TestSpace : Space {
 	TestSpace(){
-		const int num_entities = 1;
-		const int test_entites = 1;
-		const int num_sprudos = 1;
+		const int num_entities = 20;
+		const int test_entites = 3;
+		const int num_sprudos = 3;
 		const int num_bulbous = 1;
-		const int num_testchars = 1;
+		const int num_testchars = 3;
 
 		for (int i = 0; i < num_entities; i++){
 			Entity* entity = new SimpleEntity();
@@ -57,7 +57,7 @@ struct TestSpace : Space {
 		addObstruction(map = new TestMap());
 
 		//addObstruction(tree = new TreeObstacle());
-		//tree->position = {250, 500};
+		//tree->position = {270, 500};
 
 		addObstruction(boost = new BoostObstacle());
 		boost->position = {500, 500};
@@ -74,14 +74,10 @@ struct TestSpace : Space {
 	}
 
 	void createEntity(vec2 position){
-		/*SimpleEntity* entity = new SimpleEntity();
-		entity->position = position;
-		addEntity(entity);
-		entities.push_back(entity);*/
-		Sprudo* sprudo = new Sprudo();
-		sprudo->position = position;
-		addEntity(sprudo);
-		entities.push_back(sprudo);
+		TestCharacter* tc = new TestCharacter();
+		tc->position = position;
+		addEntity(tc);
+		entities.push_back(tc);
 	}
 
 	std::vector<Entity*> entities;
