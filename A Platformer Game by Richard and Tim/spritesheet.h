@@ -18,7 +18,7 @@ struct SpriteSheet {
 
 	void setFramesPerSecond(int _frames_per_second);
 
-	void addAnimation(std::string name, int start_frame, int end_frame);
+	void addAnimation(const std::string& name, int start_frame, int end_frame);
 
 	void setFlip(bool _flip);
 
@@ -50,7 +50,7 @@ extern Event AnimationEnd;
 struct SpriteSheetPlayer : Renderable {
 	SpriteSheetPlayer(const std::string& name, Entity* _owner);
 
-	void play(std::string animation_name);
+	void play(const std::string& animation_name);
 
 	void tick();
 

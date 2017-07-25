@@ -30,7 +30,7 @@ struct Entity : Renderable {
 	// tick is called once every frame and should be overridden to update the entity's state
 	virtual void tick();
 
-	virtual void onEvent(Event e);
+	virtual void onEvent(const Event& e);
 
 	bool standing() const;
 

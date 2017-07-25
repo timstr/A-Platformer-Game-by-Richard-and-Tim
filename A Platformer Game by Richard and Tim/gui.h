@@ -111,7 +111,7 @@ namespace ui {
 		friend long double getProgramTime();
 		friend sf::Vector2f getScreenSize();
 		friend sf::Vector2f getMousePos();
-		friend void init(sf::Vector2f, std::string, int);
+		friend void init(sf::Vector2f, const std::string&, int);
 		friend void run();
 		template<class WindowType, class Data>
 		friend struct Transition;
@@ -700,7 +700,7 @@ namespace ui {
 		return sf::Vector2f(sf::Mouse::getPosition(Context::get().renderwindow));
 	}
 
-	void init(sf::Vector2f size = sf::Vector2f(500, 500), std::string title = "Behold", int render_delay = 25){//TODO: this might goof up, make bool?
+	void init(sf::Vector2f size = sf::Vector2f(500, 500), const std::string& title = "Behold", int render_delay = 25){//TODO: this might goof up, make bool?
 		Context::get().current_window = root();
 
 		Context::get().render_delay = render_delay;

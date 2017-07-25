@@ -2,7 +2,7 @@
 
 #include "ImageStore.h"
 
-const sf::Image& ImageStore::getImage(std::string filename){
+const sf::Image& ImageStore::getImage(const std::string& filename){
 	auto it = image_map.find(filename);
 	if (it == image_map.end()){
 		if (!image_map[filename].loadFromFile("images/" + filename + ".png")){
@@ -14,7 +14,7 @@ const sf::Image& ImageStore::getImage(std::string filename){
 	}
 }
 
-const sf::Texture& ImageStore::getTexture(std::string filename, bool load_image_too){
+const sf::Texture& ImageStore::getTexture(const std::string& filename, bool load_image_too){
 	auto it = texture_map.find(filename);
 	if (it == texture_map.end()){
 		auto it2 = image_map.find(filename);
@@ -35,14 +35,14 @@ const sf::Texture& ImageStore::getTexture(std::string filename, bool load_image_
 	}
 }
 
-void ImageStore::discardImage(std::string filename){
+void ImageStore::discardImage(const std::string& filename){
 	auto it = image_map.find(filename);
 	if (it != image_map.end()){
 		image_map.erase(it);
 	}
 }
 
-void ImageStore::discardTexture(std::string filename){
+void ImageStore::discardTexture(const std::string& filename){
 	auto it = texture_map.find(filename);
 	if (it != texture_map.end()){
 		texture_map.erase(it);

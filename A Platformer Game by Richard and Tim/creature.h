@@ -9,15 +9,15 @@
 // independently and can interact with other characters
 struct Creature : Character {
 
-	Creature(std::string name);
+	Creature(const std::string& name);
 
-	void onEvent(Event e) override;
+	void onEvent(const Event& e) override;
 
 	void tick() override final;
 
 	virtual void update();
 
-	void addStateTransition(int from_state, int to_state, Event trigger_event, double relative_probability = 1.0, std::function<void()> onComplete = {});
+	void addStateTransition(int from_state, int to_state, const Event& trigger_event, double relative_probability = 1.0, const std::function<void()>& onComplete = {});
 
 	void setAnimation(int state, const std::string& animation);
 
@@ -57,7 +57,7 @@ struct Creature : Character {
 	};
 
 	struct Transition {
-		Transition(int _to_state, double _relative_probability, std::function<void()> _onComplete);
+		Transition(int _to_state, double _relative_probability, const std::function<void()>& _onComplete);
 
 		int to_state;
 		double relative_probability;

@@ -34,7 +34,7 @@ void SpriteSheet::setFramesPerSecond(int _frames_per_second){
 	frames_per_second = _frames_per_second;
 }
 
-void SpriteSheet::addAnimation(std::string name, int start_frame, int end_frame){
+void SpriteSheet::addAnimation(const std::string& name, int start_frame, int end_frame){
 	animations[name] = Animation(start_frame - 1, end_frame - 1);
 }
 
@@ -54,7 +54,7 @@ SpriteSheetPlayer::SpriteSheetPlayer(const std::string& name, Entity* _owner) : 
 	frames_carryover = 0;
 }
 
-void SpriteSheetPlayer::play(std::string animation_name){
+void SpriteSheetPlayer::play(const std::string& animation_name){
 	auto prev = current_animation;
 	current_animation = spritesheet.animations.find(animation_name);
 	if (prev == current_animation){

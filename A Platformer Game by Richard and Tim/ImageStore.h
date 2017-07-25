@@ -8,20 +8,20 @@
 struct ImageStore {
 	// returns an Image object from the image file found at the given path
 	// or throws an exception if it can't be loaded
-	static const sf::Image& getImage(std::string filename);
+	static const sf::Image& getImage(const std::string& filename);
 
 	// returns a Texture object from the image file found at the given path,
 	// if the file is already loaded as an image, it will be reused
 	// throws an exception if it can't be loaded
-	static const sf::Texture& getTexture(std::string filename, bool load_image_too = true);
+	static const sf::Texture& getTexture(const std::string& filename, bool load_image_too = true);
 
 	// frees the memory used by the image object
 	// obvious potential for dangling references, so use wisely
-	static void discardImage(std::string filename);
+	static void discardImage(const std::string& filename);
 
 	// frees the memory used by the texture object
 	// obvious potential for dangling references, so use wisely
-	static void discardTexture(std::string filename);
+	static void discardTexture(const std::string& filename);
 
 	// frees all memory used by the image and texture objects
 	// use only when safe

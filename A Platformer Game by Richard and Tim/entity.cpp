@@ -38,7 +38,7 @@ void Entity::tick(){
 
 }
 
-void Entity::onEvent(Event e){
+void Entity::onEvent(const Event& e){
 
 }
 

@@ -2,11 +2,11 @@
 
 #include "creature.h"
 
-Creature::Creature(std::string name) : sprite(name, this) {
+Creature::Creature(const std::string& name) : sprite(name, this) {
 
 }
 
-void Creature::onEvent(Event e){
+void Creature::onEvent(const Event& e){
 	Trigger trigger = Trigger(current_state, e);
 
 	auto begin = transitions.lower_bound(trigger);
@@ -46,7 +46,7 @@ void Creature::update(){
 
 }
 
-void Creature::addStateTransition(int from_state, int to_state, Event trigger_event, double relative_probability, std::function<void()> onComplete){
+void Creature::addStateTransition(int from_state, int to_state, const Event& trigger_event, double relative_probability, const std::function<void()>& onComplete){
 	transitions.insert(std::make_pair(Trigger(from_state, trigger_event), Transition(to_state, relative_probability, onComplete)));
 }
 
@@ -80,7 +80,7 @@ Creature::Trigger::Trigger(int _from_state, const Event& _event){
 	event_id = _event.id;
 }
 
-Creature::Transition::Transition(int _to_state, double _relative_probability, std::function<void()> _onComplete){
+Creature::Transition::Transition(int _to_state, double _relative_probability, const std::function<void()> &_onComplete){
 	to_state = _to_state;
 	relative_probability = _relative_probability;
 	onComplete = _onComplete;

@@ -3,7 +3,7 @@
 #include "ImageStore.h"
 #include <fstream>
 
-const SpriteSheet& SpriteSheetStore::getSpriteSheet(std::string name){
+const SpriteSheet& SpriteSheetStore::getSpriteSheet(const std::string& name){
 	auto it = spritesheets.find(name);
 	if (it == spritesheets.end()){
 		return (spritesheets[name] = loadSpriteSheet(name));
@@ -16,7 +16,7 @@ SpriteSheetStore::SpriteSheetStore(){
 
 }
 
-SpriteSheet SpriteSheetStore::loadSpriteSheet(std::string name){
+SpriteSheet SpriteSheetStore::loadSpriteSheet(const std::string& name){
 	std::ifstream ifs;
 	ifs.open("images/" + name + ".spritesheet");
 	if (!ifs.is_open()){
