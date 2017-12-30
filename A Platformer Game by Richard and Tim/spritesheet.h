@@ -1,6 +1,6 @@
 #pragma once
 
-#include "renderable.h"
+#include "SFML\Graphics.hpp"
 #include "entity.h"
 #include <functional>
 #include <map>
@@ -47,7 +47,7 @@ struct SpriteSheet {
 
 extern Event AnimationEnd;
 
-struct SpriteSheetPlayer : Renderable {
+struct SpriteSheetPlayer : sf::Drawable, sf::Transformable {
 	SpriteSheetPlayer(const std::string& name, Entity* _owner);
 
 	void play(const std::string& animation_name);
@@ -56,7 +56,7 @@ struct SpriteSheetPlayer : Renderable {
 
 	void setScale(vec2 scale);
 
-	void render(sf::RenderWindow& rw, vec2 offset) override;
+	void draw(sf::RenderTarget& rt, sf::RenderStates states) const override;
 
 	private:
 

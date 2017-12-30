@@ -27,7 +27,7 @@ struct Creature : Character {
 
 	void flip();
 
-	void render(sf::RenderWindow& rw, vec2 offset) override;
+	void draw(sf::RenderTarget& rt, sf::RenderStates states) const override;
 
 	protected:
 

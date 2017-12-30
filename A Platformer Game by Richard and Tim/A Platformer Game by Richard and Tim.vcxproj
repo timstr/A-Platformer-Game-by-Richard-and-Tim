@@ -156,7 +156,6 @@
     <ClInclude Include="obstruction.h" />
     <ClInclude Include="ImageStore.h" />
     <ClInclude Include="player.h" />
-    <ClInclude Include="renderable.h" />
     <ClInclude Include="space.h" />
     <ClInclude Include="spritesheet.h" />
     <ClInclude Include="SpriteSheetStore.h" />

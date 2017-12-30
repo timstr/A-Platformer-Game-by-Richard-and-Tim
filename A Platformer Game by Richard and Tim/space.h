@@ -1,5 +1,6 @@
 #pragma once
 
+#include "SFML\Graphics.hpp"
 #include "obstruction.h"
 #include "entity.h"
 #include <vector>
@@ -8,7 +9,7 @@
 // where interactions and spatial relations are collectively managed
 // A Space consists of a map, a number of obstacles, and a number of
 // entities
-struct Space : Renderable {
+struct Space : sf::Drawable, sf::Transformable {
 
 	virtual ~Space();
 
@@ -21,7 +22,7 @@ struct Space : Renderable {
 	// adopt (and assume memory management of) an entity
 	void addEntity(Entity* entity);
 
-	void render(sf::RenderWindow& rw, vec2 offset) override;
+	void draw(sf::RenderTarget& rt, sf::RenderStates states) const override;
 
 	protected:
 

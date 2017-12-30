@@ -2,43 +2,38 @@
 
 struct Entity;
 
+#include "SFML\Graphics.hpp"
 #include "entity.h"
-#include "renderable.h"
 #include "vec2.h"
 #include <functional>
 
 // Obstruction is the base class to all things that have
 // a complicated raster-image physical boundary with 
 // which entities are to interact physically
-struct Obstruction : Renderable {
+struct Obstruction : sf::Drawable, sf::Transformable {
 	Obstruction(bool _open_boundary) : open_boundary(_open_boundary) {
-		position = {0, 0};
-		previous_position = {0, 0};
+		setPosition(vec2(0, 0));
+		previous_position = getPosition();
 		friction = 0.5;
 	}
 
-	// test whether a point collides with the obstruction
+	// test whether a point (in world coordinates) collides with the obstruction
 	bool hitTest(vec2 point) const;
 
 	// get the impulse exerted on a body colliding at the given point
 	// moving at the given velocity having the given mass
 	vec2 getImpulse(vec2 point, vec2 normal, Entity* entity) const;
 
-	void setPos(vec2 _pos);
-
 	void setSprite(const sf::Sprite& _image);
 
 	void setBoundary(const sf::Image& _boundary);
 
-	void render(sf::RenderWindow& rw, vec2 offset) override;
+	void draw(sf::RenderTarget& rt, sf::RenderStates states) const override;
 
 	// tick shall be called once per frame to possibly update the obstruction's state
 	void update();
 
 	virtual void tick();
-
-	// the spatial position
-	vec2 position;
 
 	// the visual appearance
 	sf::Sprite sprite;
@@ -63,7 +58,7 @@ struct Obstruction : Renderable {
 
 	// returns the distance along the given direction to the nearest point in
 	// open space, or 0 if the given point is already in open space
-	double getDistanceToBoundary(vec2 point, vec2 direction) const;
+	float getDistanceToBoundary(vec2 point, vec2 direction) const;
 
 	protected:
 	// whether the area outside the obstruction is solid

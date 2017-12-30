@@ -7,7 +7,6 @@ namespace {
 }
 
 Entity::Entity(){
-	position = {0, 0};
 	velocity = {0, 0};
 	mass = 1.0;
 	friction = 0.5;
@@ -23,7 +22,7 @@ bool Entity::collidesWith(const Obstruction* obstruction) const {
 		mat2x2 mat = rotationMatrix(angle_delta);
 
 		for (double slice = 0; slice < slices; slice += 1, radvec = mat * radvec){
-			vec2 point = position + (circle.center + radvec) * scale;
+			vec2 point = getTransform().transformPoint(circle.center + radvec);
 
 			if (obstruction->hitTest(point)){
 				return true;
@@ -46,15 +45,7 @@ bool Entity::standing() const {
 	return is_standing;
 }
 
-void Entity::setScale(float _scale){
-	scale = _scale;
-}
-
-float Entity::getScale() const {
-	return scale;
-}
-
-void Entity::move(const std::vector<Obstruction*>& obstructions){
+void Entity::moveAndCollide(const std::vector<Obstruction*>& obstructions){
 
 	// This is where gravity happens
 	velocity.y += 0.5f;
@@ -70,7 +61,7 @@ void Entity::move(const std::vector<Obstruction*>& obstructions){
 	}
 	flying_timer += 1;
 
-	position += velocity;
+	move(velocity);
 }
 
 vec2 Entity::getContactAcceleration(const Obstruction* obstruction, vec2 normal) const {
@@ -101,16 +92,17 @@ void Entity::performCollision(Obstruction* obstruction){
 			mat2x2 mat = rotationMatrix(angle_delta);
 
 			for (double slice = 0; slice < slices; slice += 1, radvec = mat * radvec){
-				vec2 point = position + (circle.center + radvec) * scale;
+				// TODO: use general transformation instead of mere position
+				vec2 point = getTransform().transformPoint(circle.center + radvec);
 
 				if (obstruction->hitTest(point)){
-					vec2 normal = obstruction->getNormalAt(point, position + center - point - velocity);
+					vec2 normal = obstruction->getNormalAt(point, -radvec);
 					total_force += obstruction->getImpulse(point, normal, this);
 					sum_normals += normal;
 					hit_points += 1;
 
-					double depth = obstruction->getDistanceToBoundary(point, normal);
-					position += (float)(std::max(0.0, depth * 1.0 - 1.0)) * normal;
+					float depth = obstruction->getDistanceToBoundary(point, normal);
+					move(std::max(0.0f, depth * 1.0f - 1.0f) * normal);
 				}
 			}
 		}

@@ -81,9 +81,6 @@
     <ClInclude Include="ImageStore.h">
       <Filter>Utility</Filter>
     </ClInclude>
-    <ClInclude Include="renderable.h">
-      <Filter>Utility</Filter>
-    </ClInclude>
     <ClInclude Include="spritesheet.h">
       <Filter>Utility</Filter>
     </ClInclude>

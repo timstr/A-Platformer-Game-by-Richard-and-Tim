@@ -2,8 +2,12 @@
 #include "obstruction.h"
 
 bool Obstruction::hitTest(vec2 point) const {
-	int x = floor(point.x - this->position.x);
-	int y = floor(point.y - this->position.y);
+	sf::Transform inv = getTransform().getInverse();
+
+	point = inv.transformPoint(point);
+
+	int x = floor(point.x - this->getPosition().x);
+	int y = floor(point.y - this->getPosition().y);
 
 	// test whether point is outside the map
 	if ((x < 0) || (x >= boundary->getSize().x) || (y < 0) || (y >= boundary->getSize().y)){
@@ -22,7 +26,7 @@ bool Obstruction::hitTest(vec2 point) const {
 
 vec2 Obstruction::getImpulse(vec2 point, vec2 normal, Entity* entity) const {
 
-	vec2 velocity = entity->velocity - position + previous_position;
+	vec2 velocity = entity->velocity - getPosition() + previous_position;
 
 	float velocity_normal = std::max(0.0, -dot(velocity, normal));
 
@@ -42,7 +46,7 @@ vec2 Obstruction::getImpulse(vec2 point, vec2 normal, Entity* entity) const {
 	//ca_obs_normal = normal * (float)std::max(0.0, dot(ca_obs, normal));
 	ca_obs_tangent *= (float)entity->friction;
 
-	vec2 ca_ent = entity->getContactAcceleration(this, normal) * entity->getScale();
+	vec2 ca_ent = entity->getContactAcceleration(this, normal) * entity->getScale().x;
 	vec2 ca_ent_normal = projectOnto(ca_ent, normal);
 	vec2 ca_ent_tangent = ca_ent - ca_ent_normal;
 	//ca_ent_normal = normal * (float)std::max(0.0, dot(ca_ent, normal));
@@ -54,10 +58,6 @@ vec2 Obstruction::getImpulse(vec2 point, vec2 normal, Entity* entity) const {
 	return impulse_normal * normal + impulse_tangent * tangent + contact_accel_impulse;
 }
 
-void Obstruction::setPos(vec2 _pos){
-	position = _pos;
-}
-
 void Obstruction::setSprite(const sf::Sprite& _sprite){
 	sprite = _sprite;
 }
@@ -66,13 +66,13 @@ void Obstruction::setBoundary(const sf::Image& _boundary){
 	boundary = &_boundary;
 }
 
-void Obstruction::render(sf::RenderWindow& rw, vec2 offset){
-	sprite.setPosition(offset + position);
-	rw.draw(sprite);
+void Obstruction::draw(sf::RenderTarget& rt, sf::RenderStates states) const {
+	states.transform *= getTransform();
+	rt.draw(sprite, states);
 }
 
 void Obstruction::update(){
-	previous_position = position;
+	previous_position = getPosition();
 	tick();
 }
 
@@ -138,7 +138,7 @@ vec2 Obstruction::getNormalAt(vec2 point, vec2 hint) const {
 	return vec2(cos(normal), sin(normal)) * (max_last ? -1.0f : 1.0f);
 }
 
-double Obstruction::getDistanceToBoundary(vec2 point, vec2 direction) const {
+float Obstruction::getDistanceToBoundary(vec2 point, vec2 direction) const {
 	double length = abs(direction);
 	if (length == 0.0){
 		return 0.0;

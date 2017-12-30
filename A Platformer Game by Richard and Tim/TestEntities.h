@@ -5,23 +5,25 @@
 
 struct TestEntity : Entity {
 	TestEntity(){
-		position = vec2(470 + (rand() % 100) * 0.01, 50 + (rand() % 100) * 0.01);
+		setPosition(vec2(470 + (rand() % 100) * 0.01, 50 + (rand() % 100) * 0.01));
 		elasticity = (rand() % 100) * 0.01;
 		friction = (rand() % 100) * 0.01;
 	}
 
-	void render(sf::RenderWindow& rw, vec2 offset) override {
+	void draw(sf::RenderTarget& rt, sf::RenderStates states) const override {
+		states.transform *= getTransform();
 		sf::CircleShape circle;
 		circle.setFillColor(sf::Color(255 * friction, 255 * elasticity, 127, 255));
 		//circle.setFillColor(sf::Color((uint32_t)std::hash<TestEntity*>{}(this) | 0xFF));
 		circle.setOutlineThickness(0.5);
 		circle.setOutlineColor(sf::Color(0xFF));
-		circle.setScale(vec2(getScale(), getScale()));
-		for (Circle& c : circles){
+
+
+		for (const Circle& c : circles){
 			circle.setRadius(c.radius);
 			circle.setPointCount(2 * pi * c.radius);
-			circle.setPosition(offset + position + (c.center - vec2(c.radius, c.radius)) * getScale());
-			rw.draw(circle);
+			circle.setPosition(c.center - vec2(c.radius, c.radius));
+			rt.draw(circle, states);
 		}
 	}
 };
@@ -65,8 +67,9 @@ struct GuyEntity : TestEntity {
 		sprite.tick();
 	}
 
-	void render(sf::RenderWindow& rw, vec2 offset) override {
-		sprite.render(rw, offset + position);
+	void draw(sf::RenderTarget& rt, sf::RenderStates states) const override {
+		states.transform *= getTransform();
+		rt.draw(sprite, states);
 	}
 
 	void updateMoves(float _run_speed, float _jump_speed){

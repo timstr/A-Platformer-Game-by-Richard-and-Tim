@@ -27,8 +27,6 @@ mat2x2 operator*(const mat2x2& l, const mat2x2& r);
 
 vec2 operator*(const mat2x2& m, const vec2& v);
 
-vec2 operator*(const vec2& l, const vec2& r);
-
 const double pi = 3.14159265358979323846264338327950288;
 
 double dot(const vec2& v1, const vec2& v2);

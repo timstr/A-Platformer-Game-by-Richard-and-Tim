@@ -2,8 +2,9 @@
 
 struct Obstruction;
 
+#include "vec2.h"
 #include "obstruction.h"
-#include "renderable.h"
+#include "SFML\Graphics.hpp"
 #include "event.h"
 #include <vector>
 
@@ -11,17 +12,18 @@ struct Obstruction;
 // obstructions as the map and obstacles
 // an Entity has a visual appearance, a rigid physical boundary
 // comprised of one or more circles, and physical mass
-struct Entity : Renderable {
+struct Entity : sf::Drawable, sf::Transformable {
 	Entity();
 
 	// translate the entity according to its velocity and possibly collide with obstructions
-	void move(const std::vector<Obstruction*>& obstructions);
+	void moveAndCollide(const std::vector<Obstruction*>& obstructions);
 
 	// get the acceleration exerted on the entity when it contacts the given obstruction
 	// normal is assumed to be a unit vector
 	virtual vec2 getContactAcceleration(const Obstruction* obstruction, vec2 normal) const;
 
-	vec2 position;
+	virtual void draw(sf::RenderTarget& rt, sf::RenderStates states) const override = 0;
+
 	vec2 velocity;
 	double mass;
 	double friction;
@@ -33,10 +35,6 @@ struct Entity : Renderable {
 	virtual void onEvent(const Event& e);
 
 	bool standing() const;
-
-	void setScale(float _scale);
-
-	float getScale() const;
 
 	protected:
 
@@ -55,7 +53,6 @@ struct Entity : Renderable {
 
 	bool is_standing = false;
 	int flying_timer = 0;
-	float scale = 1.0f;
 
 	// returns true if the entity collides with the given obstruction
 	bool collidesWith(const Obstruction* obstruction) const;

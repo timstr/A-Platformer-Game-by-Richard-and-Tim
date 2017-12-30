@@ -39,7 +39,7 @@ struct MovingObstacle : Obstacle {
 
 	void tick() override {
 		phase += speed;
-		position = getPosition(phase);
+		setPosition(getPosition(phase));
 	}
 
 	private:

@@ -18,7 +18,7 @@ void Space::tick(){
 		entity->tick();
 	}
 	for (Entity* const entity : entities){
-		entity->move(obstructions);
+		entity->moveAndCollide(obstructions);
 	}
 }
 
@@ -32,11 +32,12 @@ void Space::addEntity(Entity* entity){
 	entities.push_back(entity);
 }
 
-void Space::render(sf::RenderWindow& rw, vec2 offset){
+void Space::draw(sf::RenderTarget& rt, sf::RenderStates states) const {
+	states.transform *= getTransform();
 	for (Obstruction* obstruction : obstructions){
-		obstruction->render(rw, offset);
+		obstruction->draw(rt, states);
 	}
 	for (Entity* entity : entities){
-		entity->render(rw, offset);
+		entity->draw(rt, states);
 	}
 }

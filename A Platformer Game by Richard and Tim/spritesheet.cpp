@@ -85,23 +85,25 @@ void SpriteSheetPlayer::tick(){
 			}
 		}
 	}
+	cliprect.left = spritesheet.framesize.x * (current_frame % spritesheet.frames_per_row);
+	cliprect.top = spritesheet.framesize.y * (current_frame / spritesheet.frames_per_row);
+	sprite.setTextureRect(cliprect);
+	sprite.setPosition(-vec2(spritesheet.framecenter.x * sprite.getScale().x, spritesheet.framecenter.y * sprite.getScale().y));
+
 	timestamp = now;
 }
 
 void SpriteSheetPlayer::setScale(vec2 scale){
 	if (spritesheet.flip){
-		sprite.setScale(scale * vec2(-1.0f, 1.0f));
+		sprite.setScale(vec2(scale.x * -1.0f, scale.y));
 	} else {
 		sprite.setScale(scale);
 	}
 }
 
-void SpriteSheetPlayer::render(sf::RenderWindow& rw, vec2 offset){
-	cliprect.left = spritesheet.framesize.x * (current_frame % spritesheet.frames_per_row);
-	cliprect.top = spritesheet.framesize.y * (current_frame / spritesheet.frames_per_row);
-	sprite.setTextureRect(cliprect);
-	sprite.setPosition(offset - vec2(spritesheet.framecenter.x * sprite.getScale().x, spritesheet.framecenter.y * sprite.getScale().y));
-	rw.draw(sprite);
+void SpriteSheetPlayer::draw(sf::RenderTarget& rt, sf::RenderStates states) const {
+	states.transform *= getTransform();
+	rt.draw(sprite, states);
 }
 
 sf::Clock SpriteSheetPlayer::clock;

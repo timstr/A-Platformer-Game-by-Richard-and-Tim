@@ -36,7 +36,7 @@ struct TestSpaceWindow : ui::Window {
 
 			if (leftMouseDown() && (keyDown(sf::Keyboard::LShift) || keyDown(sf::Keyboard::RShift))){
 				for (Entity* const entity : space.entities){
-					vec2 disp = ui::getMousePos() - entity->position;
+					vec2 disp = ui::getMousePos() - entity->getPosition();
 					double dist = abs(disp);
 					if (dist > 0.0){
 						entity->velocity += disp * (float)(50.0 / pow(dist, 2));
@@ -47,7 +47,10 @@ struct TestSpaceWindow : ui::Window {
 			space.tick();
 		}
 
-		space.render(rw, offset);
+
+		sf::Transform translation;
+		translation.translate(offset);
+		rw.draw(space, translation);
 
 		label->setText(std::to_string(space.entities.size()) + " Entities");
 

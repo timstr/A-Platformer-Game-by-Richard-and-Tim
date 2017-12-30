@@ -27,8 +27,9 @@ struct Sprudo : TestEntity {
 		}
 	}
 
-	void render(sf::RenderWindow& rw, vec2 offset) override {
-		sprite.render(rw, offset + position);
+	void draw(sf::RenderTarget& rt, sf::RenderStates states) const override {
+		states.transform *= getTransform();
+		rt.draw(sprite, states);
 	}
 
 	SpriteSheetPlayer sprite;

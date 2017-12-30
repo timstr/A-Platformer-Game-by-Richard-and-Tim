@@ -14,9 +14,9 @@ struct TestCharacter : Creature {
 		friction = 0.3;
 		elasticity = 0.1;
 
-		double scale = 0.1 + (rand() % 20) * 0.01;
+		float scale = 0.1f + (rand() % 20) * 0.01f;
 
-		setScale(scale);
+		setScale(scale, scale);
 
 		addStateTransition(idle, idle, AnimationEnd, 3);
 		addStateTransition(idle, walking, AnimationEnd, 1);

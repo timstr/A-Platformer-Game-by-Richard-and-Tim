@@ -70,9 +70,9 @@ void Creature::flip(){
 	direction *= -1;
 }
 
-void Creature::render(sf::RenderWindow& rw, vec2 offset){
-	sprite.setScale(vec2(getScale() * direction, getScale()));
-	sprite.render(rw, offset + position);
+void Creature::draw(sf::RenderTarget& rt, sf::RenderStates states) const {
+	states.transform *= getTransform();
+	rt.draw(sprite, states);
 }
 
 Creature::Trigger::Trigger(int _from_state, const Event& _event){
