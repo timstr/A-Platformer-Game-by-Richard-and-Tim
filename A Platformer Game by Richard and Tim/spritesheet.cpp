@@ -46,6 +46,9 @@ Event AnimationEnd;
 
 SpriteSheetPlayer::SpriteSheetPlayer(const std::string& name, Entity* _owner) : spritesheet(SpriteSheetStore::getSpriteSheet(name)), owner(_owner) {
 	sprite.setTexture(*spritesheet.texture);
+	if (spritesheet.flip){
+		sprite.setScale(-1.0f, 1.0f);
+	}
 	cliprect.width = spritesheet.framesize.x;
 	cliprect.height = spritesheet.framesize.y;
 	current_frame = 0;
@@ -66,6 +69,7 @@ void SpriteSheetPlayer::play(const std::string& animation_name){
 		current_frame = current_animation->second.start_frame;
 	}
 	frames_carryover = 0;
+	updateClipRect();
 }
 
 void SpriteSheetPlayer::tick(){
@@ -85,25 +89,21 @@ void SpriteSheetPlayer::tick(){
 			}
 		}
 	}
-	cliprect.left = spritesheet.framesize.x * (current_frame % spritesheet.frames_per_row);
-	cliprect.top = spritesheet.framesize.y * (current_frame / spritesheet.frames_per_row);
-	sprite.setTextureRect(cliprect);
-	sprite.setPosition(-vec2(spritesheet.framecenter.x * sprite.getScale().x, spritesheet.framecenter.y * sprite.getScale().y));
+	updateClipRect();
 
 	timestamp = now;
-}
-
-void SpriteSheetPlayer::setScale(vec2 scale){
-	if (spritesheet.flip){
-		sprite.setScale(vec2(scale.x * -1.0f, scale.y));
-	} else {
-		sprite.setScale(scale);
-	}
 }
 
 void SpriteSheetPlayer::draw(sf::RenderTarget& rt, sf::RenderStates states) const {
 	states.transform *= getTransform();
 	rt.draw(sprite, states);
+}
+
+void SpriteSheetPlayer::updateClipRect(){
+	cliprect.left = spritesheet.framesize.x * (current_frame % spritesheet.frames_per_row);
+	cliprect.top = spritesheet.framesize.y * (current_frame / spritesheet.frames_per_row);
+	sprite.setTextureRect(cliprect);
+	sprite.setPosition(-vec2(spritesheet.framecenter.x * sprite.getScale().x, spritesheet.framecenter.y * sprite.getScale().y));
 }
 
 sf::Clock SpriteSheetPlayer::clock;

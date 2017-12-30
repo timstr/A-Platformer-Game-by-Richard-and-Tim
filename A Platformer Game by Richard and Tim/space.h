@@ -5,9 +5,9 @@
 #include "entity.h"
 #include <vector>
 
-// a Space is all the above-mentioned components brought together
+// a Space is where obstructions and entities come together and
 // where interactions and spatial relations are collectively managed
-// A Space consists of a map, a number of obstacles, and a number of
+// A Space consists of a map, a number of obstructions, and a number of
 // entities
 struct Space : sf::Drawable, sf::Transformable {
 

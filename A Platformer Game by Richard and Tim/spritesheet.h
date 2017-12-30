@@ -54,11 +54,11 @@ struct SpriteSheetPlayer : sf::Drawable, sf::Transformable {
 
 	void tick();
 
-	void setScale(vec2 scale);
-
 	void draw(sf::RenderTarget& rt, sf::RenderStates states) const override;
 
 	private:
+
+	void updateClipRect();
 
 	Entity* const owner;
 	float frames_carryover;

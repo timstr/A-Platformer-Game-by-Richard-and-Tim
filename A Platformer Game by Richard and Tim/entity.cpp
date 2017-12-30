@@ -92,7 +92,6 @@ void Entity::performCollision(Obstruction* obstruction){
 			mat2x2 mat = rotationMatrix(angle_delta);
 
 			for (double slice = 0; slice < slices; slice += 1, radvec = mat * radvec){
-				// TODO: use general transformation instead of mere position
 				vec2 point = getTransform().transformPoint(circle.center + radvec);
 
 				if (obstruction->hitTest(point)){

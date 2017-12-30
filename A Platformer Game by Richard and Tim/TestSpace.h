@@ -12,9 +12,9 @@
 // TODO: rename to map
 struct TestSpace : Space {
 	TestSpace(){
-		const int num_entities = 4;
+		const int num_entities = 10;
 		const int test_entites = 3;
-		const int num_sprudos = 2;
+		const int num_sprudos = 5;
 		const int num_bulbous = 2;
 		const int num_testchars = 2;
 
