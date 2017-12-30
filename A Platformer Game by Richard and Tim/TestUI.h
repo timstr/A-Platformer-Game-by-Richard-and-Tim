@@ -65,7 +65,8 @@ struct TestSpaceWindow : ui::Window {
 
 			if (leftMouseDown() && (keyDown(sf::Keyboard::LShift) || keyDown(sf::Keyboard::RShift))){
 				for (Entity* const entity : space.entities){
-					vec2 disp = ui::getMousePos() - entity->getPosition();
+					vec2 p = viewtransform.getInverse().transformPoint(localMousePos());
+					vec2 disp = p - entity->getPosition();
 					double dist = abs(disp);
 					if (dist > 0.0){
 						entity->velocity += disp * (float)(50.0 / pow(dist, 2));
@@ -95,7 +96,8 @@ struct TestSpaceWindow : ui::Window {
 
 	void onLeftClick(int clicks) override {
 		if (keyDown(sf::Keyboard::LControl) || keyDown(sf::Keyboard::RControl)){
-			space.createEntity(localMousePos());
+			vec2 p = localMousePos();
+			space.createEntity(viewtransform.getInverse().transformPoint(p));
 		}
 	}
 
