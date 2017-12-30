@@ -1,0 +1,9 @@
+framesize 353 195
+framecenter 235 160
+framesperrow 7
+framespersecond 24
+animation running 21 37
+animation idle 1 19
+animation jump 39 39
+animation swordslash 41 48
+animation runstab 50 86
