@@ -14,11 +14,11 @@ void Space::tick(){
 	for (Obstruction* obstruction : obstructions){
 		obstruction->update();
 	}
-	for (Entity* entity : entities){
-		entity->tick();
-	}
 	for (Entity* const entity : entities){
 		entity->moveAndCollide(obstructions);
+	}
+	for (Entity* entity : entities){
+		entity->tick();
 	}
 }
 

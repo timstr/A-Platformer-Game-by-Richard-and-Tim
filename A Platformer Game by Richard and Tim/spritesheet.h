@@ -54,12 +54,16 @@ struct SpriteSheetPlayer : sf::Drawable, sf::Transformable {
 
 	void tick();
 
+	void faceLeft();
+	void faceRight();
+
 	void draw(sf::RenderTarget& rt, sf::RenderStates states) const override;
 
 	private:
 
 	void updateClipRect();
 
+	bool facingright;
 	Entity* const owner;
 	float frames_carryover;
 	sf::Time timestamp;

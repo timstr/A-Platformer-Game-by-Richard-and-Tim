@@ -45,6 +45,7 @@ void SpriteSheet::setFlip(bool _flip){
 Event AnimationEnd;
 
 SpriteSheetPlayer::SpriteSheetPlayer(const std::string& name, Entity* _owner) : spritesheet(SpriteSheetStore::getSpriteSheet(name)), owner(_owner) {
+	facingright = true;
 	sprite.setTexture(*spritesheet.texture);
 	if (spritesheet.flip){
 		sprite.setScale(-1.0f, 1.0f);
@@ -92,6 +93,19 @@ void SpriteSheetPlayer::tick(){
 	updateClipRect();
 
 	timestamp = now;
+}
+
+void SpriteSheetPlayer::faceLeft(){
+	if (facingright){
+		scale(-1.0f, 1.0f);
+		facingright = false;
+	}
+}
+void SpriteSheetPlayer::faceRight(){
+	if (!facingright){
+		scale(-1.0f, 1.0f);
+		facingright = true;
+	}
 }
 
 void SpriteSheetPlayer::draw(sf::RenderTarget& rt, sf::RenderStates states) const {

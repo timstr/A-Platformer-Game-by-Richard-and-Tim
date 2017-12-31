@@ -50,18 +50,18 @@ struct TestSpaceWindow : ui::Window {
 		 }
 
 		if (play){
-			float speed = 0.0f;
-			float jump = 0.0f;
 			if (keyDown(sf::Keyboard::Left)){
-				speed -= 1;
+				space.guy->runLeft();
 			}
 			if (keyDown(sf::Keyboard::Right)){
-				speed += 1;
+				space.guy->runRight();
 			}
 			if (keyDown(sf::Keyboard::Up)){
-				jump += 10;
+				space.guy->jump();
 			}
-			space.guy->updateMoves(speed, jump);
+			if (keyDown(sf::Keyboard::Return)){
+				space.guy->attack();
+			}
 
 			if (leftMouseDown() && (keyDown(sf::Keyboard::LShift) || keyDown(sf::Keyboard::RShift))){
 				for (Entity* const entity : space.entities){
