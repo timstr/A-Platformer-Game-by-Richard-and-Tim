@@ -1,0 +1,12 @@
+framesize 203 195
+framecenter 101 180
+framesperrow 11
+facing left
+animation standing 1 1
+animation running 2 11
+animation walking 12 27
+animation attack 28 39
+animation sleeping 40 64
+animation spooked 65 72
+animation death 73 87
+animation grazing 88 98
