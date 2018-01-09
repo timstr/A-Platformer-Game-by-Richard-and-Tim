@@ -75,9 +75,6 @@
     <ClInclude Include="space.h">
       <Filter>Mechanics</Filter>
     </ClInclude>
-    <ClInclude Include="gui.h">
-      <Filter>Utility</Filter>
-    </ClInclude>
     <ClInclude Include="ImageStore.h">
       <Filter>Utility</Filter>
     </ClInclude>

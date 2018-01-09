@@ -1,6 +1,6 @@
 #pragma once
 
-#include "gui.h"
+#include <gui\gui.h>
 #include "TestSpace.h"
 
 sf::Font& getFont(){
@@ -19,7 +19,7 @@ struct TestSpaceWindow : ui::Window {
 		addChildWindow(label = new ui::Text("-", getFont()));
 	}
 
-	void render(sf::RenderWindow& rw, vec2 offset) override {
+	void render(sf::RenderWindow& rw) override {
 		 if (keyDown(sf::Keyboard::Equal)){
 			 vec2 center = viewtransform.getInverse().transformPoint(size * 0.5f);
 			 viewtransform.scale(vec2(scale_step, scale_step), center);
@@ -79,13 +79,12 @@ struct TestSpaceWindow : ui::Window {
 
 
 		sf::Transform translation;
-		translation.translate(offset);
 		translation *= viewtransform;
 		rw.draw(space, translation);
 
 		label->setText(std::to_string(space.entities.size()) + " Entities");
 
-		renderChildWindows(rw, offset);
+		renderChildWindows(rw);
 	}
 
 	void onKeyDown(sf::Keyboard::Key key) override {
