@@ -144,7 +144,7 @@
     <ClCompile Include="character.cpp" />
     <ClCompile Include="creature.cpp" />
     <ClCompile Include="entity.cpp" />
-    <ClCompile Include="event.cpp" />
+    <ClCompile Include="creatureevent.cpp" />
     <ClCompile Include="ImageStore.cpp" />
     <ClCompile Include="item.cpp" />
     <ClCompile Include="map.cpp" />
@@ -162,8 +162,9 @@
     <ClInclude Include="character.h" />
     <ClInclude Include="creature.h" />
     <ClInclude Include="entity.h" />
-    <ClInclude Include="event.h" />
+    <ClInclude Include="creatureevent.h" />
     <ClInclude Include="gui.h" />
+    <ClInclude Include="intermob.h" />
     <ClInclude Include="item.h" />
     <ClInclude Include="map.h" />
     <ClInclude Include="obstacle.h" />

@@ -49,10 +49,10 @@ struct TestCharacter : Creature {
 		addStateTransition(leaping, running, Standing, 2);
 
 
-		setAnimation(idle, "idle");
-		setAnimation(walking, "walking");
-		setAnimation(running, "running");
-		setAnimation(leaping, "leaping");
+		setStateAnimation(idle, "idle");
+		setStateAnimation(walking, "walking");
+		setStateAnimation(running, "running");
+		setStateAnimation(leaping, "leaping");
 
 		setState(idle);
 	}

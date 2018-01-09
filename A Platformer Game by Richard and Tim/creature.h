@@ -18,11 +18,19 @@ struct Creature : Character {
 	virtual void update();
 
 	void addStateTransition(int from_state, int to_state, const Event& trigger_event, double relative_probability = 1.0, const std::function<void()>& onComplete = {});
+	void addStateTransition(int to_state, const Event& trigger_event, const std::function<void()> onComplete = {});
 
-	void setAnimation(int state, const std::string& animation);
+	template<typename CreatureType>
+	CreatureType* as() const {
+		static_assert(std::is_base_of<Creature, CreatureType>::value, "The provided CreatureType must derive from Creature");
+		return dynamic_cast<CreatureType*>(this);
+	}
+
+
+
+	void setStateAnimation(int state, const std::string& animation);
 
 	void setState(int state);
-
 	int getState() const;
 
 	void flip();
@@ -43,7 +51,6 @@ struct Creature : Character {
 
 		int from_state;
 		int event_id;
-		//const Event::Event& event;
 
 		friend bool operator<(const Trigger& l, const Trigger& r){
 			if (l.from_state < r.from_state){

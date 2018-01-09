@@ -50,7 +50,7 @@ void Creature::addStateTransition(int from_state, int to_state, const Event& tri
 	transitions.insert(std::make_pair(Trigger(from_state, trigger_event), Transition(to_state, relative_probability, onComplete)));
 }
 
-void Creature::setAnimation(int state, const std::string& animation){
+void Creature::setStateAnimation(int state, const std::string& animation){
 	animations[state] = animation;
 }
 

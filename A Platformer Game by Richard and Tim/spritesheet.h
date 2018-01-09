@@ -56,6 +56,7 @@ struct SpriteSheetPlayer : sf::Drawable, sf::Transformable {
 
 	void faceLeft();
 	void faceRight();
+	void flip();
 
 	void draw(sf::RenderTarget& rt, sf::RenderStates states) const override;
 

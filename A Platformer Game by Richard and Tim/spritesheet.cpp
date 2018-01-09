@@ -107,6 +107,10 @@ void SpriteSheetPlayer::faceRight(){
 		facingright = true;
 	}
 }
+void SpriteSheetPlayer::flip(){
+	facingright = !facingright;
+	scale(-1.0f, 1.0f);
+}
 
 void SpriteSheetPlayer::draw(sf::RenderTarget& rt, sf::RenderStates states) const {
 	states.transform *= getTransform();

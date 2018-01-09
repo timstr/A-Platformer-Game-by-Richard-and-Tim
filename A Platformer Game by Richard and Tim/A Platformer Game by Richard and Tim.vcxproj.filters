@@ -43,7 +43,7 @@
     <ClCompile Include="SpriteSheetStore.cpp">
       <Filter>Utility</Filter>
     </ClCompile>
-    <ClCompile Include="event.cpp">
+    <ClCompile Include="creatureevent.cpp">
       <Filter>Mechanics</Filter>
     </ClCompile>
   </ItemGroup>
@@ -114,7 +114,10 @@
     <ClInclude Include="testcharacter.h">
       <Filter>Test</Filter>
     </ClInclude>
-    <ClInclude Include="event.h">
+    <ClInclude Include="intermob.h">
+      <Filter>Mechanics</Filter>
+    </ClInclude>
+    <ClInclude Include="creatureevent.h">
       <Filter>Mechanics</Filter>
     </ClInclude>
   </ItemGroup>
