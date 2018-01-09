@@ -17,8 +17,8 @@ struct Creature : Character {
 
 	virtual void update();
 
-	void addStateTransition(int from_state, int to_state, const Event& trigger_event, double relative_probability = 1.0, const std::function<void()>& onComplete = {});
-	void addStateTransition(int to_state, const Event& trigger_event, const std::function<void()> onComplete = {});
+	void addStateTransition(uint8_t from_state, uint8_t to_state, const Event& trigger_event, double relative_probability = 1.0, const std::function<void()>& onComplete = {});
+	void addStateTransition(uint8_t to_state, const Event& trigger_event, const std::function<void()> onComplete = {});
 
 	template<typename CreatureType>
 	CreatureType* as() const {
@@ -28,9 +28,9 @@ struct Creature : Character {
 
 
 
-	void setStateAnimation(int state, const std::string& animation);
+	void setStateAnimation(uint8_t state, const std::string& animation);
 
-	void setState(int state);
+	void setState(uint8_t state);
 	int getState() const;
 
 	void flip();

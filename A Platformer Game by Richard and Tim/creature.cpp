@@ -7,6 +7,15 @@ Creature::Creature(const std::string& name) : sprite(name, this) {
 }
 
 void Creature::onEvent(const Event& e){
+	auto tr = transitions.find(Trigger(-1, e));
+	if (tr != transitions.end()){
+		setState(tr->second.to_state);
+		if (tr->second.onComplete){
+			tr->second.onComplete();
+		}
+		return;
+	}
+
 	Trigger trigger = Trigger(current_state, e);
 
 	auto begin = transitions.lower_bound(trigger);
@@ -46,15 +55,18 @@ void Creature::update(){
 
 }
 
-void Creature::addStateTransition(int from_state, int to_state, const Event& trigger_event, double relative_probability, const std::function<void()>& onComplete){
+void Creature::addStateTransition(uint8_t from_state, uint8_t to_state, const Event& trigger_event, double relative_probability, const std::function<void()>& onComplete){
 	transitions.insert(std::make_pair(Trigger(from_state, trigger_event), Transition(to_state, relative_probability, onComplete)));
 }
+void Creature::addStateTransition(uint8_t to_state, const Event& trigger_event, const std::function<void()> onComplete){
+	transitions.insert(std::make_pair(Trigger(-1, trigger_event), Transition(to_state, 1.0, onComplete)));
+}
 
-void Creature::setStateAnimation(int state, const std::string& animation){
+void Creature::setStateAnimation(uint8_t state, const std::string& animation){
 	animations[state] = animation;
 }
 
-void Creature::setState(int state){
+void Creature::setState(uint8_t state){
 	auto it = animations.find(state);
 	if (it != animations.end()){
 		sprite.play(it->second);
