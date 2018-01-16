@@ -46,7 +46,7 @@ struct ComplexEntity : TestEntity {
 };
 
 struct GuyEntity : TestEntity {
-	GuyEntity() : sprite("playerchar", this){
+	GuyEntity() : sprite("playerchar"){
 		addCircle(Circle(vec2(0, -10), 20));
 		addCircle(Circle({0, -40}, 30));
 		friction = 0.3;
@@ -59,7 +59,7 @@ struct GuyEntity : TestEntity {
 	vec2 getContactAcceleration(const Obstruction* obstruction, vec2 normal) const override {
 		vec2 accel = {0, 0};
 		accel += run_speed * vec2(1, 0);
-		accel += vec2(0, jump_speed * -std::max(0.0, dot(normal, {0, -1})));
+		accel += vec2(0, jump_speed * -std::max(0.0f, dot(normal, {0, -1})));
 		return accel;
 	}
 

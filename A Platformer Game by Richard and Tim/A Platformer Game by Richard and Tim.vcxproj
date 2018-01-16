@@ -174,12 +174,14 @@
     <ClInclude Include="spritesheet.h" />
     <ClInclude Include="SpriteSheetStore.h" />
     <ClInclude Include="sprudo.h" />
+    <ClInclude Include="testbird.h" />
     <ClInclude Include="testcharacter.h" />
     <ClInclude Include="TestEntities.h" />
     <ClInclude Include="TestMap.h" />
     <ClInclude Include="TestObstacles.h" />
     <ClInclude Include="TestSpace.h" />
     <ClInclude Include="TestUI.h" />
+    <ClInclude Include="testworm.h" />
     <ClInclude Include="vec2.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

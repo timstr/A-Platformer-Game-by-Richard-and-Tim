@@ -4,9 +4,6 @@
     <ClCompile Include="character.cpp">
       <Filter>Mechanics</Filter>
     </ClCompile>
-    <ClCompile Include="creature.cpp">
-      <Filter>Mechanics</Filter>
-    </ClCompile>
     <ClCompile Include="entity.cpp">
       <Filter>Mechanics</Filter>
     </ClCompile>
@@ -46,12 +43,12 @@
     <ClCompile Include="event.cpp">
       <Filter>Mechanics</Filter>
     </ClCompile>
+    <ClCompile Include="creature.cpp">
+      <Filter>Creatures</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="character.h">
-      <Filter>Mechanics</Filter>
-    </ClInclude>
-    <ClInclude Include="creature.h">
       <Filter>Mechanics</Filter>
     </ClInclude>
     <ClInclude Include="entity.h">
@@ -117,6 +114,15 @@
     <ClInclude Include="event.h">
       <Filter>Mechanics</Filter>
     </ClInclude>
+    <ClInclude Include="creature.h">
+      <Filter>Creatures</Filter>
+    </ClInclude>
+    <ClInclude Include="testbird.h">
+      <Filter>Test</Filter>
+    </ClInclude>
+    <ClInclude Include="testworm.h">
+      <Filter>Test</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Mechanics">
@@ -127,6 +133,9 @@
     </Filter>
     <Filter Include="Utility">
       <UniqueIdentifier>{393a7695-d532-49bc-89d5-6b4b1c7fd45b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Creatures">
+      <UniqueIdentifier>{83caa385-b475-4d3c-85b3-0d642db7ed53}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

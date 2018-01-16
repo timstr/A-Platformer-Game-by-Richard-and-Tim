@@ -28,7 +28,7 @@ vec2 Obstruction::getImpulse(vec2 point, vec2 normal, Entity* entity) const {
 
 	vec2 velocity = entity->velocity - getPosition() + previous_position;
 
-	float velocity_normal = std::max(0.0, -dot(velocity, normal));
+	float velocity_normal = std::max(0.0f, -dot(velocity, normal));
 
 	float impulse_normal = entity->mass * velocity_normal * (1 + entity->elasticity);
 

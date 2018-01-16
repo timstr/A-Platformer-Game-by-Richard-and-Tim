@@ -5,9 +5,14 @@
 
 #include <iostream>
 
+struct TestCharacter;
+
+CreatureTypeT<TestCharacter> TestCharacterType;
+
 struct TestCharacter : Creature {
 	// TODO: move the spritesheetplayer into the Creature class and couple animations and state machinery more tightly?
 	TestCharacter() : Creature("char1") {
+		setType(TestCharacterType);
 		addCircle(Circle({0, -150}, 50));
 		addCircle(Circle({0, 0}, 50));
 		addCircle(Circle({0, 170}, 50));
@@ -21,13 +26,11 @@ struct TestCharacter : Creature {
 		addStateTransition(idle, idle, AnimationEnd, 3);
 		addStateTransition(idle, walking, AnimationEnd, 1);
 		addStateTransition(idle, walking, AnimationEnd, 1, [this]{
-			direction *= -1;
 			flip();
 		});
 
 		addStateTransition(walking, walking, AnimationEnd, 3);
 		addStateTransition(walking, walking, AnimationEnd, 0.5,  [this]{
-			direction *= -1;
 			flip();
 		});
 		addStateTransition(walking, idle, AnimationEnd, 1);
@@ -60,9 +63,9 @@ struct TestCharacter : Creature {
 	vec2 getContactAcceleration(const Obstruction* obstruction, vec2 normal) const override {
 		switch (getState()){
 			case walking:
-				return vec2(2 * direction, 0);
+				return vec2(2 * getDirection(), 0);
 			case running:
-				return vec2(8 * direction, 0);
+				return vec2(8 * getDirection(), 0);
 			case jump:
 				return vec2(0, -(20 + rand() % 60));
 			default:
@@ -72,13 +75,11 @@ struct TestCharacter : Creature {
 
 	void update() override {
 		if (getState() == leaping){
-			velocity += vec2(direction * 0.1, 0);
+			velocity += vec2(getDirection() * 0.1, 0);
 		}
 	}
 
 	private:
-
-	int direction = 1;
 
 	enum States {
 		idle,

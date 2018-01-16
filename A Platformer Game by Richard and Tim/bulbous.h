@@ -5,7 +5,7 @@
 #include "SpriteSheetStore.h"
 
 struct Bulbous : TestEntity {
-	Bulbous() : sprite("bulbous", this) {
+	Bulbous() : sprite("bulbous") {
 		addCircle(Circle(vec2(0, -15), 20));
 		friction = 0.35;
 		elasticity = 0.1;
@@ -16,7 +16,7 @@ struct Bulbous : TestEntity {
 	}
 
 	vec2 getContactAcceleration(const Obstruction* obstruction, vec2 normal) const {
-		return vec2(direction * std::max(0.0, dot(normal, vec2(0, -0.2))), 0);
+		return vec2(direction * std::max(0.0f, dot(normal, vec2(0, -0.2))), 0);
 	}
 
 	void tick() override {

@@ -1,0 +1,6 @@
+framesize 132 36
+framecenter 66 36
+framesperrow 7
+framespersecond 10
+animation idle 1 1
+animation worming 2 7

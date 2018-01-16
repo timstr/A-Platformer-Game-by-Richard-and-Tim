@@ -19,7 +19,7 @@ struct BoostObstacle : Obstacle {
 	}
 
 	vec2 getContactAcceleration(const Entity* entity, vec2 normal) const override {
-		double align = std::max(0.0, dot(normal, vec2(0, -1)));
+		double align = std::max(0.0f, dot(normal, vec2(0, -1)));
 		return vec2(2.0 * align, 0.0);
 	}
 };

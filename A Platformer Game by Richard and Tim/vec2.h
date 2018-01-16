@@ -29,9 +29,9 @@ vec2 operator*(const mat2x2& m, const vec2& v);
 
 const double pi = 3.14159265358979323846264338327950288;
 
-double dot(const vec2& v1, const vec2& v2);
+float dot(const vec2& v1, const vec2& v2);
 
-double cross(const vec2& v1, const vec2& v2);
+float cross(const vec2& v1, const vec2& v2);
 
 vec2 projectOnto(const vec2& v1, const vec2& v2);
 

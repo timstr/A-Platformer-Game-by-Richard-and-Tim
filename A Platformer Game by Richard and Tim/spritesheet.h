@@ -48,7 +48,9 @@ struct SpriteSheet {
 extern Event AnimationEnd;
 
 struct SpriteSheetPlayer : sf::Drawable, sf::Transformable {
-	SpriteSheetPlayer(const std::string& name, Entity* _owner);
+	SpriteSheetPlayer(const std::string& name, const std::function<void()>& _onComplete = {});
+
+	void setOnComplete(const std::function<void()>& _onComplete);
 
 	void play(const std::string& animation_name);
 
@@ -65,7 +67,6 @@ struct SpriteSheetPlayer : sf::Drawable, sf::Transformable {
 	void updateClipRect();
 
 	bool facingright;
-	Entity* const owner;
 	float frames_carryover;
 	sf::Time timestamp;
 	const SpriteSheet& spritesheet;
@@ -73,5 +74,7 @@ struct SpriteSheetPlayer : sf::Drawable, sf::Transformable {
 	sf::IntRect cliprect;
 	int current_frame;
 	std::map<std::string, SpriteSheet::Animation>::const_iterator current_animation;
+	std::function<void()> onComplete;
+
 	static sf::Clock clock;
 };

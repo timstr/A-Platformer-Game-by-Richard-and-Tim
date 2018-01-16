@@ -2,8 +2,15 @@
 
 #include "creature.h"
 
-Creature::Creature(const std::string& name) : sprite(name, this) {
+Creature::Creature(const std::string& name) : sprite(name) {
+	type = nullptr;
+	sprite.setOnComplete([this]{
+		this->onEvent(AnimationEnd);
+	});
+}
 
+void Creature::setType(const CreatureType& _type){
+	type = &_type;
 }
 
 void Creature::onEvent(const Event& e){
@@ -78,8 +85,37 @@ int Creature::getState() const {
 	return current_state;
 }
 
+void Creature::notice(Creature* creature){
+	const CreatureType* t = creature->type;
+	while (t){
+		auto it = type_handlers.find(t);
+		if (it != type_handlers.end()){
+			it->second(creature);
+			return;
+		}
+		t = t->getBaseType();
+	}
+}
+
+void Creature::onNotice(const CreatureType& creaturetype, const std::function<void(Creature*)>& handler){
+	type_handlers[&creaturetype] = handler;
+}
+
 void Creature::flip(){
+	sprite.flip();
 	direction *= -1;
+}
+
+void Creature::setDirection(float dir){
+	if (dir >= 0.0f){
+		direction = 1;
+	} else {
+		direction = -1;
+	}
+}
+
+float Creature::getDirection() const {
+	return direction;
 }
 
 void Creature::draw(sf::RenderTarget& rt, sf::RenderStates states) const {

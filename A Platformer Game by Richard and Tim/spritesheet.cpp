@@ -44,7 +44,8 @@ void SpriteSheet::setFlip(bool _flip){
 
 Event AnimationEnd;
 
-SpriteSheetPlayer::SpriteSheetPlayer(const std::string& name, Entity* _owner) : spritesheet(SpriteSheetStore::getSpriteSheet(name)), owner(_owner) {
+SpriteSheetPlayer::SpriteSheetPlayer(const std::string& name, const std::function<void()>& _onComplete)
+	: spritesheet(SpriteSheetStore::getSpriteSheet(name)) {
 	facingright = true;
 	sprite.setTexture(*spritesheet.texture);
 	if (spritesheet.flip){
@@ -56,6 +57,10 @@ SpriteSheetPlayer::SpriteSheetPlayer(const std::string& name, Entity* _owner) : 
 	current_animation = spritesheet.animations.end();
 	timestamp = clock.getElapsedTime();
 	frames_carryover = 0;
+}
+
+void SpriteSheetPlayer::setOnComplete(const std::function<void()>& _onComplete){
+	onComplete = _onComplete;
 }
 
 void SpriteSheetPlayer::play(const std::string& animation_name){
@@ -85,7 +90,9 @@ void SpriteSheetPlayer::tick(){
 		for (; frames_carryover > 1; frames_carryover -= 1){
 			current_frame += 1;
 			if (current_frame > current_animation->second.end_frame){
-				owner->onEvent(AnimationEnd);
+				if (onComplete){
+					onComplete();
+				}
 				current_frame = current_animation->second.start_frame;
 			}
 		}

@@ -23,11 +23,11 @@ vec2 operator*(const mat2x2& m, const vec2& v){
 	);
 }
 
-double dot(const vec2& v1, const vec2& v2){
+float dot(const vec2& v1, const vec2& v2){
 	return (v1.x * v2.x + v1.y * v2.y);
 }
 
-double cross(const vec2& v1, const vec2& v2){
+float cross(const vec2& v1, const vec2& v2){
 	return (v1.x * v2.y - v1.y * v2.x);
 }
 
