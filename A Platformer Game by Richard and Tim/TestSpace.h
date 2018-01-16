@@ -17,14 +17,15 @@ struct TestSpace : Space {
 	TestSpace(){
 		vec2 place_to_be = vec2(300, 100);
 
-		addThings<SimpleEntity>(10, place_to_be, true);
-		addThings<TestEntity>(3, place_to_be, true);
-		addThings<ComplexEntity>(3, place_to_be, true);
-		addThings<Sprudo>(5, place_to_be);
-		addThings<TestCharacter>(3, place_to_be);
-		addThings<Bulbous>(2, place_to_be);
-		addThings<TestBird>(15, place_to_be);
-		addThings<TestWorm>(15, place_to_be, true);
+		addEntities<SimpleEntity>(0, place_to_be, true);
+		addEntities<TestEntity>(0, place_to_be, true);
+		addEntities<ComplexEntity>(0, place_to_be, true);
+		addEntities<Sprudo>(0, place_to_be);
+		addEntities<Bulbous>(0, place_to_be);
+
+		addCreatures<TestCharacter>(0, place_to_be);
+		addCreatures<TestBird>(1, place_to_be);
+		addCreatures<TestWorm>(2, place_to_be, true);
 
 		guy = new GuyEntity();
 		addEntity(guy);
@@ -46,7 +47,7 @@ struct TestSpace : Space {
 	}
 
 	template<typename EntityT>
-	void addThings(size_t count, vec2 position, bool random_velo = false){
+	void addEntities(size_t count, vec2 position, bool random_velo = false){
 		static_assert(std::is_base_of<Entity, EntityT>::value, "Please give me an Entity instead.");
 		for (size_t i = 0; i < count; i++){
 			Entity* ent = new EntityT();
@@ -56,6 +57,20 @@ struct TestSpace : Space {
 			}
 			addEntity(ent);
 			entities.push_back(ent);
+		}
+	}
+
+	template<typename EntityT>
+	void addCreatures(size_t count, vec2 position, bool random_velo = false){
+		static_assert(std::is_base_of<Creature, EntityT>::value, "Please give me an Creature instead.");
+		for (size_t i = 0; i < count; i++){
+			Creature* creature = new EntityT();
+			creature->setPosition(position);
+			if (random_velo){
+				creature->velocity = vec2((((rand() % 100) - 50) / 10.0), (((rand() % 100) - 50) / 10.0));
+			}
+			addCreature(creature);
+			entities.push_back(creature);
 		}
 	}
 

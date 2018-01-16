@@ -107,15 +107,24 @@ void Creature::flip(){
 }
 
 void Creature::setDirection(float dir){
-	if (dir >= 0.0f){
+	if (dir >= 0.0f && direction != 1){
+		sprite.flip();
 		direction = 1;
-	} else {
+	} else if (dir < 0 && direction != -1){
+		sprite.flip();
 		direction = -1;
 	}
 }
 
 float Creature::getDirection() const {
 	return direction;
+}
+
+void Creature::setAwarenessRadius(float rad){
+	awareness_radius = abs(rad);
+}
+float Creature::getAwarenessRadius() const {
+	return awareness_radius;
 }
 
 void Creature::draw(sf::RenderTarget& rt, sf::RenderStates states) const {

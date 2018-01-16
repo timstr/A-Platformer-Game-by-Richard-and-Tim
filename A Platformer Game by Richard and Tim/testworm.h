@@ -11,7 +11,7 @@ struct TestWorm : Creature {
 		elasticity = 0.05;
 		friction = 0.5;
 
-		setScale(0.3, 0.3);
+		setScale(0.7, 0.7);
 
 		setType(TestWormType);
 		addCircle(Circle(vec2(0, -10), 10));

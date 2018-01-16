@@ -83,6 +83,9 @@ struct Creature : Character {
 	void setDirection(float dir);
 	float getDirection() const;
 
+	void setAwarenessRadius(float rad);
+	float getAwarenessRadius() const;
+
 	void draw(sf::RenderTarget& rt, sf::RenderStates states) const override;
 
 	protected:
@@ -93,6 +96,7 @@ struct Creature : Character {
 
 	int current_state = -1;
 	int direction = 1;
+	float awareness_radius;
 
 	struct Trigger {
 		Trigger(int _from_state, const Event& _event);
