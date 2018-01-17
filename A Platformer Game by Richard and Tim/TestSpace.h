@@ -24,8 +24,8 @@ struct TestSpace : Space {
 		addEntities<Bulbous>(0, place_to_be);
 
 		addCreatures<TestCharacter>(0, place_to_be);
-		addCreatures<TestBird>(1, place_to_be);
-		addCreatures<TestWorm>(2, place_to_be, true);
+		addCreatures<TestBird>(10, place_to_be);
+		addCreatures<TestWorm>(20, place_to_be, true);
 
 		guy = new GuyEntity();
 		addEntity(guy);
@@ -39,8 +39,8 @@ struct TestSpace : Space {
 		//addObstruction(boost = new BoostObstacle());
 		//boost->setPosition(vec2(500, 500));
 
-		//addObstruction(new MovingObstacle({400, 350}, {400, 475}, 100));
-		//addObstruction(new MovingObstacle({600, 300}, {700, 300}, 100));
+		addObstruction(new MovingObstacle({400, 350}, {400, 475}, 100));
+		addObstruction(new MovingObstacle({600, 300}, {700, 300}, 100));
 
 		//addObstruction(new RampObstacle());
 		//addObstruction(new MovingObstacle({50, 150}, {700, 300}, 250));

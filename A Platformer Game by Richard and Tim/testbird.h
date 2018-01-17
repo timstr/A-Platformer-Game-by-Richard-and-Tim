@@ -12,7 +12,7 @@ struct TestBird : Creature {
 		setType(TestBirdType);
 		setAwarenessRadius(250);
 		onNotice(TestWormType, [this](Creature* creature){
-			if (getState() != Hunting){
+			if (getState() != Hunting && getState() != Watching && getState() != Eating){
 				TestWorm* worm = dynamic_cast<TestWorm*>(creature);
 				this->prey = worm;
 				setState(Hunting);
@@ -40,10 +40,15 @@ struct TestBird : Creature {
 		addStateTransition(Hunting, Idle, Tick, 0.1, [this]{
 			prey = nullptr;
 		});
+		addStateTransition(Watching, Watching, Tick, 10);
+		addStateTransition(Watching, Eating, Tick, 0.1);
+		addStateTransition(Eating, Idle, AnimationEnd);
 
 		setStateAnimation(Idle, "idle");
 		setStateAnimation(Flying, "flying");
 		setStateAnimation(Hunting, "sneaking");
+		setStateAnimation(Watching, "watching");
+		setStateAnimation(Eating, "eating");
 
 		setState(Idle);
 	}
@@ -69,9 +74,20 @@ struct TestBird : Creature {
 					float diff = prey->getPosition().x - getPosition().x;
 					if (abs(diff) > 20.0f){
 						setDirection(diff);
+					} else {
+						setState(Watching);
 					}
 				}
-
+				break;
+			case Watching:
+				if (prey){
+					float diff = prey->getPosition().x - getPosition().x;
+					if (abs(diff) > 50.0f){
+						setState(Hunting);
+					}
+				} else {
+					setState(Idle);
+				}
 				break;
 		}
 	}
@@ -83,6 +99,8 @@ struct TestBird : Creature {
 	enum State {
 		Idle,
 		Flying,
-		Hunting
+		Hunting,
+		Watching,
+		Eating
 	};
 };
