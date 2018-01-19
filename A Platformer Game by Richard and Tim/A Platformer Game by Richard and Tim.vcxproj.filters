@@ -123,6 +123,9 @@
     <ClInclude Include="testworm.h">
       <Filter>Test</Filter>
     </ClInclude>
+    <ClInclude Include="destructible.h">
+      <Filter>Mechanics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Mechanics">

@@ -10,7 +10,6 @@ struct TestCharacter;
 CreatureTypeT<TestCharacter> TestCharacterType;
 
 struct TestCharacter : Creature {
-	// TODO: move the spritesheetplayer into the Creature class and couple animations and state machinery more tightly?
 	TestCharacter() : Creature("char1") {
 		setType(TestCharacterType);
 		addCircle(Circle({0, -150}, 50));

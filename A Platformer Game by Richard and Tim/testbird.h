@@ -11,10 +11,9 @@ struct TestBird : Creature {
 	TestBird() : Creature("bird") {
 		setType(TestBirdType);
 		setAwarenessRadius(250);
-		onNotice(TestWormType, [this](Creature* creature){
+		onNotice(TestWormType, [this](std::weak_ptr<Creature> creature){
 			if (getState() != Hunting && getState() != Watching && getState() != Eating){
-				TestWorm* worm = dynamic_cast<TestWorm*>(creature);
-				this->prey = worm;
+				this->prey = creature;
 				setState(Hunting);
 			}
 		});
@@ -38,11 +37,16 @@ struct TestBird : Creature {
 		addStateTransition(Flying, Idle, Tick, 1);
 		addStateTransition(Hunting, Hunting, Tick, 10);
 		addStateTransition(Hunting, Idle, Tick, 0.1, [this]{
-			prey = nullptr;
+			prey.reset();
 		});
 		addStateTransition(Watching, Watching, Tick, 10);
 		addStateTransition(Watching, Eating, Tick, 0.1);
-		addStateTransition(Eating, Idle, AnimationEnd);
+		addStateTransition(Eating, Idle, AnimationEnd, 1, [this]{
+			if (auto p = prey.lock()){
+				p->destroy();
+				prey.reset();
+			}
+		});
 
 		setStateAnimation(Idle, "idle");
 		setStateAnimation(Flying, "flying");
@@ -70,8 +74,8 @@ struct TestBird : Creature {
 				velocity.x += (rand() % 101) * 0.01f * getDirection();
 				break;
 			case Hunting:
-				if (prey){
-					float diff = prey->getPosition().x - getPosition().x;
+				if (auto p = prey.lock()){
+					float diff = p->getPosition().x - getPosition().x;
 					if (abs(diff) > 20.0f){
 						setDirection(diff);
 					} else {
@@ -80,10 +84,12 @@ struct TestBird : Creature {
 				}
 				break;
 			case Watching:
-				if (prey){
-					float diff = prey->getPosition().x - getPosition().x;
+				if (auto p = prey.lock()){
+					float diff = p->getPosition().x - getPosition().x;
 					if (abs(diff) > 50.0f){
 						setState(Hunting);
+					} else if (abs(diff) > 20.0f){
+						setDirection(diff);
 					}
 				} else {
 					setState(Idle);
@@ -94,7 +100,7 @@ struct TestBird : Creature {
 
 	private:
 
-	Creature* prey = nullptr;
+	std::weak_ptr<Creature> prey;
 
 	enum State {
 		Idle,

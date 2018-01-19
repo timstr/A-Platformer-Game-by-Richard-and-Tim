@@ -50,26 +50,31 @@ struct TestSpaceWindow : ui::Window {
 		 }
 
 		if (play){
-			if (keyDown(sf::Keyboard::Left)){
-				space.guy->runLeft();
-			}
-			if (keyDown(sf::Keyboard::Right)){
-				space.guy->runRight();
-			}
-			if (keyDown(sf::Keyboard::Up)){
-				space.guy->jump();
-			}
-			if (keyDown(sf::Keyboard::Return)){
-				space.guy->attack();
+			if (auto sguy = space.guy.lock()){
+				if (keyDown(sf::Keyboard::Left)){
+					sguy->runLeft();
+				}
+				if (keyDown(sf::Keyboard::Right)){
+					sguy->runRight();
+				}
+				if (keyDown(sf::Keyboard::Up)){
+					sguy->jump();
+				}
+				if (keyDown(sf::Keyboard::Return)){
+					sguy->attack();
+				}
 			}
 
+			// gravitation mouse fling
 			if (leftMouseDown() && (keyDown(sf::Keyboard::LShift) || keyDown(sf::Keyboard::RShift))){
-				for (Entity* const entity : space.entities){
-					vec2 p = viewtransform.getInverse().transformPoint(localMousePos());
-					vec2 disp = p - entity->getPosition();
-					double dist = abs(disp);
-					if (dist > 0.0){
-						entity->velocity += disp * (float)(50.0 / pow(dist, 2));
+				for (const auto& ent : space.entities){
+					if (auto entity = ent.lock()){
+						vec2 p = viewtransform.getInverse().transformPoint(localMousePos());
+						vec2 disp = p - entity->getPosition();
+						double dist = abs(disp);
+						if (dist > 0.0){
+							entity->velocity += disp * (float)(50.0 / pow(dist, 2));
+						}
 					}
 				}
 			}

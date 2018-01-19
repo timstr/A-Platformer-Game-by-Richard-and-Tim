@@ -161,6 +161,7 @@
     <ClInclude Include="bulbous.h" />
     <ClInclude Include="character.h" />
     <ClInclude Include="creature.h" />
+    <ClInclude Include="destructible.h" />
     <ClInclude Include="entity.h" />
     <ClInclude Include="event.h" />
     <ClInclude Include="intermob.h" />

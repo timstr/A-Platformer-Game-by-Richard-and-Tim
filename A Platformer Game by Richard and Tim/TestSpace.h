@@ -12,7 +12,7 @@
 #include "testbird.h"
 #include "testworm.h"
 
-// TODO: rename to map
+// TODO: rename to map?
 struct TestSpace : Space {
 	TestSpace(){
 		vec2 place_to_be = vec2(300, 100);
@@ -24,14 +24,13 @@ struct TestSpace : Space {
 		addEntities<Bulbous>(0, place_to_be);
 
 		addCreatures<TestCharacter>(0, place_to_be);
-		addCreatures<TestBird>(10, place_to_be);
-		addCreatures<TestWorm>(20, place_to_be, true);
+		addCreatures<TestBird>(1, place_to_be);
+		addCreatures<TestWorm>(2, place_to_be, true);
 
-		guy = new GuyEntity();
-		addEntity(guy);
-		entities.push_back(guy);
+		
+		entities.push_back(guy = addEntity<GuyEntity>());
 
-		addObstruction(map = new TestMap());
+		map = addObstruction<TestMap>();
 
 		//addObstruction(tree = new TreeObstacle());
 		//tree->position = {270, 500};
@@ -39,8 +38,8 @@ struct TestSpace : Space {
 		//addObstruction(boost = new BoostObstacle());
 		//boost->setPosition(vec2(500, 500));
 
-		addObstruction(new MovingObstacle({400, 350}, {400, 475}, 100));
-		addObstruction(new MovingObstacle({600, 300}, {700, 300}, 100));
+		addObstruction<MovingObstacle>(vec2(400, 350), vec2(400, 475), 100);
+		addObstruction<MovingObstacle>(vec2(600, 300), vec2(700, 300), 100);
 
 		//addObstruction(new RampObstacle());
 		//addObstruction(new MovingObstacle({50, 150}, {700, 300}, 250));
@@ -50,40 +49,37 @@ struct TestSpace : Space {
 	void addEntities(size_t count, vec2 position, bool random_velo = false){
 		static_assert(std::is_base_of<Entity, EntityT>::value, "Please give me an Entity instead.");
 		for (size_t i = 0; i < count; i++){
-			Entity* ent = new EntityT();
+			std::shared_ptr<EntityT> ent = addEntity<EntityT>().lock();
 			ent->setPosition(position);
 			if (random_velo){
 				ent->velocity = vec2((((rand() % 100) - 50) / 10.0), (((rand() % 100) - 50) / 10.0));
 			}
-			addEntity(ent);
 			entities.push_back(ent);
 		}
 	}
 
-	template<typename EntityT>
+	template<typename CreatureT>
 	void addCreatures(size_t count, vec2 position, bool random_velo = false){
-		static_assert(std::is_base_of<Creature, EntityT>::value, "Please give me an Creature instead.");
+		static_assert(std::is_base_of<Creature, CreatureT>::value, "Please give me an Creature instead.");
 		for (size_t i = 0; i < count; i++){
-			Creature* creature = new EntityT();
+			std::shared_ptr<CreatureT> creature = addCreature<CreatureT>().lock();
 			creature->setPosition(position);
 			if (random_velo){
 				creature->velocity = vec2((((rand() % 100) - 50) / 10.0), (((rand() % 100) - 50) / 10.0));
 			}
-			addCreature(creature);
 			entities.push_back(creature);
 		}
 	}
 
 	void createEntity(vec2 position){
-		Entity* ent = new ComplexEntity();
+		auto ent = addEntity<ComplexEntity>().lock();
 		ent->setPosition(position);
-		addEntity(ent);
 		entities.push_back(ent);
 	}
 
-	std::vector<Entity*> entities;
-	GuyEntity* guy;
-	TestMap* map;
-	TreeObstacle* tree;
-	BoostObstacle* boost;
+	std::vector<std::weak_ptr<Entity>> entities;
+	std::weak_ptr<GuyEntity> guy;
+	std::weak_ptr<TestMap> map;
+	std::weak_ptr<TreeObstacle> tree;
+	std::weak_ptr<BoostObstacle> boost;
 };

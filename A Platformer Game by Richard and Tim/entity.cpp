@@ -13,7 +13,7 @@ Entity::Entity(){
 	elasticity = 0.5;
 }
 
-bool Entity::collidesWith(const Obstruction* obstruction) const {
+bool Entity::collidesWith(const std::shared_ptr<Obstruction>& obstruction) const {
 	for (const Circle& circle : circles){
 		double slices = circle.radius * precision;
 		double angle_delta = 2 * pi / slices;
@@ -45,12 +45,12 @@ bool Entity::standing() const {
 	return is_standing;
 }
 
-void Entity::moveAndCollide(const std::vector<Obstruction*>& obstructions){
+void Entity::moveAndCollide(const std::vector<std::shared_ptr<Obstruction>>& obstructions){
 
 	// This is where gravity happens
 	velocity.y += 0.5f;
 
-	for (Obstruction* const obstruction : obstructions){
+	for (auto& obstruction : obstructions){
 		performCollision(obstruction);
 	}
 
@@ -68,7 +68,7 @@ vec2 Entity::getContactAcceleration(const Obstruction* obstruction, vec2 normal)
 	return {0, 0};
 }
 
-void Entity::performCollision(Obstruction* obstruction){
+void Entity::performCollision(const std::shared_ptr<Obstruction>& obstruction){
 	vec2 center = {0, 0};
 	for (const Circle& circle : circles){
 		center += circle.center;

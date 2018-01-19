@@ -5,12 +5,13 @@ struct Entity;
 #include "SFML\Graphics.hpp"
 #include "entity.h"
 #include "vec2.h"
+#include "destructible.h"
 #include <functional>
 
 // Obstruction is the base class to all things that have
 // a complicated raster-image physical boundary with 
 // which entities are to interact physically
-struct Obstruction : sf::Drawable, sf::Transformable {
+struct Obstruction : sf::Drawable, sf::Transformable, Destructible {
 	Obstruction(bool _open_boundary) : open_boundary(_open_boundary) {
 		setPosition(vec2(0, 0));
 		previous_position = getPosition();
@@ -30,9 +31,9 @@ struct Obstruction : sf::Drawable, sf::Transformable {
 
 	void draw(sf::RenderTarget& rt, sf::RenderStates states) const override;
 
-	// tick shall be called once per frame to possibly update the obstruction's state
 	void update();
 
+	// tick shall be called once per frame to possibly update the obstruction's state
 	virtual void tick();
 
 	// the visual appearance

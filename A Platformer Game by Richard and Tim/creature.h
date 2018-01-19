@@ -41,7 +41,6 @@ struct CreatureTypeT : CreatureType {
 };
 
 // TODO: use singleton CRTP to hold common data like state transitions and creature notice handlers?
-// TODO: add awareness radius, within which likelihood of noticing another creature increases
 // TODO: is it safe to call setState() inside state transition callback?
 
 // Creature is an autonomous character that moves around
@@ -65,9 +64,9 @@ struct Creature : Character {
 	void setState(uint8_t state);
 	int getState() const;
 
-	void notice(Creature* creature);
+	void notice(std::weak_ptr<Creature> creature);
 
-	void onNotice(const CreatureType& creaturetype, const std::function<void(Creature*)>& handler);
+	void onNotice(const CreatureType& creaturetype, const std::function<void(std::weak_ptr<Creature>)>& handler);
 
 	template<typename Type>
 	Type* as(const CreatureTypeT<Type>& basetype){
@@ -126,6 +125,6 @@ struct Creature : Character {
 	// TODO: can these be made static, per creature subtype?
 	std::multimap<Trigger, Transition> transitions;
 	std::map<int, std::string> animations;
-	std::map<const CreatureType*,std::function<void(Creature*)>> type_handlers;
+	std::map<const CreatureType*,std::function<void(std::weak_ptr<Creature>)>> type_handlers;
 	const CreatureType* type;
 };

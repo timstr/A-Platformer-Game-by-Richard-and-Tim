@@ -5,6 +5,7 @@
 #include "entity.h"
 #include "creature.h"
 #include <vector>
+#include <memory>
 
 // a Space is where obstructions and entities come together and
 // where interactions and spatial relations are collectively managed
@@ -17,20 +18,38 @@ struct Space : sf::Drawable, sf::Transformable {
 	// simulate interactions
 	void tick();
 
-	// adopt (and assume memory management of) an obstruction
-	void addObstruction(Obstruction* obstruction);
+	// add a new obstruction
+	template<typename ObstructionType, typename ... ArgTypes>
+	std::weak_ptr<ObstructionType> addObstruction(ArgTypes ... args){
+		static_assert(std::is_base_of<Obstruction, ObstructionType>::value, "ObstructionType must derive from Obstruction");
+		std::shared_ptr<ObstructionType> obstruction = std::make_shared<ObstructionType>(args...);
+		obstructions.push_back(obstruction);
+		return obstruction;
+	}
 
-	// adopt (and assume memory management of) an entity
-	void addEntity(Entity* entity);
+	// add a new entity
+	template<typename EntityType, typename ... ArgTypes>
+	std::weak_ptr<EntityType> addEntity(ArgTypes ... args){
+		static_assert(std::is_base_of<Entity, EntityType>::value, "EntityType must derive from Entity");
+		std::shared_ptr<EntityType> entity = std::make_shared<EntityType>(args...);
+		entities.push_back(entity);
+		return entity;
+	}
 
-	// adopt and assume memory management of a creature
-	void addCreature(Creature* creature);
+	// add a new creature
+	template<typename CreatureType, typename ... ArgTypes>
+	std::weak_ptr<CreatureType> addCreature(ArgTypes ... args){
+		static_assert(std::is_base_of<Creature, CreatureType>::value, "CreatureType must derive from Creature");
+		std::weak_ptr<CreatureType> creature = addEntity<CreatureType>(args...);
+		creatures.push_back(creature);
+		return creature;
+	}
 
 	void draw(sf::RenderTarget& rt, sf::RenderStates states) const override;
 
 	protected:
 
-	std::vector<Obstruction*> obstructions;
-	std::vector<Entity*> entities;
-	std::vector<Creature*> creatures;
+	std::vector<std::shared_ptr<Obstruction>> obstructions;
+	std::vector<std::shared_ptr<Entity>> entities;
+	std::vector<std::weak_ptr<Creature>> creatures;
 };

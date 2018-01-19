@@ -3,7 +3,7 @@
 #include <map>
 #include <SFML\Graphics.hpp>
 
-// TODO: count references to images and textures to automatically manage lifetimes?
+// TODO: get rid of maps and use shared_ptrs instead?
 
 struct ImageStore {
 	// returns an Image object from the image file found at the given path

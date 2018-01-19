@@ -85,19 +85,21 @@ int Creature::getState() const {
 	return current_state;
 }
 
-void Creature::notice(Creature* creature){
-	const CreatureType* t = creature->type;
-	while (t){
-		auto it = type_handlers.find(t);
-		if (it != type_handlers.end()){
-			it->second(creature);
-			return;
+void Creature::notice(std::weak_ptr<Creature> crtr){
+	if (auto creature = crtr.lock()){
+		const CreatureType* t = creature->type;
+		while (t){
+			auto it = type_handlers.find(t);
+			if (it != type_handlers.end()){
+				it->second(creature);
+				return;
+			}
+			t = t->getBaseType();
 		}
-		t = t->getBaseType();
 	}
 }
 
-void Creature::onNotice(const CreatureType& creaturetype, const std::function<void(Creature*)>& handler){
+void Creature::onNotice(const CreatureType& creaturetype, const std::function<void(std::weak_ptr<Creature>)>& handler){
 	type_handlers[&creaturetype] = handler;
 }
 
