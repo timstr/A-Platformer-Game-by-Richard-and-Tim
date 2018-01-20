@@ -96,6 +96,8 @@ void Entity::collide(const Obstruction& obstruction){
 }
 
 void Entity::move(){
+	velocity.y += 0.5f; // TODO: design gravity better
+
 	if (is_standing = flying_timer < 10){
 		onEvent(Standing);
 	} else {
