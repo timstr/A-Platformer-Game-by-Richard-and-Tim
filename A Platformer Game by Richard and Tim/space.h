@@ -18,6 +18,9 @@ struct Space : sf::Drawable, sf::Transformable {
 	// simulate interactions
 	void tick();
 
+	// custom per-frame function
+	virtual void update();
+
 	// add a new obstruction
 	template<typename ObstructionType, typename ... ArgTypes>
 	std::weak_ptr<ObstructionType> addObstruction(ArgTypes ... args){

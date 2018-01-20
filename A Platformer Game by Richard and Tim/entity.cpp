@@ -3,7 +3,7 @@
 #include <math.h>
 
 namespace {
-	const double precision = 1.0;
+	const float precision = 1.0;
 }
 
 Entity::Entity(){
@@ -13,15 +13,15 @@ Entity::Entity(){
 	elasticity = 0.5;
 }
 
-bool Entity::collidesWith(const std::shared_ptr<Obstruction>& obstruction) const {
+bool Entity::collidesWith(const Obstruction* obstruction) const {
 	for (const Circle& circle : circles){
-		double slices = circle.radius * precision;
-		double angle_delta = 2 * pi / slices;
+		float slices = circle.radius * precision;
+		float angle_delta = 2 * pi / slices;
 
 		vec2 radvec = vec2(0, circle.radius);
 		mat2x2 mat = rotationMatrix(angle_delta);
 
-		for (double slice = 0; slice < slices; slice += 1, radvec = mat * radvec){
+		for (float slice = 0; slice < slices; slice += 1, radvec = mat * radvec){
 			vec2 point = getTransform().transformPoint(circle.center + radvec);
 
 			if (obstruction->hitTest(point)){
@@ -51,7 +51,7 @@ void Entity::moveAndCollide(const std::vector<std::shared_ptr<Obstruction>>& obs
 	velocity.y += 0.5f;
 
 	for (auto& obstruction : obstructions){
-		performCollision(obstruction);
+		performCollision(obstruction.get());
 	}
 
 	if (is_standing = flying_timer < 10){
@@ -68,7 +68,7 @@ vec2 Entity::getContactAcceleration(const Obstruction* obstruction, vec2 normal)
 	return {0, 0};
 }
 
-void Entity::performCollision(const std::shared_ptr<Obstruction>& obstruction){
+void Entity::performCollision(const Obstruction* obstruction){
 	vec2 center = {0, 0};
 	for (const Circle& circle : circles){
 		center += circle.center;
@@ -85,13 +85,13 @@ void Entity::performCollision(const std::shared_ptr<Obstruction>& obstruction){
 		int hit_points = 0;
 
 		for (const Circle& circle : circles){
-			double slices = circle.radius * precision;
-			double angle_delta = 2 * pi / slices;
+			float slices = circle.radius * precision;
+			float angle_delta = 2 * pi / slices;
 
 			vec2 radvec = vec2(circle.radius, 0);
 			mat2x2 mat = rotationMatrix(angle_delta);
 
-			for (double slice = 0; slice < slices; slice += 1, radvec = mat * radvec){
+			for (float slice = 0; slice < slices; slice += 1, radvec = mat * radvec){
 				vec2 point = getTransform().transformPoint(circle.center + radvec);
 
 				if (obstruction->hitTest(point)){
@@ -125,7 +125,7 @@ void Entity::addCircle(const Entity::Circle& circle){
 	circles.push_back(circle);
 }
 
-Entity::Circle::Circle(vec2 _center, double _radius){
+Entity::Circle::Circle(vec2 _center, float _radius){
 	center = _center;
 	radius = _radius;
 }

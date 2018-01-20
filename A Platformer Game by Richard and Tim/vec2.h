@@ -21,13 +21,13 @@ struct mat2x2 {
 	float a, b, c, d;
 };
 
-mat2x2 rotationMatrix(double radians);
+mat2x2 rotationMatrix(float radians);
 
 mat2x2 operator*(const mat2x2& l, const mat2x2& r);
 
 vec2 operator*(const mat2x2& m, const vec2& v);
 
-const double pi = 3.14159265358979323846264338327950288;
+const float pi = 3.1415927f;
 
 float dot(const vec2& v1, const vec2& v2);
 
@@ -35,4 +35,4 @@ float cross(const vec2& v1, const vec2& v2);
 
 vec2 projectOnto(const vec2& v1, const vec2& v2);
 
-double abs(const vec2& v);
+float abs(const vec2& v);

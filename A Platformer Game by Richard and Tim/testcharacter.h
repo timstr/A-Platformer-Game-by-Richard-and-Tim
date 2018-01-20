@@ -15,8 +15,8 @@ struct TestCharacter : Creature {
 		addCircle(Circle({0, -150}, 50));
 		addCircle(Circle({0, 0}, 50));
 		addCircle(Circle({0, 170}, 50));
-		friction = 0.3;
-		elasticity = 0.1;
+		friction = 0.3f;
+		elasticity = 0.1f;
 
 		float scale = 0.1f + (rand() % 20) * 0.01f;
 
@@ -66,7 +66,7 @@ struct TestCharacter : Creature {
 			case running:
 				return vec2(8 * getDirection(), 0);
 			case jump:
-				return vec2(0, -(20 + rand() % 60));
+				return vec2(0, -(float)(20 + rand() % 60));
 			default:
 				return vec2(0, 0);
 		}
@@ -74,7 +74,7 @@ struct TestCharacter : Creature {
 
 	void update() override {
 		if (getState() == leaping){
-			velocity += vec2(getDirection() * 0.1, 0);
+			velocity += vec2(getDirection() * 0.1f, 0);
 		}
 	}
 

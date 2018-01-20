@@ -119,7 +119,7 @@ void Creature::setDirection(float dir){
 }
 
 float Creature::getDirection() const {
-	return direction;
+	return (float)direction;
 }
 
 void Creature::setAwarenessRadius(float rad){

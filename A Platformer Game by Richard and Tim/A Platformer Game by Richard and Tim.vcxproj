@@ -176,6 +176,7 @@
     <ClInclude Include="SpriteSheetStore.h" />
     <ClInclude Include="sprudo.h" />
     <ClInclude Include="testbird.h" />
+    <ClInclude Include="testbug.h" />
     <ClInclude Include="testcharacter.h" />
     <ClInclude Include="TestEntities.h" />
     <ClInclude Include="TestMap.h" />

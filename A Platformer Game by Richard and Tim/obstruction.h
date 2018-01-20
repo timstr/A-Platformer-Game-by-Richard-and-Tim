@@ -45,7 +45,7 @@ struct Obstruction : sf::Drawable, sf::Transformable, Destructible {
 	// the coefficient of friction
 	// 0 for totally slippy
 	// 1 for totally grippy
-	double friction;
+	float friction;
 
 	// the acceleration exerted upon an entity touching the surface
 	// normal is assumed to be a unit vector

@@ -7,8 +7,8 @@
 struct Bulbous : TestEntity {
 	Bulbous() : sprite("bulbous") {
 		addCircle(Circle(vec2(0, -15), 20));
-		friction = 0.35;
-		elasticity = 0.1;
+		friction = 0.35f;
+		elasticity = 0.1f;
 
 		sprite.play("walking");
 
@@ -16,7 +16,7 @@ struct Bulbous : TestEntity {
 	}
 
 	vec2 getContactAcceleration(const Obstruction* obstruction, vec2 normal) const {
-		return vec2(direction * std::max(0.0f, dot(normal, vec2(0, -0.2))), 0);
+		return vec2(direction * std::max(0.0f, dot(normal, vec2(0, -0.2f))), 0);
 	}
 
 	void tick() override {
@@ -24,7 +24,7 @@ struct Bulbous : TestEntity {
 
 		if (rand() % 100 == 0){
 			direction = -direction;
-			sprite.setScale(vec2(-direction * 0.5, 0.5));
+			sprite.setScale(vec2(-direction * 0.5f, 0.5f));
 		}
 	}
 

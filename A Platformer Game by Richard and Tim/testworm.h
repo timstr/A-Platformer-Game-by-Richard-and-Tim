@@ -8,10 +8,10 @@ CreatureTypeT<TestWorm> TestWormType;
 
 struct TestWorm : Creature {
 	TestWorm() : Creature("woim") {
-		elasticity = 0.05;
-		friction = 0.5;
+		elasticity = 0.05f;
+		friction = 0.5f;
 
-		setScale(0.7, 0.7);
+		setScale(0.7f, 0.7f);
 
 		setType(TestWormType);
 		addCircle(Circle(vec2(0, -10), 10));
@@ -32,7 +32,7 @@ struct TestWorm : Creature {
 
 	vec2 getContactAcceleration(const Obstruction* obstruction, vec2 normal) const override {
 		if (getState() == Worming){
-			return vec2(getDirection() * 0.5, 0) * std::max(0.0f, dot(normal, vec2(0, -1)));
+			return vec2(getDirection() * 0.5f, 0) * std::max(0.0f, dot(normal, vec2(0, -1)));
 		}
 		return vec2(0, 0);
 	}

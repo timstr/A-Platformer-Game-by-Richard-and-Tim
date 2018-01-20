@@ -27,9 +27,9 @@ struct Entity : sf::Drawable, sf::Transformable, Destructible {
 	virtual void draw(sf::RenderTarget& rt, sf::RenderStates states) const override = 0;
 
 	vec2 velocity;
-	double mass;
-	double friction;
-	double elasticity;
+	float mass;
+	float friction;
+	float elasticity;
 
 	// tick is called once every frame and should be overridden to update the entity's state
 	virtual void tick();
@@ -41,10 +41,10 @@ struct Entity : sf::Drawable, sf::Transformable, Destructible {
 	protected:
 
 	struct Circle {
-		Circle(vec2 _center = {0, 0}, double _radius = 20.0);
+		Circle(vec2 _center = {0, 0}, float _radius = 20.0);
 
 		vec2 center;
-		double radius;
+		float radius;
 	};
 
 	void addCircle(const Circle& circle);
@@ -57,10 +57,10 @@ struct Entity : sf::Drawable, sf::Transformable, Destructible {
 	int flying_timer = 0;
 
 	// returns true if the entity collides with the given obstruction
-	bool collidesWith(const std::shared_ptr<Obstruction>& obstruction) const;
+	bool collidesWith(const Obstruction* obstruction) const;
 
 	// possibly collide with obstruction and change
 	// velocity accordingly
-	void performCollision(const std::shared_ptr<Obstruction>& obstruction);
+	void performCollision(const Obstruction* obstruction);
 
 };

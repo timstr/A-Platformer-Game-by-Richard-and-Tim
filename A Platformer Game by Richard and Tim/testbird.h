@@ -18,8 +18,8 @@ struct TestBird : Creature {
 			}
 		});
 
-		elasticity = 0.05;
-		friction = 0.7;
+		elasticity = 0.05f;
+		friction = 0.7f;
 
 		addCircle(Circle({0, -50}, 50));
 
@@ -81,6 +81,9 @@ struct TestBird : Creature {
 					} else {
 						setState(Watching);
 					}
+				} else {
+					setState(Idle);
+					prey.reset();
 				}
 				break;
 			case Watching:
@@ -93,6 +96,7 @@ struct TestBird : Creature {
 					}
 				} else {
 					setState(Idle);
+					prey.reset();
 				}
 				break;
 		}

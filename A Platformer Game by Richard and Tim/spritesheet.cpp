@@ -51,8 +51,8 @@ SpriteSheetPlayer::SpriteSheetPlayer(const std::string& name, const std::functio
 	if (spritesheet.flip){
 		sprite.setScale(-1.0f, 1.0f);
 	}
-	cliprect.width = spritesheet.framesize.x;
-	cliprect.height = spritesheet.framesize.y;
+	cliprect.width = (int)spritesheet.framesize.x;
+	cliprect.height = (int)spritesheet.framesize.y;
 	current_frame = 0;
 	current_animation = spritesheet.animations.end();
 	timestamp = clock.getElapsedTime();
@@ -125,8 +125,8 @@ void SpriteSheetPlayer::draw(sf::RenderTarget& rt, sf::RenderStates states) cons
 }
 
 void SpriteSheetPlayer::updateClipRect(){
-	cliprect.left = spritesheet.framesize.x * (current_frame % spritesheet.frames_per_row);
-	cliprect.top = spritesheet.framesize.y * (current_frame / spritesheet.frames_per_row);
+	cliprect.left = (int)(spritesheet.framesize.x * (current_frame % spritesheet.frames_per_row));
+	cliprect.top = (int)(spritesheet.framesize.y * (current_frame / spritesheet.frames_per_row));
 	sprite.setTextureRect(cliprect);
 	sprite.setPosition(-vec2(spritesheet.framecenter.x * sprite.getScale().x, spritesheet.framecenter.y * sprite.getScale().y));
 }

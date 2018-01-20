@@ -33,11 +33,11 @@ SpriteSheet SpriteSheetStore::loadSpriteSheet(const std::string& name){
 		if (tag == "framesize"){
 			int x, y;
 			ifs >> x >> y;
-			spritesheet.setFrameSize(vec2(x, y));
+			spritesheet.setFrameSize(vec2((float)x, (float)y));
 		} else if (tag == "framecenter"){
 			int x, y;
 			ifs >> x >> y;
-			spritesheet.setFrameCenter(vec2(x, y));
+			spritesheet.setFrameCenter(vec2((float)x, (float)y));
 		} else if (tag == "framesperrow"){
 			int fpr;
 			ifs >> fpr;

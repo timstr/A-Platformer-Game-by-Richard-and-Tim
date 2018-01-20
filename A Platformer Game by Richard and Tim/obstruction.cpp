@@ -6,11 +6,11 @@ bool Obstruction::hitTest(vec2 point) const {
 
 	point = inv.transformPoint(point);
 
-	int x = floor(point.x - this->getPosition().x);
-	int y = floor(point.y - this->getPosition().y);
+	int x = (int)floor(point.x - this->getPosition().x);
+	int y = (int)floor(point.y - this->getPosition().y);
 
 	// test whether point is outside the map
-	if ((x < 0) || (x >= boundary->getSize().x) || (y < 0) || (y >= boundary->getSize().y)){
+	if ((x < 0) || (x >= (int)boundary->getSize().x) || (y < 0) || (y >= (int)boundary->getSize().y)){
 		return !open_boundary;
 	}
 
@@ -44,13 +44,13 @@ vec2 Obstruction::getImpulse(vec2 point, vec2 normal, Entity* entity) const {
 	vec2 ca_obs_normal = projectOnto(ca_obs, normal);
 	vec2 ca_obs_tangent = ca_obs - ca_obs_normal;
 	//ca_obs_normal = normal * (float)std::max(0.0, dot(ca_obs, normal));
-	ca_obs_tangent *= (float)entity->friction;
+	ca_obs_tangent *= entity->friction;
 
 	vec2 ca_ent = entity->getContactAcceleration(this, normal) * entity->getScale().x;
 	vec2 ca_ent_normal = projectOnto(ca_ent, normal);
 	vec2 ca_ent_tangent = ca_ent - ca_ent_normal;
 	//ca_ent_normal = normal * (float)std::max(0.0, dot(ca_ent, normal));
-	ca_ent_tangent *= (float)friction;
+	ca_ent_tangent *= friction;
 
 
 	vec2 contact_accel_impulse = (ca_obs_normal + ca_obs_tangent + ca_ent_normal + ca_ent_tangent) * (float)entity->mass;
@@ -82,18 +82,18 @@ void Obstruction::tick() {
 
 vec2 Obstruction::getNormalAt(vec2 point, vec2 hint) const {
 
-	const double probe_radius = 10.0;
-	const double slices = probe_radius * 2;
-	const double angle_delta = 2 * pi / slices;
+	const float probe_radius = 10.0;
+	const float slices = probe_radius * 2;
+	const float angle_delta = 2 * pi / slices;
 
-	double hint_angle = atan2(hint.y, hint.x);
+	float hint_angle = atan2(hint.y, hint.x);
 
 	if (std::isnan(hint_angle)){
 		hint_angle = 0;
 	}
 
-	double min_angle = hint_angle;
-	double max_angle = hint_angle;
+	float min_angle = hint_angle;
+	float max_angle = hint_angle;
 
 	bool max_last = false;
 
@@ -104,7 +104,7 @@ vec2 Obstruction::getNormalAt(vec2 point, vec2 hint) const {
 	bool inside = hitTest(point + rayvec);
 	bool first_hit = inside;
 
-	for (double angle = angle_delta + hint_angle; angle <= 2 * pi + hint_angle; angle += angle_delta){
+	for (float angle = angle_delta + hint_angle; angle <= 2 * pi + hint_angle; angle += angle_delta){
 
 		rayvec = mat * rayvec;
 
@@ -126,10 +126,10 @@ vec2 Obstruction::getNormalAt(vec2 point, vec2 hint) const {
 	}
 
 	if (min_angle == max_angle){
-		return hint / (float)hypot(hint.x, hint.y);
+		return hint / hypot(hint.x, hint.y);
 	}
 
-	double normal = (min_angle + max_angle) * 0.5;
+	float normal = (min_angle + max_angle) * 0.5f;
 
 	if (std::isnan(normal)){
 		normal = 0;
@@ -139,7 +139,7 @@ vec2 Obstruction::getNormalAt(vec2 point, vec2 hint) const {
 }
 
 float Obstruction::getDistanceToBoundary(vec2 point, vec2 direction) const {
-	double length = abs(direction);
+	float length = abs(direction);
 	if (length == 0.0){
 		return 0.0;
 	}
@@ -149,10 +149,10 @@ float Obstruction::getDistanceToBoundary(vec2 point, vec2 direction) const {
 	const float max_distance = 5.0;
 	const int max_steps = 10;
 
-	double distance = 0;
+	float distance = 0;
 
 	vec2 path = direction * max_distance;
-	double path_length = max_distance;
+	float path_length = max_distance;
 
 	for (int i = 0; i < max_steps; i++){
 		if (hitTest(point + path)){

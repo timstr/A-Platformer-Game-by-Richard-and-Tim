@@ -19,13 +19,13 @@ struct BoostObstacle : Obstacle {
 	}
 
 	vec2 getContactAcceleration(const Entity* entity, vec2 normal) const override {
-		double align = std::max(0.0f, dot(normal, vec2(0, -1)));
-		return vec2(2.0 * align, 0.0);
+		float align = std::max(0.0f, dot(normal, vec2(0, -1)));
+		return vec2(2.0f * align, 0.0f);
 	}
 };
 
 struct MovingObstacle : Obstacle {
-	MovingObstacle(vec2 _position1, vec2 _position2, double frames){
+	MovingObstacle(vec2 _position1, vec2 _position2, float frames){
 		speed = 2 * pi / frames;
 
 		position1 = _position1;
@@ -44,12 +44,12 @@ struct MovingObstacle : Obstacle {
 
 	private:
 
-	vec2 getPosition(double _phase) const {
+	vec2 getPosition(float _phase) const {
 		return position1 + (position2 - position1) * (float)(0.5 + 0.5 * sin(_phase));
 	}
 
-	double phase = 0;
-	double speed;
+	float phase = 0;
+	float speed;
 	vec2 position1, position2;
 };
 

@@ -8,14 +8,14 @@ struct Sprudo : TestEntity {
 	Sprudo() : sprite("sprudo") {
 		addCircle(Circle(vec2(-3, -10), 25));
 		addCircle(Circle(vec2(0, 45), 20));
-		friction = 0.35;
-		elasticity = 0.1;
+		friction = 0.35f;
+		elasticity = 0.1f;
 
 		sprite.play("walking");
 	}
 
 	vec2 getContactAcceleration(const Obstruction* obstruction, vec2 normal) const {
-		return vec2(direction * 0.6 * std::max(0.0f, dot(normal, vec2(0, -1))), 0);
+		return vec2(direction * 0.6f * std::max(0.0f, dot(normal, vec2(0, -1))), 0);
 	}
 
 	void tick() override {
@@ -23,7 +23,7 @@ struct Sprudo : TestEntity {
 
 		if (rand() % 100 == 0){
 			direction = -direction;
-			sprite.setScale(vec2(direction, 1));
+			sprite.setScale(vec2((float)direction, 1.0f));
 		}
 	}
 

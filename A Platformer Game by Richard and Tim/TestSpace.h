@@ -8,9 +8,9 @@
 #include "sprudo.h"
 #include "bulbous.h"
 #include "testcharacter.h"
-
 #include "testbird.h"
 #include "testworm.h"
+#include "testbug.h"
 
 // TODO: rename to map?
 struct TestSpace : Space {
@@ -23,9 +23,10 @@ struct TestSpace : Space {
 		addEntities<Sprudo>(0, place_to_be);
 		addEntities<Bulbous>(0, place_to_be);
 
-		addCreatures<TestCharacter>(0, place_to_be);
-		addCreatures<TestBird>(1, place_to_be);
-		addCreatures<TestWorm>(2, place_to_be, true);
+		addCreatures<TestCharacter>(0, place_to_be, true);
+		addCreatures<TestBird>(5, place_to_be, true);
+		addCreatures<TestWorm>(20, place_to_be, true);
+		addCreatures<TestBug>(5, place_to_be, true);
 
 		
 		entities.push_back(guy = addEntity<GuyEntity>());
@@ -38,8 +39,8 @@ struct TestSpace : Space {
 		//addObstruction(boost = new BoostObstacle());
 		//boost->setPosition(vec2(500, 500));
 
-		addObstruction<MovingObstacle>(vec2(400, 350), vec2(400, 475), 100);
-		addObstruction<MovingObstacle>(vec2(600, 300), vec2(700, 300), 100);
+		addObstruction<MovingObstacle>(vec2(400, 350), vec2(400, 475), 100.0f);
+		addObstruction<MovingObstacle>(vec2(600, 300), vec2(700, 300), 100.0f);
 
 		//addObstruction(new RampObstacle());
 		//addObstruction(new MovingObstacle({50, 150}, {700, 300}, 250));
@@ -52,7 +53,10 @@ struct TestSpace : Space {
 			std::shared_ptr<EntityT> ent = addEntity<EntityT>().lock();
 			ent->setPosition(position);
 			if (random_velo){
-				ent->velocity = vec2((((rand() % 100) - 50) / 10.0), (((rand() % 100) - 50) / 10.0));
+				ent->velocity = vec2(
+					((rand() % 100) - 50) * 0.1f,
+					((rand() % 100) - 50) * 0.1f
+				);
 			}
 			entities.push_back(ent);
 		}
@@ -65,7 +69,10 @@ struct TestSpace : Space {
 			std::shared_ptr<CreatureT> creature = addCreature<CreatureT>().lock();
 			creature->setPosition(position);
 			if (random_velo){
-				creature->velocity = vec2((((rand() % 100) - 50) / 10.0), (((rand() % 100) - 50) / 10.0));
+				creature->velocity = vec2(
+					((rand() % 100) - 50) * 0.1f,
+					((rand() % 100) - 50) * 0.1f
+				);
 			}
 			entities.push_back(creature);
 		}
@@ -75,6 +82,16 @@ struct TestSpace : Space {
 		auto ent = addEntity<ComplexEntity>().lock();
 		ent->setPosition(position);
 		entities.push_back(ent);
+	}
+
+	void update(){
+		for (auto it = entities.begin(); it != entities.end();){
+			if (it->expired()){
+				it = entities.erase(it);
+			} else {
+				it++;
+			}
+		}
 	}
 
 	std::vector<std::weak_ptr<Entity>> entities;

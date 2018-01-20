@@ -1,9 +1,9 @@
 #pragma once
 #include "vec2.h"
 
-mat2x2 rotationMatrix(double radians){
-	double cosine = cos(radians);
-	double sine = sin(radians);
+mat2x2 rotationMatrix(float radians){
+	float cosine = cos(radians);
+	float sine = sin(radians);
 	return mat2x2(cosine, -sine, sine, cosine);
 }
 
@@ -39,6 +39,6 @@ vec2 projectOnto(const vec2& v1, const vec2& v2){
 	return v2 * (float)(dot(v1, v2) / dot(v2, v2));
 }
 
-double abs(const vec2& v){
+float abs(const vec2& v){
 	return hypot(v.x, v.y);
 }

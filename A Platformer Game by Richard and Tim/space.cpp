@@ -70,6 +70,12 @@ void Space::tick(){
 			}
 		}
 	}
+
+	update();
+}
+
+void Space::update(){
+
 }
 
 void Space::draw(sf::RenderTarget& rt, sf::RenderStates states) const {
