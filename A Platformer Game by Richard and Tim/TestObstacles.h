@@ -39,12 +39,12 @@ struct MovingObstacle : Obstacle {
 
 	void tick() override {
 		phase += speed;
-		setPosition(getPosition(phase));
+		setPosition(calcPosition(phase));
 	}
 
 	private:
 
-	vec2 getPosition(float _phase) const {
+	vec2 calcPosition(float _phase) const {
 		return position1 + (position2 - position1) * (float)(0.5 + 0.5 * sin(_phase));
 	}
 

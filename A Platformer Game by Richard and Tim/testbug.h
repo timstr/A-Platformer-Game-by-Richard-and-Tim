@@ -9,9 +9,11 @@ CreatureTypeT<TestBug> TestBugType;
 
 struct TestBug : Creature {
 	TestBug() : Creature("bug") {
+		setType(TestBugType);
+
 		addCircle(Circle(vec2(0, -20), 20));
 
-		setAwarenessRadius(120);
+		setAwarenessRadius(80);
 
 		setScale(0.6f, 0.6f);
 		elasticity = 0.3f;
@@ -29,7 +31,6 @@ struct TestBug : Creature {
 		addStateTransition(Running, Idle, AnimationEnd, 0.5);
 
 		addStateTransition(PlayDead, PlayDead, Tick, 20);
-		addStateTransition(PlayDead, Idle, Tick, 0.1);
 
 		setStateAnimation(Idle, "idle");
 		setStateAnimation(Running, "running");
@@ -37,6 +38,7 @@ struct TestBug : Creature {
 
 		onNotice(TestBirdType, [this](std::weak_ptr<Creature> creature){
 			setState(PlayDead);
+			birdclock.restart();
 		});
 
 		setState(Idle);
@@ -49,9 +51,18 @@ struct TestBug : Creature {
 		return vec2(0, 0);
 	}
 
+	void update() override {
+		if (getState() == PlayDead && birdclock.getElapsedTime().asSeconds() > 2.0f){
+			setState(Idle);
+		}
+	}
+
 	enum States {
 		Idle,
 		Running,
 		PlayDead
 	};
+
+	private:
+	sf::Clock birdclock;
 };

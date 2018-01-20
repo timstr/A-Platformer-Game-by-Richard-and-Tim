@@ -2,10 +2,6 @@
 #include "obstruction.h"
 
 bool Obstruction::hitTest(vec2 point) const {
-	sf::Transform inv = getTransform().getInverse();
-
-	point = inv.transformPoint(point);
-
 	int x = (int)floor(point.x - this->getPosition().x);
 	int y = (int)floor(point.y - this->getPosition().y);
 

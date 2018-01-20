@@ -39,6 +39,8 @@ void Space::tick(){
 	for (auto& entity : entities){
 		entity->tick();
 	}
+
+	// let creatures notice one another
 	for (unsigned int i = 0; i < creatures.size(); i++){
 		if (auto creature1 = creatures[i].lock()){
 			for (unsigned int j = i + 1; j < creatures.size(); j++){

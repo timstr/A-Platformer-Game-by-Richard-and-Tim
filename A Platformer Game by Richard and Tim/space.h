@@ -12,7 +12,7 @@
 // A Space consists of a map, a number of obstructions, and a number of
 // entities
 struct Space : sf::Drawable, sf::Transformable {
-
+	
 	virtual ~Space();
 
 	// simulate interactions

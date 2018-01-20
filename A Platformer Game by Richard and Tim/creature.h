@@ -5,6 +5,8 @@
 #include "spritesheet.h"
 #include "event.h"
 
+struct Creature;
+
 struct CreatureType {
 	CreatureType(const CreatureType* _base_type) : base_type(_base_type) {
 
@@ -49,6 +51,8 @@ struct Creature : Character {
 	Creature(const std::string& name);
 
 	void setType(const CreatureType& type);
+	const CreatureType* getType() const;
+	bool hasType(const CreatureType& type) const;
 
 	void onEvent(const Event& e) override;
 
@@ -68,15 +72,6 @@ struct Creature : Character {
 
 	void onNotice(const CreatureType& creaturetype, const std::function<void(std::weak_ptr<Creature>)>& handler);
 
-	template<typename Type>
-	Type* as(const CreatureTypeT<Type>& basetype){
-		if (type->hasBase(basetype)){
-			return dynamic_cast<Type>(this);
-		} else {
-			return nullptr;
-		}
-	}
-
 	void flip();
 
 	void setDirection(float dir);
@@ -95,7 +90,7 @@ struct Creature : Character {
 
 	int current_state = -1;
 	int direction = 1;
-	float awareness_radius;
+	float awareness_radius = 100.0f;
 
 	struct Trigger {
 		Trigger(int _from_state, const Event& _event);

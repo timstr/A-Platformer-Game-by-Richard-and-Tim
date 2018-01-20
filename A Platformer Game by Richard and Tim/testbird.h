@@ -1,22 +1,35 @@
 #pragma once
 
-#include "creature.h"
-#include "testworm.h"
-
 struct TestBird;
 
 CreatureTypeT<TestBird> TestBirdType;
+
+#include "creature.h"
+#include "testworm.h"
+#include "testbug.h"
 
 struct TestBird : Creature {
 	TestBird() : Creature("bird") {
 		setType(TestBirdType);
 		setAwarenessRadius(250);
+
 		onNotice(TestWormType, [this](std::weak_ptr<Creature> creature){
-			if (getState() != Hunting && getState() != Watching && getState() != Eating){
+			if (getState() == Idle || getState() == Flying){
 				this->prey = creature;
 				setState(Hunting);
 			}
 		});
+		onNotice(TestBugType, [this](std::weak_ptr<Creature> creature){
+			if (getState() == Idle || getState() == Flying){
+				if (auto c = creature.lock()){
+					if (c->getState() != TestBug::PlayDead){
+						this->prey = creature;
+						setState(Hunting);
+					}
+				}
+			}
+		});
+		
 
 		elasticity = 0.05f;
 		friction = 0.7f;
@@ -40,7 +53,15 @@ struct TestBird : Creature {
 			prey.reset();
 		});
 		addStateTransition(Watching, Watching, Tick, 10);
-		addStateTransition(Watching, Eating, Tick, 0.1);
+		addStateTransition(Watching, Idle, Tick, 0.05);
+		addStateTransition(Watching, Eating, Tick, 0.1, [this]{
+			if (auto p = prey.lock()){
+				if (p->hasType(TestBugType)){
+					// whoops, don't eat the bug
+					setState(Watching);
+				}
+			}
+		});
 		addStateTransition(Eating, Idle, AnimationEnd, 1, [this]{
 			if (auto p = prey.lock()){
 				p->destroy();

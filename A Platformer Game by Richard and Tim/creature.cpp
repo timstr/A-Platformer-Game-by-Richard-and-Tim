@@ -12,6 +12,12 @@ Creature::Creature(const std::string& name) : sprite(name) {
 void Creature::setType(const CreatureType& _type){
 	type = &_type;
 }
+const CreatureType* Creature::getType() const {
+	return type;
+}
+bool Creature::hasType(const CreatureType& _type) const {
+	return type->hasBase(_type);
+}
 
 void Creature::onEvent(const Event& e){
 	auto tr = transitions.find(Trigger(-1, e));

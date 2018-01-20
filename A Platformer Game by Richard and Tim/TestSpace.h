@@ -15,7 +15,7 @@
 // TODO: rename to map?
 struct TestSpace : Space {
 	TestSpace(){
-		vec2 place_to_be = vec2(300, 100);
+		vec2 place_to_be = vec2(470, 500);
 
 		addEntities<SimpleEntity>(0, place_to_be, true);
 		addEntities<TestEntity>(0, place_to_be, true);
@@ -24,9 +24,9 @@ struct TestSpace : Space {
 		addEntities<Bulbous>(0, place_to_be);
 
 		addCreatures<TestCharacter>(0, place_to_be, true);
-		addCreatures<TestBird>(5, place_to_be, true);
-		addCreatures<TestWorm>(20, place_to_be, true);
-		addCreatures<TestBug>(5, place_to_be, true);
+		addCreatures<TestBird>(2, place_to_be, true);
+		addCreatures<TestWorm>(2, place_to_be, true);
+		addCreatures<TestBug>(2, place_to_be, true);
 
 		
 		entities.push_back(guy = addEntity<GuyEntity>());
@@ -36,13 +36,13 @@ struct TestSpace : Space {
 		//addObstruction(tree = new TreeObstacle());
 		//tree->position = {270, 500};
 
-		//addObstruction(boost = new BoostObstacle());
+		//auto boost = addObstruction<BoostObstacle>().lock();
 		//boost->setPosition(vec2(500, 500));
 
-		addObstruction<MovingObstacle>(vec2(400, 350), vec2(400, 475), 100.0f);
+		//addObstruction<MovingObstacle>(vec2(400, 350), vec2(400, 475), 100.0f);
 		addObstruction<MovingObstacle>(vec2(600, 300), vec2(700, 300), 100.0f);
 
-		//addObstruction(new RampObstacle());
+		//addObstruction<RampObstacle>();
 		//addObstruction(new MovingObstacle({50, 150}, {700, 300}, 250));
 	}
 

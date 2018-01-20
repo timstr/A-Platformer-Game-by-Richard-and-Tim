@@ -13,7 +13,6 @@ struct Entity;
 // which entities are to interact physically
 struct Obstruction : sf::Drawable, sf::Transformable, Destructible {
 	Obstruction(bool _open_boundary) : open_boundary(_open_boundary) {
-		setPosition(vec2(0, 0));
 		previous_position = getPosition();
 		friction = 0.5;
 	}
