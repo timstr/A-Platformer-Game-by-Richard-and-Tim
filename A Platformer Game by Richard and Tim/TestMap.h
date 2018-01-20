@@ -5,8 +5,8 @@
 
 struct TestMap : Map {
 	TestMap(){
-		sprite.setTexture(ImageStore::getTexture("testmapboundary3"));
+		setSprite(sf::Sprite(ImageStore::getTexture("testmapboundary3")));
 		setBoundary(ImageStore::getImage("testmapboundary3"));
-		friction = 1.0;
+		setFriction(1);
 	}
 };

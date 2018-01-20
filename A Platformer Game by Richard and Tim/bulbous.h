@@ -15,7 +15,7 @@ struct Bulbous : TestEntity {
 		sprite.setScale(vec2(0.5, 0.5));
 	}
 
-	vec2 getContactAcceleration(const Obstruction* obstruction, vec2 normal) const {
+	vec2 getContactAcceleration(const Obstruction& obstruction, vec2 normal) const {
 		return vec2(direction * std::max(0.0f, dot(normal, vec2(0, -0.2f))), 0);
 	}
 

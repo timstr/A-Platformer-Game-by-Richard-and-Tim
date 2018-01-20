@@ -6,14 +6,11 @@ namespace {
 	const float precision = 1.0;
 }
 
-Entity::Entity(){
-	velocity = {0, 0};
-	mass = 1.0;
-	friction = 0.5;
-	elasticity = 0.5;
+Entity::Entity() : velocity({0, 0}), mass(1), friction(0.5), elasticity(0.5) {
+
 }
 
-bool Entity::collidesWith(const Obstruction* obstruction) const {
+bool Entity::collidesWith(const Obstruction& obstruction) const {
 	for (const Circle& circle : circles){
 		float slices = circle.radius * precision;
 		float angle_delta = 2 * pi / slices;
@@ -24,7 +21,7 @@ bool Entity::collidesWith(const Obstruction* obstruction) const {
 		for (float slice = 0; slice < slices; slice += 1, radvec = mat * radvec){
 			vec2 point = getTransform().transformPoint(circle.center + radvec);
 
-			if (obstruction->hitTest(point)){
+			if (obstruction.hitTest(point)){
 				return true;
 			}
 		}
@@ -45,30 +42,7 @@ bool Entity::standing() const {
 	return is_standing;
 }
 
-void Entity::moveAndCollide(const std::vector<std::shared_ptr<Obstruction>>& obstructions){
-
-	// This is where gravity happens
-	velocity.y += 0.5f;
-
-	for (auto& obstruction : obstructions){
-		performCollision(obstruction.get());
-	}
-
-	if (is_standing = flying_timer < 10){
-		onEvent(Standing);
-	} else {
-		onEvent(Flying);
-	}
-	flying_timer += 1;
-
-	move(velocity);
-}
-
-vec2 Entity::getContactAcceleration(const Obstruction* obstruction, vec2 normal) const {
-	return {0, 0};
-}
-
-void Entity::performCollision(const Obstruction* obstruction){
+void Entity::collide(const Obstruction& obstruction){
 	vec2 center = {0, 0};
 	for (const Circle& circle : circles){
 		center += circle.center;
@@ -94,14 +68,14 @@ void Entity::performCollision(const Obstruction* obstruction){
 			for (float slice = 0; slice < slices; slice += 1, radvec = mat * radvec){
 				vec2 point = getTransform().transformPoint(circle.center + radvec);
 
-				if (obstruction->hitTest(point)){
-					vec2 normal = obstruction->getNormalAt(point, -radvec);
-					total_force += obstruction->getImpulse(point, normal, this);
+				if (obstruction.hitTest(point)){
+					vec2 normal = obstruction.getNormalAt(point, -radvec);
+					total_force += obstruction.getImpulse(point, normal, *this);
 					sum_normals += normal;
 					hit_points += 1;
 
-					float depth = obstruction->getDistanceToBoundary(point, normal);
-					move(std::max(0.0f, depth * 1.0f - 1.0f) * normal);
+					float depth = obstruction.getDistanceToBoundary(point, normal);
+					setPosition(getPosition() + std::max(0.0f, depth * 1.0f - 1.0f) * normal);
 				}
 			}
 		}
@@ -119,6 +93,21 @@ void Entity::performCollision(const Obstruction* obstruction){
 			}
 		}
 	}
+}
+
+void Entity::move(){
+	if (is_standing = flying_timer < 10){
+		onEvent(Standing);
+	} else {
+		onEvent(Flying);
+	}
+	flying_timer += 1;
+
+	setPosition(getPosition() + velocity);
+}
+
+vec2 Entity::getContactAcceleration(const Obstruction& obstruction, vec2 normal) const {
+	return {0, 0};
 }
 
 void Entity::addCircle(const Entity::Circle& circle){

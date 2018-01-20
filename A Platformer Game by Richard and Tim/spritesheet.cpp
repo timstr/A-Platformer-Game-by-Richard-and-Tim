@@ -5,13 +5,9 @@
 #include "ImageStore.h"
 #include <map>
 
-SpriteSheet::SpriteSheet(){
-	texture = nullptr;
-	framecenter = {0, 0};
-	framesize = {0, 0};
-	frames_per_row = 0;
-	frames_per_second = 30;
-	flip = false;
+SpriteSheet::SpriteSheet()
+	: texture(nullptr), framecenter({0, 0}), framesize({0, 0}), frames_per_row(0), frames_per_second(30), flip(false) {
+
 }
 
 void SpriteSheet::setTexture(const sf::Texture& _texture){
@@ -34,7 +30,7 @@ void SpriteSheet::setFramesPerSecond(int _frames_per_second){
 	frames_per_second = _frames_per_second;
 }
 
-void SpriteSheet::addAnimation(const std::string& name, int start_frame, int end_frame){
+void SpriteSheet::addAnimation(std::string name, int start_frame, int end_frame){
 	animations[name] = Animation(start_frame - 1, end_frame - 1);
 }
 
@@ -44,7 +40,7 @@ void SpriteSheet::setFlip(bool _flip){
 
 Event AnimationEnd;
 
-SpriteSheetPlayer::SpriteSheetPlayer(const std::string& name, const std::function<void()>& _onComplete)
+SpriteSheetPlayer::SpriteSheetPlayer(std::string name, std::function<void()> _onComplete)
 	: spritesheet(SpriteSheetStore::getSpriteSheet(name)) {
 	facingright = true;
 	sprite.setTexture(*spritesheet.texture);
@@ -59,7 +55,7 @@ SpriteSheetPlayer::SpriteSheetPlayer(const std::string& name, const std::functio
 	frames_carryover = 0;
 }
 
-void SpriteSheetPlayer::setOnComplete(const std::function<void()>& _onComplete){
+void SpriteSheetPlayer::setOnComplete(std::function<void()> _onComplete){
 	onComplete = _onComplete;
 }
 

@@ -17,12 +17,15 @@ struct Obstruction;
 struct Entity : sf::Drawable, sf::Transformable, Destructible {
 	Entity();
 
-	// translate the entity according to its velocity and possibly collide with obstructions
-	void moveAndCollide(const std::vector<std::shared_ptr<Obstruction>>& obstructions);
+	// possibly collide with obstruction and change
+	// velocity accordingly
+	void collide(const Obstruction& obstruction);
+
+	void move();
 
 	// get the acceleration exerted on the entity when it contacts the given obstruction
 	// normal is assumed to be a unit vector
-	virtual vec2 getContactAcceleration(const Obstruction* obstruction, vec2 normal) const;
+	virtual vec2 getContactAcceleration(const Obstruction& obstruction, vec2 normal) const;
 
 	virtual void draw(sf::RenderTarget& rt, sf::RenderStates states) const override = 0;
 
@@ -57,10 +60,6 @@ struct Entity : sf::Drawable, sf::Transformable, Destructible {
 	int flying_timer = 0;
 
 	// returns true if the entity collides with the given obstruction
-	bool collidesWith(const Obstruction* obstruction) const;
-
-	// possibly collide with obstruction and change
-	// velocity accordingly
-	void performCollision(const Obstruction* obstruction);
+	bool collidesWith(const Obstruction& obstruction) const;
 
 };

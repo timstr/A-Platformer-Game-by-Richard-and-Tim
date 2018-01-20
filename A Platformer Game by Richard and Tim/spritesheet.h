@@ -18,7 +18,7 @@ struct SpriteSheet {
 
 	void setFramesPerSecond(int _frames_per_second);
 
-	void addAnimation(const std::string& name, int start_frame, int end_frame);
+	void addAnimation(std::string name, int start_frame, int end_frame);
 
 	void setFlip(bool _flip);
 
@@ -32,9 +32,8 @@ struct SpriteSheet {
 	bool flip;
 
 	struct Animation {
-		Animation(int _start_frame = 0, int _end_frame = 0){
-			start_frame = _start_frame;
-			end_frame = _end_frame;
+		Animation(int _start_frame = 0, int _end_frame = 0)
+			: start_frame(_start_frame), end_frame(_end_frame) {
 		}
 		int start_frame;
 		int end_frame;
@@ -48,9 +47,9 @@ struct SpriteSheet {
 extern Event AnimationEnd;
 
 struct SpriteSheetPlayer : sf::Drawable, sf::Transformable {
-	SpriteSheetPlayer(const std::string& name, const std::function<void()>& _onComplete = {});
+	SpriteSheetPlayer(std::string name, std::function<void()> _onComplete = {});
 
-	void setOnComplete(const std::function<void()>& _onComplete);
+	void setOnComplete(std::function<void()> _onComplete);
 
 	void play(const std::string& animation_name);
 

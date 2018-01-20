@@ -14,7 +14,7 @@ struct Sprudo : TestEntity {
 		sprite.play("walking");
 	}
 
-	vec2 getContactAcceleration(const Obstruction* obstruction, vec2 normal) const {
+	vec2 getContactAcceleration(const Obstruction& obstruction, vec2 normal) const override {
 		return vec2(direction * 0.6f * std::max(0.0f, dot(normal, vec2(0, -1))), 0);
 	}
 

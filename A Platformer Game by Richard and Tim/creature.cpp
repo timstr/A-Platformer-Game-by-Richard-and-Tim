@@ -2,7 +2,7 @@
 
 #include "creature.h"
 
-Creature::Creature(const std::string& name) : sprite(name) {
+Creature::Creature(std::string name) : sprite(name) {
 	type = nullptr;
 	sprite.setOnComplete([this]{
 		this->onEvent(AnimationEnd);
@@ -68,14 +68,14 @@ void Creature::update(){
 
 }
 
-void Creature::addStateTransition(uint8_t from_state, uint8_t to_state, const Event& trigger_event, double relative_probability, const std::function<void()>& onComplete){
+void Creature::addStateTransition(uint8_t from_state, uint8_t to_state, const Event& trigger_event, double relative_probability, std::function<void()> onComplete){
 	transitions.insert(std::make_pair(Trigger(from_state, trigger_event), Transition(to_state, relative_probability, onComplete)));
 }
-void Creature::addStateTransition(uint8_t to_state, const Event& trigger_event, const std::function<void()> onComplete){
+void Creature::addStateTransition(uint8_t to_state, const Event& trigger_event, std::function<void()> onComplete){
 	transitions.insert(std::make_pair(Trigger(-1, trigger_event), Transition(to_state, 1.0, onComplete)));
 }
 
-void Creature::setStateAnimation(uint8_t state, const std::string& animation){
+void Creature::setStateAnimation(uint8_t state, std::string animation){
 	animations[state] = animation;
 }
 
@@ -105,7 +105,7 @@ void Creature::notice(std::weak_ptr<Creature> crtr){
 	}
 }
 
-void Creature::onNotice(const CreatureType& creaturetype, const std::function<void(std::weak_ptr<Creature>)>& handler){
+void Creature::onNotice(const CreatureType& creaturetype, std::function<void(std::weak_ptr<Creature>)> handler){
 	type_handlers[&creaturetype] = handler;
 }
 
@@ -145,8 +145,7 @@ Creature::Trigger::Trigger(int _from_state, const Event& _event){
 	event_id = _event.id;
 }
 
-Creature::Transition::Transition(int _to_state, double _relative_probability, const std::function<void()> &_onComplete){
-	to_state = _to_state;
-	relative_probability = _relative_probability;
-	onComplete = _onComplete;
+Creature::Transition::Transition(int _to_state, double _relative_probability, std::function<void()> _onComplete)
+	: to_state(_to_state), relative_probability(_relative_probability), onComplete(_onComplete) {
+
 }

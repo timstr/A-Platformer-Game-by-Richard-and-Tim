@@ -61,7 +61,7 @@ struct GuyEntity : TestEntity {
 		sprite.scale(2.0f, 2.0f);
 	}
 
-	vec2 getContactAcceleration(const Obstruction* obstruction, vec2 normal) const override {
+	vec2 getContactAcceleration(const Obstruction& obstruction, vec2 normal) const override {
 		vec2 accel = {0, 0};
 		accel += run_speed * vec2(1, 0);
 		accel += vec2(0, jump_speed * -std::max(0.0f, dot(normal, {0, -1})));

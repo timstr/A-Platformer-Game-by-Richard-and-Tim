@@ -6,19 +6,19 @@
 struct TreeObstacle : Obstacle {
 	TreeObstacle(){
 		setBoundary(ImageStore::getImage("testobstacle1"));
-		sprite.setTexture(ImageStore::getTexture("testobstacle1"));
-		friction = 0.0;
+		setSprite(sf::Sprite(ImageStore::getTexture("testobstacle1")));
+		setFriction(0);
 	}
 };
 
 struct BoostObstacle : Obstacle {
 	BoostObstacle(){
 		setBoundary(ImageStore::getImage("testobstacle2"));
-		sprite.setTexture(ImageStore::getTexture("testobstacle2"));
-		friction = 0.0;
+		setSprite(sf::Sprite(ImageStore::getTexture("testobstacle2")));
+		setFriction(0);
 	}
 
-	vec2 getContactAcceleration(const Entity* entity, vec2 normal) const override {
+	vec2 getContactAcceleration(const Entity& entity, vec2 normal) const override {
 		float align = std::max(0.0f, dot(normal, vec2(0, -1)));
 		return vec2(2.0f * align, 0.0f);
 	}
@@ -32,9 +32,9 @@ struct MovingObstacle : Obstacle {
 		position2 = _position2;
 
 		setBoundary(ImageStore::getImage("testobstacle3"));
-		sprite.setTexture(ImageStore::getTexture("testobstacle3"));
+		setSprite(sf::Sprite(ImageStore::getTexture("testobstacle3")));
 
-		friction = 1.0;
+		setFriction(1);
 	}
 
 	void tick() override {
@@ -56,8 +56,8 @@ struct MovingObstacle : Obstacle {
 struct RampObstacle : Obstacle {
 	RampObstacle(){
 		setBoundary(ImageStore::getImage("testobstacle4"));
-		sprite.setTexture(ImageStore::getTexture("testobstacle4"));
+		setSprite(sf::Sprite(ImageStore::getTexture("testobstacle4")));
 
-		friction = 0.0;
+		setFriction(0);
 	}
 };

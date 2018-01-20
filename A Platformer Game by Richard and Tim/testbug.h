@@ -44,7 +44,7 @@ struct TestBug : Creature {
 		setState(Idle);
 	}
 
-	vec2 getContactAcceleration(const Obstruction* obstruction, vec2 normal) const override {
+	vec2 getContactAcceleration(const Obstruction& obstruction, vec2 normal) const override {
 		if (getState() == Running){
 			return vec2(getDirection() * 2, 0) * dot(normal, vec2(0, -1));
 		}

@@ -16,7 +16,7 @@ SpriteSheetStore::SpriteSheetStore(){
 
 }
 
-SpriteSheet SpriteSheetStore::loadSpriteSheet(const std::string& name){
+SpriteSheet SpriteSheetStore::loadSpriteSheet(std::string name){
 	std::ifstream ifs;
 	ifs.open("images/" + name + ".spritesheet");
 	if (!ifs.is_open()){

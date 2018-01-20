@@ -12,17 +12,14 @@ struct Entity;
 // a complicated raster-image physical boundary with 
 // which entities are to interact physically
 struct Obstruction : sf::Drawable, sf::Transformable, Destructible {
-	Obstruction(bool _open_boundary) : open_boundary(_open_boundary) {
-		previous_position = getPosition();
-		friction = 0.5;
-	}
+	Obstruction(bool _open_boundary);
 
 	// test whether a point (in world coordinates) collides with the obstruction
 	bool hitTest(vec2 point) const;
 
 	// get the impulse exerted on a body colliding at the given point
 	// moving at the given velocity having the given mass
-	vec2 getImpulse(vec2 point, vec2 normal, Entity* entity) const;
+	vec2 getImpulse(vec2 point, vec2 normal, const Entity& entity) const;
 
 	void setSprite(const sf::Sprite& _image);
 
@@ -35,20 +32,12 @@ struct Obstruction : sf::Drawable, sf::Transformable, Destructible {
 	// tick shall be called once per frame to possibly update the obstruction's state
 	virtual void tick();
 
-	// the visual appearance
-	sf::Sprite sprite;
-
-	// the physical boundary
-	const sf::Image* boundary;
-
-	// the coefficient of friction
-	// 0 for totally slippy
-	// 1 for totally grippy
-	float friction;
+	void setFriction(float f);
+	float getFriction() const;
 
 	// the acceleration exerted upon an entity touching the surface
 	// normal is assumed to be a unit vector
-	virtual vec2 getContactAcceleration(const Entity* entity, vec2 normal) const {
+	virtual vec2 getContactAcceleration(const Entity& entity, vec2 normal) const {
 		return {0, 0};
 	}
 
@@ -60,7 +49,19 @@ struct Obstruction : sf::Drawable, sf::Transformable, Destructible {
 	// open space, or 0 if the given point is already in open space
 	float getDistanceToBoundary(vec2 point, vec2 direction) const;
 
-	protected:
+	private:
+
+	// the visual appearance
+	sf::Sprite sprite;
+
+	// the coefficient of friction
+	// 0 for totally slippy
+	// 1 for totally grippy
+	float friction;
+
+	// the physical boundary
+	const sf::Image* boundary;
+
 	// whether the area outside the obstruction is solid
 	const bool open_boundary;
 

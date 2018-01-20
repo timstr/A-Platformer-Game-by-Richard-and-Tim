@@ -34,7 +34,10 @@ void Space::tick(){
 		obstruction->update();
 	}
 	for (auto& entity : entities){
-		entity->moveAndCollide(obstructions);
+		for (auto& obstruction : obstructions){
+			entity->collide(*obstruction);
+		}
+		entity->move();
 	}
 	for (auto& entity : entities){
 		entity->tick();

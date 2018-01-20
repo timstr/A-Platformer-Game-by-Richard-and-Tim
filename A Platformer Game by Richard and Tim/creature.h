@@ -48,7 +48,7 @@ struct CreatureTypeT : CreatureType {
 // Creature is an autonomous character that moves around
 // independently and can interact with other characters
 struct Creature : Character {
-	Creature(const std::string& name);
+	Creature(std::string name);
 
 	void setType(const CreatureType& type);
 	const CreatureType* getType() const;
@@ -60,17 +60,17 @@ struct Creature : Character {
 
 	virtual void update();
 
-	void addStateTransition(uint8_t from_state, uint8_t to_state, const Event& trigger_event, double relative_probability = 1.0, const std::function<void()>& onComplete = {});
-	void addStateTransition(uint8_t to_state, const Event& trigger_event, const std::function<void()> onComplete = {});
+	void addStateTransition(uint8_t from_state, uint8_t to_state, const Event& trigger_event, double relative_probability = 1.0, std::function<void()> onComplete = {});
+	void addStateTransition(uint8_t to_state, const Event& trigger_event, std::function<void()> onComplete = {});
 
-	void setStateAnimation(uint8_t state, const std::string& animation);
+	void setStateAnimation(uint8_t state, std::string animation);
 
 	void setState(uint8_t state);
 	int getState() const;
 
 	void notice(std::weak_ptr<Creature> creature);
 
-	void onNotice(const CreatureType& creaturetype, const std::function<void(std::weak_ptr<Creature>)>& handler);
+	void onNotice(const CreatureType& creaturetype, std::function<void(std::weak_ptr<Creature>)> handler);
 
 	void flip();
 
@@ -110,7 +110,7 @@ struct Creature : Character {
 	};
 
 	struct Transition {
-		Transition(int _to_state, double _relative_probability, const std::function<void()>& _onComplete);
+		Transition(int _to_state, double _relative_probability, std::function<void()> _onComplete);
 
 		int to_state;
 		double relative_probability;

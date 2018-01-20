@@ -24,9 +24,9 @@ struct TestSpace : Space {
 		addEntities<Bulbous>(0, place_to_be);
 
 		addCreatures<TestCharacter>(0, place_to_be, true);
-		addCreatures<TestBird>(2, place_to_be, true);
-		addCreatures<TestWorm>(2, place_to_be, true);
-		addCreatures<TestBug>(2, place_to_be, true);
+		addCreatures<TestBird>(100, place_to_be, true);
+		addCreatures<TestWorm>(300, place_to_be, true);
+		addCreatures<TestBug>(1, place_to_be, true);
 
 		
 		entities.push_back(guy = addEntity<GuyEntity>());

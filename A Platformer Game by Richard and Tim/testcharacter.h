@@ -59,7 +59,7 @@ struct TestCharacter : Creature {
 		setState(idle);
 	}
 
-	vec2 getContactAcceleration(const Obstruction* obstruction, vec2 normal) const override {
+	vec2 getContactAcceleration(const Obstruction& obstruction, vec2 normal) const override {
 		switch (getState()){
 			case walking:
 				return vec2(2 * getDirection(), 0);
