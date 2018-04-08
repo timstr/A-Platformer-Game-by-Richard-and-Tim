@@ -1,8 +1,0 @@
-framesize 100 67
-framecenter 50 60
-facing left
-framesperrow 9
-framespersecond 10
-animation idle 1 1
-animation running 2 8
-animation playdead 9 9
