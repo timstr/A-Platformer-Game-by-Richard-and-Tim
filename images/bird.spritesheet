@@ -1,0 +1,9 @@
+framesize 100 100
+framecenter 60 100
+framesperrow 10
+framespersecond 8
+animation idle 1 1
+animation flying 2 3
+animation sneaking 4 5
+animation watching 6 6
+animation eating 7 10

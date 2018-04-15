@@ -1,0 +1,30 @@
+cmake_minimum_required(VERSION 3.9.0)
+
+set(FONTS_PATH "${CMAKE_SOURCE_DIR}/fonts")
+configure_file(
+	"${CMAKE_CURRENT_SOURCE_DIR}/fontspath.h.in"
+	"${CMAKE_CURRENT_SOURCE_DIR}/fontspath.h"
+)
+
+set(ui-headers
+	TestUI.h
+	fontspath.h
+)
+
+set(ui-srcs
+	TestUI.cpp
+)
+
+add_library(ui STATIC ${ui-headers} ${ui-srcs})
+
+set_target_properties(ui PROPERTIES LINKER_LANGUAGE CXX)
+
+target_include_directories(ui
+	PUBLIC "."
+	PUBLIC worlds
+)
+
+target_link_libraries(ui
+	PUBLIC tims-gui
+	PUBLIC worlds
+)
