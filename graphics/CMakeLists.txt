@@ -13,7 +13,7 @@ set(graphics-headers
 	spritesheet.h
 	ImageStore.h
 	SpriteSheetStore.h
-	images.h
+	imagespath.h
 )
 
 set(graphics-srcs
