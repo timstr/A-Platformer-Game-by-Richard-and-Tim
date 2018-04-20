@@ -7,6 +7,8 @@
 #include <vector>
 #include <memory>
 
+#include "physengine.h"
+
 // a Space is where obstructions and entities come together and
 // where interactions and spatial relations are collectively managed
 // A Space consists of a map, a number of obstructions, and a number of

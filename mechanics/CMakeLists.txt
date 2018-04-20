@@ -12,7 +12,6 @@ set(mechanics-headers
 	obstruction.h
 	player.h
 	space.h
-	vec2.h
 )
 
 set(mechanics-srcs
@@ -25,7 +24,6 @@ set(mechanics-srcs
 	obstruction.cpp
 	player.cpp
 	space.cpp
-	vec2.cpp
 )
 
 add_library(mechanics STATIC ${mechanics-headers} ${mechanics-srcs})
@@ -37,4 +35,5 @@ target_include_directories(mechanics PUBLIC ".")
 target_link_libraries(mechanics
 	PUBLIC tims-gui
 	PUBLIC graphics
+	PUBLIC physics
 )
