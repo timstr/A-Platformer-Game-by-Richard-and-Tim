@@ -6,6 +6,7 @@
 #include <memory>
 #include <map>
 #include <functional>
+#include <algorithm>
 #include <Eigen/Sparse>
 
 namespace phys {
@@ -22,30 +23,24 @@ namespace phys {
 
 		}
 
-		Collision collide(RigidBody& a, RigidBody& b){
-			auto pair = std::make_pair(a.type, b.type);
-			auto it = collision_table.find(pair);
-			if (it != collision_table.end()){
-				return it->second(a, b);
-			} else {
-				throw std::runtime_error("The collision jump table was used incorrectly");
-			}
+		void addRigidBody(RigidBody& body){
+			bodies.emplace_back(&body);
+		}
+		void removeRigidBody(RigidBody& body){
+			bodies.erase(std::remove(bodies.begin(),
+									 bodies.end(),
+									 &body),
+						 bodies.end());
 		}
 
-		bool possibleCollision(const RigidBody& a, const RigidBody& b){
-			const BoundingBox abb = a.getBoundingBox();
-			const BoundingBox bbb = b.getBoundingBox();
-			return abb.collidesWith(bbb);
-		}
-		
 		void tick(float dt){
 			// user-defined forces should have been applied
 
 			// accelerate and move all bodies
 			for (const auto& body : bodies){
-				body->velocity += body->forces * body->inv_mass * dt;
+				body->velocity += body->forces * body->inverse_mass * dt;
 				body->position += body->velocity * dt;
-				body->angular_velocity += body->torques * body->inv_moment * dt;
+				body->angular_velocity += body->torques * body->inverse_moment * dt;
 				body->angle += body->angular_velocity * dt;
 				body->forces = {0.0f, 0.0f};
 				body->torques = 0.0f;
@@ -65,10 +60,48 @@ namespace phys {
 			// TODO: add custom constraints such as joints, springs, etc
 
 			// TODO: solve constraints, apply corrective impulses/forces
+			/*
+			Needed:
+			J - Jacobian matrix of constraint function w.r.t. state vector
+			M - mass/moment matrix
+			M^-1 - inverse mass/moment matrix
+			dJ/dt - element-wise time derivate of Jacobian matrix J
+			F_ext - vector of external forces (applied as desired between simulation ticks)
+
+			*/
+
+			using namespace Eigen;
+
+			const int n = bodies.size();
+			const int m = collisions.size();
+
+			SparseMatrix<float> J {m, 3*n};
+			SparseMatrix<float> Jdot {m, 3*n};
+
+			SparseMatrix<float> M {3*n, 3*n};
+			SparseMatrix<float> M_inv {3*n, 3*n};
 
 		}
 
-		std::vector<std::shared_ptr<RigidBody>> bodies;
+		private:
+
+		Collision collide(RigidBody& a, RigidBody& b){
+			auto pair = std::make_pair(a.type, b.type);
+			auto it = collision_table.find(pair);
+			if (it != collision_table.end()){
+				return it->second(a, b);
+			} else {
+				throw std::runtime_error("The collision jump table was used incorrectly");
+			}
+		}
+
+		bool possibleCollision(const RigidBody& a, const RigidBody& b){
+			const BoundingBox abb = a.getBoundingBox();
+			const BoundingBox bbb = b.getBoundingBox();
+			return abb.collidesWith(bbb);
+		}
+
+		std::vector<RigidBody*> bodies;
 
 		using CollisionFunction = Collision(*)(RigidBody&, RigidBody&);
 		const std::map<std::pair<RigidBody::Type, RigidBody::Type>, CollisionFunction> collision_table;

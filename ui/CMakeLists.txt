@@ -9,6 +9,7 @@ configure_file(
 set(ui-headers
 	TestUI.h
 	fontspath.h
+	PhysicsTestUI.h
 )
 
 set(ui-srcs

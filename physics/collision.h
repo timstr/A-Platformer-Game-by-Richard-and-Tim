@@ -4,6 +4,7 @@
 
 namespace phys {
 
+	// TODO: remove penetration depth, add collision points in local coordinates of _a and _b
 	struct Collision {
 		Collision(RigidBody& _a, RigidBody& _b, vec2 _normal, float _penetration) :
 			a(_a), b(_b), normal(_normal), penetration(_penetration) {
@@ -20,7 +21,7 @@ namespace phys {
 		Circle& ca = static_cast<Circle&>(a);
 		Circle& cb = static_cast<Circle&>(b);
 
-		vec2 diff = cb.position - ca.position;
+		vec2 diff = cb.getPosition() - ca.getPosition();
 		float dist = abs(diff);
 
 		float penetration = dist - ca.radius - cb.radius;
@@ -34,7 +35,7 @@ namespace phys {
 		Rectangle& ra = static_cast<Rectangle&>(a);
 		Circle& cb = static_cast<Circle&>(b);
 
-		vec2 diff = cb.position - ra.position;
+		vec2 diff = cb.getPosition() - ra.getPosition();
 		vec2 closest = diff;
 
 		float x_extent = ra.size.x * 0.5f;
@@ -73,7 +74,7 @@ namespace phys {
 		Rectangle& ra = static_cast<Rectangle&>(a);
 		Rectangle& rb = static_cast<Rectangle&>(b);
 
-		vec2 diff = rb.position - ra.position;
+		vec2 diff = rb.getPosition() - ra.getPosition();
 
 		float x_overlap = (ra.size.x + rb.size.x) * 0.5f - std::abs(diff.x);
 

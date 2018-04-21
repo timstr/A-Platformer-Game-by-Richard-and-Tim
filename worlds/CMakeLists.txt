@@ -5,7 +5,7 @@ add_library(worlds-base INTERFACE)
 
 # list of all header-only sub-libraries
 set(worlds-libs
-	
+	physicstest
 )
 
 # sub-libraries that aren't header-only and thus need to be linked to

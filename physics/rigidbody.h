@@ -37,11 +37,19 @@ namespace phys {
 
 		RigidBody(Type _type, float _mass, float _moment, float _elasticity) :
 			type(_type),
+			velocity({0.0f, 0.0f}),
+			position({0.0f, 0.0f}),
+			forces({0.0f, 0.0f}),
+			angle(0.0f),
+			angular_velocity(0.0f),
+			torques(0.0f),
 			mass(_mass),
-			inv_mass(_mass == 0.0f ? 0.0f : (1.0f / _mass)),
+			inverse_mass(_mass == 0.0f ? 0.0f : (1.0f / _mass)),
 			moment(_moment),
-			inv_moment(_moment == 0.0f ? 0.0f : (1.0f / _moment)),
-			elasticity(_elasticity) {
+			inverse_moment(_moment == 0.0f ? 0.0f : (1.0f / _moment)),
+			elasticity(_elasticity),
+			transform_needs_update(true),
+			inv_transform_needs_update(true) {
 
 		}
 		virtual ~RigidBody(){
@@ -52,6 +60,74 @@ namespace phys {
 
 		const float elasticity;
 
+		const float mass;
+		const float inverse_mass;
+
+		const float moment;
+		const float inverse_moment;
+		
+		void applyForceAt(vec2 force, vec2 point_world_space){
+			forces += force;
+			vec2 rad = (point_world_space - position);
+			torques += rad.x * force.y - rad.y * force.x;
+		}
+
+		void applyForce(vec2 force){
+			forces += force;
+		}
+
+		void applyTorque(float torque){
+			torques += torque;
+		}
+
+		const vec2& getPosition() const {
+			return position;
+		}
+		void setPosition(vec2 _position){
+			position = _position;
+		}
+
+		const vec2& getVelocity() const {
+			return velocity;
+		}
+		void setVelocity(vec2 _velocity){
+			velocity = _velocity;
+		}
+
+		float getAngle() const {
+			return angle;
+		}
+		void setAngle(float _angle){
+			angle = _angle;
+		}
+
+		float getAngularVelocity() const {
+			return angular_velocity;
+		}
+		void setAngularVelocity(float _angular_velocity){
+			angular_velocity = _angular_velocity;
+		}
+
+		const mat2x2& getTransform() const {
+			if (transform_needs_update){
+				transform = rotationMatrix(angle);
+				transform_needs_update = false;
+			}
+			return transform;
+		}
+
+		const mat2x2& getInverseTransform() const {
+			if (inv_transform_needs_update){
+				inv_transform = rotationMatrix(-angle);
+				inv_transform_needs_update = false;
+			}
+			return inv_transform;
+		}
+
+		virtual BoundingBox getBoundingBox() const = 0;
+
+		protected:
+
 		vec2 position;
 		vec2 velocity;
 		vec2 forces;
@@ -60,23 +136,13 @@ namespace phys {
 		float angular_velocity;
 		float torques;
 
-		const float mass;
-		const float inv_mass;
+		mutable bool transform_needs_update;
+		mutable mat2x2 transform;
 
-		const float moment;
-		const float inv_moment;
+		mutable bool inv_transform_needs_update;
+		mutable mat2x2 inv_transform;
 
-		mat2x2 transform;
-		
-		void applyForce(vec2 force, vec2 point_from_com){
-			
-		}
-
-		void updateTransform(){
-			transform = rotationMatrix(angle);
-		}
-
-		virtual BoundingBox getBoundingBox() const = 0;
+		friend struct Engine;
 	};
 
 
@@ -116,7 +182,23 @@ namespace phys {
 		const vec2 size;
 
 		BoundingBox getBoundingBox() const override {
-			return BoundingBox(position - size * 0.5f, position + size * 0.5f);
+
+			vec2 topleft = getTransform() * (-size * 0.5f);
+			vec2 bottomleft = getTransform() * (vec2(-size.x, size.y) * 0.5f);
+			vec2 topright = getTransform() * (vec2(-size.x, size.y) * 0.5f);
+			vec2 bottomright = getTransform() * (size * 0.5f);
+
+			vec2 min = {
+				std::min<float>({topleft.x, bottomleft.x, topright.x, bottomright.x}),
+				std::min<float>({topleft.y, bottomleft.y, topright.y, bottomright.y})
+			};
+
+			vec2 max = {
+				std::max<float>({topleft.x, bottomleft.x, topright.x, bottomright.x}),
+				std::max<float>({topleft.y, bottomleft.y, topright.y, bottomright.y})
+			};
+
+			return BoundingBox(position + min, position + max);
 		}
 	};
 

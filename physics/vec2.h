@@ -5,17 +5,16 @@
 typedef sf::Vector2f vec2;
 
 struct mat2x2 {
-	mat2x2(float topleft = 0, float topright = 0, float bottomleft = 0, float bottomright = 0){
-		a = topleft;
-		b = topright;
-		c = bottomleft;
-		d = bottomright;
+	mat2x2() : a(0.0f), b(0.0f), c(0.0f), d(0.0f) {
+
 	}
-	mat2x2(const vec2& l, const vec2& r){
-		a = l.x;
-		b = r.x;
-		c = l.y;
-		d = r.y;
+	mat2x2(float topleft, float topright, float bottomleft, float bottomright)
+		:a(topleft), b(topright), c(bottomleft), d(bottomright) {
+		
+	}
+	mat2x2(const vec2& l, const vec2& r)
+		: a(l.x), b(r.x), c(l.y), d(r.y) {
+		
 	}
 
 	float a, b, c, d;
