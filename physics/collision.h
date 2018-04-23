@@ -6,15 +6,16 @@ namespace phys {
 
 	// TODO: remove penetration depth, add collision points in local coordinates of _a and _b
 	struct Collision {
-		Collision(RigidBody& _a, RigidBody& _b, vec2 _normal, float _penetration) :
-			a(_a), b(_b), normal(_normal), penetration(_penetration) {
+		Collision(RigidBody& _a, RigidBody& _b, vec2 _normal, vec2 _radius_a, vec2 _radius_b) :
+			a(_a), b(_b), normal(_normal), radius_a(_radius_a), radius_b(_radius_b) {
 
 		}
 
 		RigidBody& a;
 		RigidBody& b;
-		vec2 normal;
-		float penetration;
+		const vec2 normal;
+		const vec2 radius_a; // vector from a's center of mass to point of collision (closest point to b), in a's local coordinates
+		const vec2 radius_b; // vector from b's center of mass to point of collision (closest point to a), in b's local coordinates
 	};
 
 	inline Collision collisionCircleCircle(RigidBody& a, RigidBody& b){
@@ -28,11 +29,14 @@ namespace phys {
 
 		vec2 normal = diff / dist;
 
-		return Collision(ca, cb, normal, penetration);
+		vec2 r_a = ca.getInverseTransform() * (normal * ca.radius);
+		vec2 r_b = cb.getInverseTransform() * (-normal * cb.radius);
+
+		return Collision(ca, cb, normal, r_a, r_b);
 	}
 
 	inline Collision collisionRectangleCircle(RigidBody& a, RigidBody& b){
-		Rectangle& ra = static_cast<Rectangle&>(a);
+		/*Rectangle& ra = static_cast<Rectangle&>(a);
 		Circle& cb = static_cast<Circle&>(b);
 
 		vec2 diff = cb.getPosition() - ra.getPosition();
@@ -63,15 +67,17 @@ namespace phys {
 			return Collision(ra, cb, -normal / dist, cb.radius - dist);
 		} else {
 			return Collision(ra, cb, normal / dist, cb.radius - dist);
-		}
+		}*/
+		throw std::runtime_error("Not implemented");
 	}
 
 	inline Collision collisionCircleRectangle(RigidBody& a, RigidBody& b){
-		return collisionRectangleCircle(b, a);
+		//return collisionRectangleCircle(b, a);
+		throw std::runtime_error("Not implemented");
 	}
 
 	inline Collision collisionRectangleRectangle(RigidBody& a, RigidBody& b){
-		Rectangle& ra = static_cast<Rectangle&>(a);
+		/*Rectangle& ra = static_cast<Rectangle&>(a);
 		Rectangle& rb = static_cast<Rectangle&>(b);
 
 		vec2 diff = rb.getPosition() - ra.getPosition();
@@ -93,7 +99,8 @@ namespace phys {
 		}
 
 		// not a collision, return a negative penetration
-		return Collision(a, b, {0.0f, 0.0f}, -1.0f);
+		return Collision(a, b, {0.0f, 0.0f}, -1.0f);*/
+		throw std::runtime_error("Not implemented");
 	}
 
 } // namespace phys

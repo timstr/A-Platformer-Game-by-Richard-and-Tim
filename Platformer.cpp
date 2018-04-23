@@ -11,7 +11,7 @@ int main(){
 	ui::root()->addChildWindow(tsw);
 	tsw->grabFocus();*/
 
-	PhysicsTestUI* ptui = new PhysicsTestUI({1000, 700}, 100);
+	PhysicsTestUI* ptui = new PhysicsTestUI({1000, 700});
 	ui::root()->addChildWindow(ptui);
 	ptui->grabFocus();
 
