@@ -50,31 +50,26 @@ namespace phys {
 
 			// TODO: add custom constraints such as joints, springs, etc
 
-			// TODO: solve constraints, apply corrective impulses/forces
-			/*
-			Needed:
-			J - Jacobian matrix of constraint function w.r.t. state vector
-			Jdot - element-wise time derivate of Jacobian matrix J
-			M - mass/moment matrix
-			M^-1 - inverse mass/moment matrix
-			dJ/dt - element-wise time derivate of Jacobian matrix J
-			F_ext - vector of external forces (applied as desired between simulation ticks)
-			qdot - velocity vector, time derivative of q (state vector)
-
-			*/
+			// solve constraints, apply corrective forces
 
 			using namespace Eigen;
 
 			const int n = bodies.size();
 			const int m = 1; // 1 test constraint for now
 
-			SparseMatrix<float> J {m, 3*n};
-			SparseMatrix<float> Jdot {m, 3*n};
+			SparseMatrix<float> J {m, 3*n}; // Jacobian of constraint function
+			SparseMatrix<float> Jdot {m, 3*n}; // derivative of Jacobian w.r.t. time
+			SparseMatrix<float> M_inv {3*n, 3*n}; // inverse mass/moment diagonal matrix
 
-			VectorXf F_ext {3 * n};
-			VectorXf qdot {3 * n};
+			VectorXf F_ext {3 * n}; // accumulated external forces
+			VectorXf qdot {3 * n}; // velocities and angular velocities
 
-			SparseMatrix<float> M_inv {3*n, 3*n};
+			VectorXf C {m}; // Constraint functions
+			VectorXf Cdot {m}; // derivative of constraint functions w.r.t. time
+
+			float k_s = 0.5; // feedback spring constant
+			float k_d = 0.5; // feedback damping constant
+
 
 			// initialize M_inv
 			for (int i = 0; i < n; ++i){
@@ -101,47 +96,65 @@ namespace phys {
 			const int a = 0;
 			const int b = 1;
 
-			// initialize J
-			J.insert(0, 3 * a + 0) = bodies[a]->position.x - bodies[b]->position.x;		// dC/dPax
-			J.insert(0, 3 * a + 1) = bodies[a]->position.y - bodies[b]->position.y;		// dC/dPay
+			const vec2 dP = bodies[b]->position - bodies[a]->position;
+			const vec2 dV = bodies[b]->velocity - bodies[a]->velocity;
+			const float dist = 300.0f;
 
-			J.insert(0, 3 * b + 0) = bodies[b]->position.x - bodies[a]->position.x;		// dC/dPbx
-			J.insert(0, 3 * b + 1) = bodies[b]->position.y - bodies[a]->position.y;		// dC/dPby
+			// various derivates of the fixed-distance constraint function:
+			//	C = (1/2)*(|Pb - Pa|^2 - d^2)
+
+			const float dCdPx = -dP.x;
+			const float dCdPy = -dP.y;
+
+			const float d2CdPxdt = -dV.x;
+			const float d2CdPydt = -dV.y;
+
+			// initialize C and Cdot
+			C(0) = 0.5f * ((dP.x * dP.x) + (dP.y * dP.y) - (dist * dist));
+			Cdot(0) = dP.x * dV.x + dP.y * dV.y;
+
+			// initialize J
+			J.insert(0, 3 * a + 0) = dCdPx;
+			J.insert(0, 3 * a + 1) = dCdPy;
+
+			J.insert(0, 3 * b + 0) = -dCdPx;
+			J.insert(0, 3 * b + 1) = -dCdPy;
 			
 			// initialize Jdot
-			Jdot.insert(0, 3 * a + 0) = bodies[a]->velocity.x - bodies[b]->velocity.x;	// d2C/dPaxdt
-			Jdot.insert(0, 3 * a + 1) = bodies[a]->velocity.y - bodies[b]->velocity.y;	// d2C/dPaydt
+			Jdot.insert(0, 3 * a + 0) = d2CdPxdt;
+			Jdot.insert(0, 3 * a + 1) = d2CdPydt;
 			
-			Jdot.insert(0, 3 * b + 0) = bodies[b]->velocity.x - bodies[a]->velocity.x;	// d2C/dPbxdt
-			Jdot.insert(0, 3 * b + 1) = bodies[b]->velocity.y - bodies[a]->velocity.y;	// d2C/dPbydt
+			Jdot.insert(0, 3 * b + 0) = -d2CdPxdt;
+			Jdot.insert(0, 3 * b + 1) = -d2CdPydt;
 
 			// calculate A and y to solve A*lambda = y
 			SparseMatrix<float> A = J * M_inv * J.transpose();
-			VectorXf y = -Jdot * qdot - J * M_inv * F_ext;
+			VectorXf y = -Jdot * qdot - J * M_inv * F_ext - k_s * C - k_d * Cdot;
 			VectorXf lambda;
 
 			SparseLU<SparseMatrix<float>> solver;
 			solver.compute(A);
-			if (solver.info() != Success){
-				throw std::runtime_error("Constraint computation failed");
+			if (solver.info() == Success){
+				lambda = solver.solve(y);
+				if (solver.info() == Success){
+
+					// calculate corrective forces
+					VectorXf f_corr = J.transpose() * lambda;
+
+					// apply corrective forces and torques
+					for (int i = 0; i < n; ++i){
+						bodies[i]->forces.x += f_corr(3 * i + 0);
+						bodies[i]->forces.y += f_corr(3 * i + 1);
+						bodies[i]->torques += f_corr(3 * i + 2);
+					}
+
+				} else {
+					//throw std::runtime_error("Constraint solving failed");
+				}
+			} else {
+				//throw std::runtime_error("Constraint computation failed");
 			}
 			
-			lambda = solver.solve(y);
-			if (solver.info() != Success){
-				throw std::runtime_error("Constraint solving failed");
-			}
-
-			// calculate corrective forces
-			VectorXf f_corr = J.transpose() * lambda;
-
-			// apply corrective forces and torques
-			for (int i = 0; i < n; ++i){
-				bodies[i]->forces.x += f_corr(3 * i + 0);
-				bodies[i]->forces.y += f_corr(3 * i + 1);
-				bodies[i]->torques += f_corr(3 * i + 2);
-			}
-
-
 			// accelerate and move all bodies
 			for (const auto& body : bodies){
 				body->velocity += body->forces * body->inverse_mass * dt;
