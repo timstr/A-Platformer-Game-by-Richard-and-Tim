@@ -9,14 +9,14 @@ struct PhysicsTestUI : ui::Window {
 	PhysicsTestUI(vec2 _size) : paused(true) {
 		size = _size;
 
-		shapes.emplace_back(std::make_unique<CircleGuy>(50.0f, size * 0.5f - vec2(200.0f, 0.0f)));
-		shapes.emplace_back(std::make_unique<CircleGuy>(50.0f, size * 0.5f + vec2(200.0f, 0.0f)));
+		shapes.emplace_back(std::make_unique<CircleGuy>(50.0f, vec2(700.0f, 100.0f)));
+		shapes.emplace_back(std::make_unique<CircleGuy>(50.0f, vec2(700.0f, 300.0f)));
 
 		physics_engine.addRigidBody(shapes[0]->getBody());
 		physics_engine.addRigidBody(shapes[1]->getBody());
 
-		shapes[0]->getBody().applyForce({0.0f, -30000.0f});
-		shapes[1]->getBody().applyForce({0.0f, 30000.0f});
+		shapes[0]->getBody().applyForce({0.0f, 0.0f});
+		shapes[1]->getBody().applyForce({-300000.0f, 0.0f});
 
 		addChildWindow(label = new ui::Text("", getFont()), vec2(0.0f, 0.0f));
 	}
@@ -30,6 +30,8 @@ struct PhysicsTestUI : ui::Window {
 	void onKeyDown(sf::Keyboard::Key key) override {
 		if (key == sf::Keyboard::Space){
 			paused = !paused;
+		} else if (key == sf::Keyboard::T && paused){
+			physics_engine.tick(1.0f);
 		}
 	}
 

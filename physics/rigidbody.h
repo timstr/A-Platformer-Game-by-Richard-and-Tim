@@ -26,7 +26,7 @@ namespace phys {
 		vec2 max;
 	};
 
-	// TODO: add 
+	// TODO: add convex polygon, raster shape
 	
 	struct RigidBody {
 
@@ -49,12 +49,17 @@ namespace phys {
 			inverse_moment(_moment == 0.0f ? 0.0f : (1.0f / _moment)),
 			elasticity(_elasticity),
 			transform_needs_update(true),
-			inv_transform_needs_update(true) {
+			inv_transform_needs_update(true),
+			ext_forces({0, 0}), corr_forces({0, 0}) {
 
 		}
 		virtual ~RigidBody(){
 
 		}
+
+		// TEST:
+		vec2 ext_forces;
+		vec2 corr_forces;
 
 		const Type type;
 

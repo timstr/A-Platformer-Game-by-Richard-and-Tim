@@ -35,6 +35,7 @@ namespace phys {
 		}
 
 		void tick(float dt){
+
 			// user-defined forces should have been applied
 			
 			// find collisions
@@ -55,7 +56,7 @@ namespace phys {
 			using namespace Eigen;
 
 			const int n = bodies.size();
-			const int m = 1; // 1 test constraint for now
+			const int m = 2; // 2 test constraints for now
 
 			SparseMatrix<float> J {m, 3*n}; // Jacobian of constraint function
 			SparseMatrix<float> Jdot {m, 3*n}; // derivative of Jacobian w.r.t. time
@@ -67,8 +68,9 @@ namespace phys {
 			VectorXf C {m}; // Constraint functions
 			VectorXf Cdot {m}; // derivative of constraint functions w.r.t. time
 
-			float k_s = 0.5; // feedback spring constant
-			float k_d = 0.5; // feedback damping constant
+			// TODO: tune these
+			float k_s = 0.005f; // feedback spring constant
+			float k_d = 0.1f; // feedback damping constant
 
 
 			// initialize M_inv
@@ -93,39 +95,78 @@ namespace phys {
 			}
 
 			// Test: single fixed distance constraint between bodies a and b
-			const int a = 0;
-			const int b = 1;
+			{
+				const int a = 0;
+				const int b = 1;
 
-			const vec2 dP = bodies[b]->position - bodies[a]->position;
-			const vec2 dV = bodies[b]->velocity - bodies[a]->velocity;
-			const float dist = 300.0f;
+				const vec2 dP = bodies[b]->position - bodies[a]->position;
+				const vec2 dV = bodies[b]->velocity - bodies[a]->velocity;
+				const float dist = 200.0f;
 
-			// various derivates of the fixed-distance constraint function:
-			//	C = (1/2)*(|Pb - Pa|^2 - d^2)
+				// various derivates of the fixed-distance constraint function:
+				//	C = (1/2)*(|Pb - Pa|^2 - d^2)
 
-			const float dCdPx = -dP.x;
-			const float dCdPy = -dP.y;
+				const float dCdPx = -dP.x;
+				const float dCdPy = -dP.y;
 
-			const float d2CdPxdt = -dV.x;
-			const float d2CdPydt = -dV.y;
+				const float d2CdPxdt = -dV.x;
+				const float d2CdPydt = -dV.y;
 
-			// initialize C and Cdot
-			C(0) = 0.5f * ((dP.x * dP.x) + (dP.y * dP.y) - (dist * dist));
-			Cdot(0) = dP.x * dV.x + dP.y * dV.y;
+				const float valC = 0.5f * ((dP.x * dP.x) + (dP.y * dP.y) - (dist * dist));
+				const float valCdot = dP.x * dV.x + dP.y * dV.y;
 
-			// initialize J
-			J.insert(0, 3 * a + 0) = dCdPx;
-			J.insert(0, 3 * a + 1) = dCdPy;
+				// initialize C and Cdot
+				C(0) = valC;
+				Cdot(0) = valCdot;
 
-			J.insert(0, 3 * b + 0) = -dCdPx;
-			J.insert(0, 3 * b + 1) = -dCdPy;
-			
-			// initialize Jdot
-			Jdot.insert(0, 3 * a + 0) = d2CdPxdt;
-			Jdot.insert(0, 3 * a + 1) = d2CdPydt;
-			
-			Jdot.insert(0, 3 * b + 0) = -d2CdPxdt;
-			Jdot.insert(0, 3 * b + 1) = -d2CdPydt;
+				// initialize J
+				J.insert(0, 3 * a + 0) = dCdPx;
+				J.insert(0, 3 * a + 1) = dCdPy;
+
+				J.insert(0, 3 * b + 0) = -dCdPx;
+				J.insert(0, 3 * b + 1) = -dCdPy;
+
+				// initialize Jdot
+				Jdot.insert(0, 3 * a + 0) = d2CdPxdt;
+				Jdot.insert(0, 3 * a + 1) = d2CdPydt;
+
+				Jdot.insert(0, 3 * b + 0) = -d2CdPxdt;
+				Jdot.insert(0, 3 * b + 1) = -d2CdPydt;
+			}
+
+			// Test: single fixed distance constraint between body a and the point (500, 100)
+			{
+				const int a = 0;
+				const int b = 1;
+
+				const vec2 dP = vec2(500.0f, 100.0f) - bodies[a]->position;
+				const vec2 dV = -bodies[a]->velocity;
+				const float dist = 200.0f;
+
+				// various derivates of the fixed-distance constraint function:
+				//	C = (1/2)*(|Pb - Pa|^2 - d^2)
+
+				const float dCdPx = -dP.x;
+				const float dCdPy = -dP.y;
+
+				const float d2CdPxdt = -dV.x;
+				const float d2CdPydt = -dV.y;
+
+				const float valC = 0.5f * ((dP.x * dP.x) + (dP.y * dP.y) - (dist * dist));
+				const float valCdot = dP.x * dV.x + dP.y * dV.y;
+
+				// initialize C and Cdot
+				C(1) = valC;
+				Cdot(1) = valCdot;
+
+				// initialize J
+				J.insert(1, 3 * a + 0) = dCdPx;
+				J.insert(1, 3 * a + 1) = dCdPy;
+
+				// initialize Jdot
+				Jdot.insert(1, 3 * a + 0) = d2CdPxdt;
+				Jdot.insert(1, 3 * a + 1) = d2CdPydt;
+			}
 
 			// calculate A and y to solve A*lambda = y
 			SparseMatrix<float> A = J * M_inv * J.transpose();
@@ -139,13 +180,17 @@ namespace phys {
 				if (solver.info() == Success){
 
 					// calculate corrective forces
-					VectorXf f_corr = J.transpose() * lambda;
+					VectorXf F_c = J.transpose() * lambda;
 
 					// apply corrective forces and torques
 					for (int i = 0; i < n; ++i){
-						bodies[i]->forces.x += f_corr(3 * i + 0);
-						bodies[i]->forces.y += f_corr(3 * i + 1);
-						bodies[i]->torques += f_corr(3 * i + 2);
+						// TEST:
+						bodies[i]->ext_forces = bodies[i]->forces;
+						bodies[i]->corr_forces = {F_c(3 * i + 0), F_c(3 * i + 1)};
+						// end test
+						bodies[i]->forces.x += F_c(3 * i + 0);
+						bodies[i]->forces.y += F_c(3 * i + 1);
+						bodies[i]->torques += F_c(3 * i + 2);
 					}
 
 				} else {
