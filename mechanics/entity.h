@@ -4,7 +4,7 @@ struct Obstruction;
 
 #include "vec2.h"
 #include "obstruction.h"
-#include "SFML\Graphics.hpp"
+#include "SFML/Graphics.hpp"
 #include "event.h"
 #include "destructible.h"
 #include <vector>
@@ -43,10 +43,10 @@ struct Entity : sf::Drawable, sf::Transformable, Destructible {
 
 	bool standing() const;
 
-	protected:
+protected:
 
 	struct Circle {
-		Circle(vec2 _center = {0, 0}, float _radius = 20.0);
+		Circle(vec2 _center = { 0, 0 }, float _radius = 20.0);
 
 		vec2 center;
 		float radius;
@@ -56,7 +56,7 @@ struct Entity : sf::Drawable, sf::Transformable, Destructible {
 
 	std::vector<Circle> circles;
 
-	private:
+private:
 
 	bool is_standing = false;
 	int flying_timer = 0;

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SFML\Graphics.hpp"
+#include "SFML/Graphics.hpp"
 
 typedef sf::Vector2f vec2;
 
@@ -10,11 +10,11 @@ struct mat2x2 {
 	}
 	mat2x2(float topleft, float topright, float bottomleft, float bottomright)
 		:a(topleft), b(topright), c(bottomleft), d(bottomright) {
-		
+
 	}
 	mat2x2(const vec2& l, const vec2& r)
 		: a(l.x), b(r.x), c(l.y), d(r.y) {
-		
+
 	}
 
 	float a, b, c, d;

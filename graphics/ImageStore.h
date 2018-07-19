@@ -1,7 +1,7 @@
 #pragma once
 
 #include <map>
-#include <SFML\Graphics.hpp>
+#include <SFML/Graphics.hpp>
 
 // TODO: get rid of maps and use shared_ptrs instead?
 
@@ -27,7 +27,7 @@ struct ImageStore {
 	// use only when safe
 	static void clear();
 
-	private:
+private:
 
 	ImageStore();
 	~ImageStore();

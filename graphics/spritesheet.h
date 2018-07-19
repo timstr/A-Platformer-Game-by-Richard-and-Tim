@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SFML\Graphics.hpp"
+#include "SFML/Graphics.hpp"
 #include "entity.h"
 #include <functional>
 #include <map>
@@ -11,7 +11,7 @@ struct SpriteSheet {
 	void setTexture(const sf::Texture& _texture);
 
 	void setFrameSize(vec2 _framesize);
-	
+
 	void setFrameCenter(vec2 _framecenter);
 
 	void setFramesPerRow(int _frames_per_row);
@@ -22,7 +22,7 @@ struct SpriteSheet {
 
 	void setFlip(bool _flip);
 
-	private:
+private:
 
 	const sf::Texture* texture;
 	vec2 framecenter;
@@ -61,7 +61,7 @@ struct SpriteSheetPlayer : sf::Drawable, sf::Transformable {
 
 	void draw(sf::RenderTarget& rt, sf::RenderStates states) const override;
 
-	private:
+private:
 
 	void updateClipRect();
 

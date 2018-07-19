@@ -1,21 +1,21 @@
 #pragma once
 
-#include <gui\gui.h>
+#include <gui/gui.h>
 #include "TestSpace.h"
 
 sf::Font& getFont();
 
-struct TestSpaceWindow : ui::Window {
+struct TestSpaceWindow : ui::FreeElement {
 	TestSpaceWindow();
 
 	void render(sf::RenderWindow& rw) override;
 
-	void onKeyDown(sf::Keyboard::Key key) override;
+	bool onKeyDown(sf::Keyboard::Key key) override;
 
-	void onLeftClick(int clicks) override;
+	bool onLeftClick(int clicks) override;
 
-	private:
-	ui::Text* label;
+private:
+	ui::Ref<ui::Text> label;
 	TestSpace space;
 	bool play = true;
 

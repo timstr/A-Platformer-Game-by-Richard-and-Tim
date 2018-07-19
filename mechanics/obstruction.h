@@ -2,7 +2,7 @@
 
 struct Entity;
 
-#include "SFML\Graphics.hpp"
+#include "SFML/Graphics.hpp"
 #include "entity.h"
 #include "vec2.h"
 #include "destructible.h"
@@ -38,7 +38,7 @@ struct Obstruction : sf::Drawable, sf::Transformable, Destructible {
 	// the acceleration exerted upon an entity touching the surface
 	// normal is assumed to be a unit vector
 	virtual vec2 getContactAcceleration(const Entity& entity, vec2 normal) const {
-		return {0, 0};
+		return { 0, 0 };
 	}
 
 	// returns the normal at a point on a boundary, or the hint direction if
@@ -49,7 +49,7 @@ struct Obstruction : sf::Drawable, sf::Transformable, Destructible {
 	// open space, or 0 if the given point is already in open space
 	float getDistanceToBoundary(vec2 point, vec2 direction) const;
 
-	private:
+private:
 
 	// the visual appearance
 	sf::Sprite sprite;
