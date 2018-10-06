@@ -5,12 +5,14 @@ set(testworld-headers
 	TestSpace.h
 	TestObstacles.h
 	TestMap.h
+	TreeZone.h
 	TestEntities.h
 	testcharacter.h
 	testbug.h
 	testbird.h
 	sprudo.h
 	bulbous.h
+	HermannHorst.h
 )
 
 set(testworld-srcs
@@ -18,6 +20,7 @@ set(testworld-srcs
 	testcharacter.cpp
 	testbug.cpp
 	testbird.cpp
+	HermannHorst.cpp
 )
 
 add_library(testworld STATIC ${testworld-headers} ${testworld-srcs})

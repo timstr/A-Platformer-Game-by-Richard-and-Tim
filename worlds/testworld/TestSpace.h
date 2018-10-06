@@ -4,6 +4,7 @@
 #include "TestObstacles.h"
 #include "TestEntities.h"
 #include "TestMap.h"
+#include "TreeZone.h"
 
 #include "sprudo.h"
 #include "bulbous.h"
@@ -11,6 +12,7 @@
 #include "testbird.h"
 #include "testworm.h"
 #include "testbug.h"
+#include "HermannHorst.h"
 
 // TODO: rename to map?
 struct TestSpace : Space {
@@ -28,10 +30,13 @@ struct TestSpace : Space {
 		addCreatures<TestWorm>(5, place_to_be, true);
 		addCreatures<TestBug>(1, place_to_be, true);
 
+		addCreatures<HermannHorst>(2, place_to_be, true);
 		
-		entities.push_back(guy = addEntity<GuyEntity>());
+		entities.push_back(guy = addEntity<GuyEntity>().lock());
 
-		map = addObstruction<TestMap>();
+		//map = addObstruction<TestMap>();
+		map = addObstruction<TreeZone>();
+		foreground = addObstruction<TreeZoneForeground>().lock();
 
 		//addObstruction(tree = new TreeObstacle());
 		//tree->position = {270, 500};
@@ -40,7 +45,7 @@ struct TestSpace : Space {
 		//boost->setPosition(vec2(500, 500));
 
 		//addObstruction<MovingObstacle>(vec2(400, 350), vec2(400, 475), 100.0f);
-		addObstruction<MovingObstacle>(vec2(600, 300), vec2(700, 300), 100.0f);
+		//addObstruction<MovingObstacle>(vec2(600, 300), vec2(700, 300), 100.0f);
 
 		//addObstruction<RampObstacle>();
 		//addObstruction(new MovingObstacle({50, 150}, {700, 300}, 250));
@@ -94,9 +99,15 @@ struct TestSpace : Space {
 		}
 	}
 
+	void draw(sf::RenderTarget& rt, sf::RenderStates states) const override {
+		Space::draw(rt, states);
+		rt.draw(*foreground, states);
+	}
+
 	std::vector<std::weak_ptr<Entity>> entities;
-	std::weak_ptr<GuyEntity> guy;
-	std::weak_ptr<TestMap> map;
+	std::shared_ptr<GuyEntity> guy;
+	std::weak_ptr<Map> map;
 	std::weak_ptr<TreeObstacle> tree;
 	std::weak_ptr<BoostObstacle> boost;
+	std::shared_ptr<TreeZoneForeground> foreground;
 };

@@ -51,14 +51,14 @@ struct ComplexEntity : TestEntity {
 };
 
 struct GuyEntity : TestEntity {
-	GuyEntity() : sprite("playerchar"){
-		addCircle(Circle(vec2(0, -10), 20));
-		addCircle(Circle({0, -40}, 30));
+	GuyEntity() : sprite("HermannHorst"){
+		addCircle(Circle({0, -250}, 220));
 		friction = 0.3f;
 		elasticity = 0.1f;
-		sprite.setScale(vec2(0.25, 0.25));
-		sprite.play("idle");
-		sprite.scale(2.0f, 2.0f);
+		//sprite.setScale(vec2(0.2f, 0.2f));
+		setScale(vec2(0.2f, 0.2f));
+		sprite.play("standing");
+		//sprite.scale(0.2f, 0.2f);
 	}
 
 	vec2 getContactAcceleration(const Obstruction& obstruction, vec2 normal) const override {
@@ -70,7 +70,10 @@ struct GuyEntity : TestEntity {
 
 	void onEvent(const Event& e) override {
 		if (e == AnimationEnd){
-			sprite.play("idle");
+			sprite.play("standing");
+		}
+		if (e == Standing && sprite.currentAnimation() == "leaping" && velocity.y < 0.0f){
+			sprite.play("standing");
 		}
 	}
 
@@ -81,7 +84,7 @@ struct GuyEntity : TestEntity {
 	}
 
 	void draw(sf::RenderTarget& rt, sf::RenderStates states) const override {
-		TestEntity::draw(rt, states);
+		//TestEntity::draw(rt, states);
 		states.transform *= getTransform();
 		rt.draw(sprite, states);
 	}
@@ -89,19 +92,19 @@ struct GuyEntity : TestEntity {
 	void runRight(){
 		sprite.faceRight();
 		sprite.play("running");
-		run_speed = 1.0f;
+		run_speed = 5.0f;
+		velocity.x += 0.1f;
 	}
 	void runLeft(){
 		sprite.faceLeft();
 		sprite.play("running");
-		run_speed = -1.0f;
+		run_speed = -5.0f;
+		velocity.x -= 0.1f;
 	}
 	void jump(){
-		sprite.play("jump");
-		jump_speed = 10.0f;
-	}
-	void attack(){
-		sprite.play("swordslash");
+		sprite.play("leaping");
+		jump_speed = 70.0f;
+		velocity.y -= 0.5f;
 	}
 
 	private:
