@@ -1,0 +1,8 @@
+framesize 517 585
+framecenter 258 570
+framesperrow 11
+facing left
+animation standing 1 12
+animation running 13 28
+animation walking 32 48
+animation leaping 49 49

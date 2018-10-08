@@ -53,6 +53,8 @@ struct SpriteSheetPlayer : sf::Drawable, sf::Transformable {
 
 	void play(const std::string& animation_name);
 
+	std::string currentAnimation() const;
+
 	void tick();
 
 	void faceLeft();

@@ -27,10 +27,10 @@ struct PhysicsTestUI : ui::FreeElement {
 		shapes.clear();
 	}
 
-	bool onKeyDown(sf::Keyboard::Key key) override {
-		if (key == sf::Keyboard::Space) {
+	bool onKeyDown(ui::Key key) override {
+		if (key == ui::Key::Space) {
 			paused = !paused;
-		} else if (key == sf::Keyboard::T && paused) {
+		} else if (key == ui::Key::T && paused) {
 			physics_engine.tick(1.0f);
 		}
 		return true;

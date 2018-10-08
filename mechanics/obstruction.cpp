@@ -1,12 +1,19 @@
 #pragma once
 #include "obstruction.h"
 
-Obstruction::Obstruction(bool _open_boundary)
-	: open_boundary(_open_boundary), previous_position(getPosition()), friction(0.5) {
+Obstruction::Obstruction(bool _open_boundary) :
+	open_boundary(_open_boundary),
+	previous_position(getPosition()),
+	friction(0.5),
+	boundary(nullptr) {
 
 }
 
 bool Obstruction::hitTest(vec2 point) const {
+	if (!boundary){
+		return false;
+	}
+
 	int x = (int)floor(point.x - this->getPosition().x);
 	int y = (int)floor(point.y - this->getPosition().y);
 

@@ -10,7 +10,7 @@ struct TestSpaceWindow : ui::FreeElement {
 
 	void render(sf::RenderWindow& rw) override;
 
-	bool onKeyDown(sf::Keyboard::Key key) override;
+	bool onKeyDown(ui::Key key) override;
 
 	bool onLeftClick(int clicks) override;
 

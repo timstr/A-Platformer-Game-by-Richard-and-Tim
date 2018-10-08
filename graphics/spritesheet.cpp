@@ -74,6 +74,13 @@ void SpriteSheetPlayer::play(const std::string& animation_name){
 	updateClipRect();
 }
 
+std::string SpriteSheetPlayer::currentAnimation() const {
+	if (current_animation == spritesheet.animations.end()){
+		return "";
+	}
+	return current_animation->first;
+}
+
 void SpriteSheetPlayer::tick(){
 	sf::Time now = clock.getElapsedTime();
 
