@@ -2,7 +2,7 @@
 
 struct Obstruction;
 
-#include "vec2.h"
+#include "Vec2.hpp"
 #include "obstruction.h"
 #include "SFML/Graphics.hpp"
 #include "event.h"

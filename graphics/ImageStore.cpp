@@ -32,6 +32,7 @@ const sf::Texture& ImageStore::getTexture(std::string filename, bool load_image_
 				}
 			}
 		}
+		texture_map[filename].setSmooth(true);
 		return texture_map[filename];
 	} else {
 		return it->second;

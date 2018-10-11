@@ -1,6 +1,6 @@
 #pragma once
 
-#include "physengine.h"
+#include "PhysicsEngine.hpp"
 #include "gui/gui.h"
 
 struct ShapeGuy {
@@ -18,14 +18,6 @@ struct ShapeGuy {
 			// Velocity
 			sf::Vertex(center, sf::Color(0xFF0000FF)),
 			sf::Vertex(center + body.getVelocity() * 10.0f, sf::Color(0xFF0000FF)),
-
-			// External forces
-			sf::Vertex(center, sf::Color(0x00FF00FF)),
-			sf::Vertex(center + body.ext_forces * body.inverse_mass * 10.0f, sf::Color(0x00FF00FF)),
-
-			// Corrective forces
-			sf::Vertex(center, sf::Color(0x0000FFFF)),
-			sf::Vertex(center + body.corr_forces * body.inverse_mass * 10.0f, sf::Color(0x0000FFFF)),
 		};
 
 		rw.draw(vertices, 6, sf::PrimitiveType::Lines);
@@ -49,8 +41,8 @@ struct RectangleGuy : ShapeGuy {
 
 	void draw(sf::RenderWindow& rw) override {
 		sf::RectangleShape rs;
-		rs.setSize(body.size);
-		rs.setOrigin(body.size * 0.5f);
+		rs.setSize(body.size());
+		rs.setOrigin(body.size() * 0.5f);
 		rs.setRotation(body.getAngle());
 		rs.setPosition(body.getPosition());
 
@@ -60,10 +52,10 @@ struct RectangleGuy : ShapeGuy {
 
 		rw.draw(rs);
 
-		drawVectors(rw, body.getPosition(),		body);
+		drawVectors(rw, body.getPosition(),	body);
 	}
 
-	phys::Rectangle body;
+	phys::RectangleBody body;
 };
 
 struct CircleGuy : ShapeGuy {
@@ -78,8 +70,8 @@ struct CircleGuy : ShapeGuy {
 
 	void draw(sf::RenderWindow& rw) override {
 		sf::CircleShape cs;
-		cs.setRadius(body.radius);
-		cs.setOrigin({body.radius, body.radius});
+		cs.setRadius(body.radius());
+		cs.setOrigin({body.radius(), body.radius()});
 		cs.setRotation(body.getAngle());
 		cs.setPosition(body.getPosition());
 
@@ -92,6 +84,6 @@ struct CircleGuy : ShapeGuy {
 		drawVectors(rw, body.getPosition(), body);
 	}
 
-	phys::Circle body;
+	phys::CircleBody body;
 };
 

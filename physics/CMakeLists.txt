@@ -1,17 +1,27 @@
 cmake_minimum_required(VERSION 3.9.0)
 
 set(physics-headers
-	vec2.h
-	rigidbody.h
-	physengine.h
-	collision.h
+	BoundingBox.hpp
+	CircleBody.hpp
+	Collision.hpp
+	ConvexBody.hpp
+	PhysicsEngine.hpp
+	RasterBody.hpp
+	RectangleBody.hpp
+	RigidBody.hpp
+	Vec2.hpp
 )
 
 set(physics-srcs
-	vec2.cpp
-	rigidbody.cpp
-	physengine.cpp
-	collision.cpp
+	BoundingBox.cpp
+	CircleBody.cpp
+	Collision.cpp
+	ConvexBody.cpp
+	PhysicsEngine.cpp
+	RasterBody.cpp
+	RectangleBody.cpp
+	RigidBody.cpp
+	Vec2.cpp
 )
 
 add_library(physics STATIC ${physics-headers} ${physics-srcs})

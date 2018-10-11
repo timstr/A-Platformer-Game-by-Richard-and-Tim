@@ -4,7 +4,7 @@ struct Entity;
 
 #include "SFML/Graphics.hpp"
 #include "entity.h"
-#include "vec2.h"
+#include "Vec2.hpp"
 #include "destructible.h"
 #include <functional>
 
