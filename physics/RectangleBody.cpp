@@ -13,7 +13,6 @@ namespace phys {
 	}
 
 	BoundingBox RectangleBody::getBoundingBox() const {
-
 		vec2 topleft = getTransform() * (-m_size * 0.5f);
 		vec2 bottomleft = getTransform() * (vec2(-m_size.x, m_size.y) * 0.5f);
 		vec2 topright = getTransform() * (vec2(-m_size.x, m_size.y) * 0.5f);
@@ -30,7 +29,6 @@ namespace phys {
 		};
 
 		return BoundingBox(position + min, position + max);
-
 	}
 
 	vec2 RectangleBody::size() const {
