@@ -1,13 +1,16 @@
-cmake_minimum_required(VERSION 3.9.0)
-
-# use only MPL2-licensed features of Eigen
-add_definitions(-DEIGEN_MPL2_ONLY)
+cmake_minimum_required(VERSION 3.10.0)
 
 set(GAME "A-Platformer-Game-by-Richard-and-Tim")
 
 project(${GAME})
 
 add_executable(${GAME} Platformer.cpp)
+
+# use C++17 standard
+set_property(TARGET ${GAME} PROPERTY CXX_STANDARD 17)
+
+# use only MPL2-licensed features of Eigen
+add_definitions(-DEIGEN_MPL2_ONLY)
 
 set(LIBRARIES
 	graphics

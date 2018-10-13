@@ -5,20 +5,29 @@
 #include "TestUI.h"
 #include <random>
 
+std::random_device rand_dev;
+std::default_random_engine rand_eng {rand_dev()};
+
 struct PhysicsTestUI : ui::FreeElement {
 	PhysicsTestUI(vec2 _size) : paused(true) {
 		setSize(_size, true);
 
-		shapes.emplace_back(std::make_unique<CircleGuy>(50.0f, vec2(700.0f, 100.0f)));
-		shapes.emplace_back(std::make_unique<CircleGuy>(50.0f, vec2(700.0f, 300.0f)));
+		int n = 100;
+		std::uniform_real_distribution<float> dist {0.0f, 1.0f};
 
-		physics_engine.addRigidBody(shapes[0]->getBody());
-		physics_engine.addRigidBody(shapes[1]->getBody());
+		for (int i = 0; i < n; ++i){
+			auto shape = std::make_unique<CircleGuy>(
+				2.0f + 18.0f * dist(rand_eng),
+				vec2(_size.x * dist(rand_eng), _size.y * dist(rand_eng))
+			);
+			vec2 velo = shape->body.getPosition() - _size * 0.5f;
+			velo *= -2.0f / abs(velo);
+			shape->body.setVelocity(velo);
 
-		shapes[0]->getBody().applyForce({ 0.0f, 0.0f });
-		shapes[1]->getBody().applyForce({ -300000.0f, 0.0f });
+			physics_engine.addRigidBody(shape->body);
 
-		label = add<ui::Text>("", getFont());
+			shapes.emplace_back(std::move(shape));
+		}
 	}
 	~PhysicsTestUI() {
 		for (const auto& shape : shapes) {
@@ -52,9 +61,6 @@ struct PhysicsTestUI : ui::FreeElement {
 		for (const auto& shape : shapes) {
 			shape->draw(rw);
 		}
-
-		float dist = abs(shapes[1]->getBody().getPosition() - shapes[0]->getBody().getPosition());
-		label->setText("Distance: " + std::to_string(dist));
 	}
 
 private:

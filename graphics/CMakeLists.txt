@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.9.0)
+cmake_minimum_required(VERSION 3.10.0)
 
 
 # configure images path
@@ -23,6 +23,9 @@ set(graphics-srcs
 )
 
 add_library(graphics STATIC ${graphics-headers} ${graphics-srcs})
+
+# use C++17 standard
+set_property(TARGET graphics PROPERTY CXX_STANDARD 17)
 
 set_target_properties(graphics PROPERTIES LINKER_LANGUAGE CXX)
 

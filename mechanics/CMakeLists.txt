@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.9.0)
+cmake_minimum_required(VERSION 3.10.0)
 
 set(mechanics-headers
 	character.h
@@ -27,6 +27,9 @@ set(mechanics-srcs
 )
 
 add_library(mechanics STATIC ${mechanics-headers} ${mechanics-srcs})
+
+# use C++17 standard
+set_property(TARGET mechanics PROPERTY CXX_STANDARD 17)
 
 set_target_properties(mechanics PROPERTIES LINKER_LANGUAGE CXX)
 

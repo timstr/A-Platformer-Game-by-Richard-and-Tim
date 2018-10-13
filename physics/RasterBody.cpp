@@ -33,12 +33,14 @@ namespace phys {
 		p.y /= m_size.y;
 		p = p * 0.5f + vec2(0.5f, 0.5f);
 
-		int px = floor(p.x * (float)((int)m_image.getSize().x - 1));
-		int py = floor(p.y * (float)((int)m_image.getSize().y - 1));
-		if (px < 0 || px >= m_image.getSize().x || py < 0 || py >= m_image.getSize().y){
+		int px = (int)floor(p.x * (float)((int)m_image.getSize().x - 1));
+		int py = (int)floor(p.y * (float)((int)m_image.getSize().y - 1));
+		if (px < 0 || px >= (int)m_image.getSize().x || py < 0 || py >= (int)m_image.getSize().y){
 			return false;
 		}
 
+		// TODO: use vector of octree instead of simple image to sparsely and quickly
+		// binary handle raster data
 		sf::Color color = m_image.getPixel(px, py);
 		return ((float)color.r + (float)color.g + (float)color.b) / 3.0f / 255.0f > 0.5f;
 	}

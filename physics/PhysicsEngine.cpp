@@ -42,15 +42,20 @@ namespace phys {
 		// user-defined forces should have been applied
 
 		// find collisions
-		/*std::vector<Collision> collisions;
+		std::vector<Collision> collisions;
 
 		for (int i = 0; i < bodies.size(); ++i){
-		for (int j = i + 1; j < bodies.size(); ++j){
-		if (bodies[i]->getBoundingBox().collidesWith(bodies[j]->getBoundingBox())){
-		collisions.emplace_back(collide(*bodies[i], *bodies[j]));
+			for (int j = i + 1; j < bodies.size(); ++j){
+				if (bodies[i]->getBoundingBox().collidesWith(bodies[j]->getBoundingBox())){
+					collisions.emplace_back(collide(*bodies[i], *bodies[j]));
+				}
+			}
 		}
+
+		// resolve collisions by applying impulses
+		for (const auto& collision : collisions){
+			
 		}
-		}*/
 
 		// TODO: add custom constraints such as joints, springs, etc
 
@@ -71,12 +76,12 @@ namespace phys {
 		VectorXf C {m}; // Constraint functions
 		VectorXf Cdot {m}; // derivative of constraint functions w.r.t. time
 
-						   // TODO: tune these
+		// TODO: tune these
 		float k_s = 0.005f; // feedback spring constant
 		float k_d = 0.1f; // feedback damping constant
 
 
-						  // initialize M_inv
+		// initialize M_inv
 		for (int i = 0; i < n; ++i){
 			M_inv.insert(3 * i + 0, 3 * i + 0) = bodies[i]->inverse_mass;
 			M_inv.insert(3 * i + 1, 3 * i + 1) = bodies[i]->inverse_mass;
@@ -85,9 +90,11 @@ namespace phys {
 
 		// initialize F_ext
 		for (int i = 0; i < n; ++i){
-			F_ext(3 * i + 0) = bodies[i]->forces.x;
-			F_ext(3 * i + 1) = bodies[i]->forces.y;
-			F_ext(3 * i + 2) = bodies[i]->torques;
+			const vec2 forces = bodies[i]->getEffectiveForces(dt);
+			const float torques = bodies[i]->getEffectiveTorques(dt);
+			F_ext(3 * i + 0) = forces.x;
+			F_ext(3 * i + 1) = forces.y;
+			F_ext(3 * i + 2) = torques;
 		}
 
 		// initialize qdot
@@ -95,80 +102,6 @@ namespace phys {
 			qdot(3 * i + 0) = bodies[i]->velocity.x;
 			qdot(3 * i + 1) = bodies[i]->velocity.y;
 			qdot(3 * i + 2) = bodies[i]->angular_velocity;
-		}
-
-		// Test: single fixed distance constraint between bodies a and b
-		{
-			const int a = 0;
-			const int b = 1;
-
-			const vec2 dP = bodies[b]->position - bodies[a]->position;
-			const vec2 dV = bodies[b]->velocity - bodies[a]->velocity;
-			const float dist = 200.0f;
-
-			// various derivates of the fixed-distance constraint function:
-			//	C = (1/2)*(|Pb - Pa|^2 - d^2)
-
-			const float dCdPx = -dP.x;
-			const float dCdPy = -dP.y;
-
-			const float d2CdPxdt = -dV.x;
-			const float d2CdPydt = -dV.y;
-
-			const float valC = 0.5f * ((dP.x * dP.x) + (dP.y * dP.y) - (dist * dist));
-			const float valCdot = dP.x * dV.x + dP.y * dV.y;
-
-			// initialize C and Cdot
-			C(0) = valC;
-			Cdot(0) = valCdot;
-
-			// initialize J
-			J.insert(0, 3 * a + 0) = dCdPx;
-			J.insert(0, 3 * a + 1) = dCdPy;
-
-			J.insert(0, 3 * b + 0) = -dCdPx;
-			J.insert(0, 3 * b + 1) = -dCdPy;
-
-			// initialize Jdot
-			Jdot.insert(0, 3 * a + 0) = d2CdPxdt;
-			Jdot.insert(0, 3 * a + 1) = d2CdPydt;
-
-			Jdot.insert(0, 3 * b + 0) = -d2CdPxdt;
-			Jdot.insert(0, 3 * b + 1) = -d2CdPydt;
-		}
-
-		// Test: single fixed distance constraint between body a and the point (500, 100)
-		{
-			const int a = 0;
-			const int b = 1;
-
-			const vec2 dP = vec2(500.0f, 100.0f) - bodies[a]->position;
-			const vec2 dV = -bodies[a]->velocity;
-			const float dist = 200.0f;
-
-			// various derivates of the fixed-distance constraint function:
-			//	C = (1/2)*(|Pb - Pa|^2 - d^2)
-
-			const float dCdPx = -dP.x;
-			const float dCdPy = -dP.y;
-
-			const float d2CdPxdt = -dV.x;
-			const float d2CdPydt = -dV.y;
-
-			const float valC = 0.5f * ((dP.x * dP.x) + (dP.y * dP.y) - (dist * dist));
-			const float valCdot = dP.x * dV.x + dP.y * dV.y;
-
-			// initialize C and Cdot
-			C(1) = valC;
-			Cdot(1) = valCdot;
-
-			// initialize J
-			J.insert(1, 3 * a + 0) = dCdPx;
-			J.insert(1, 3 * a + 1) = dCdPy;
-
-			// initialize Jdot
-			Jdot.insert(1, 3 * a + 0) = d2CdPxdt;
-			Jdot.insert(1, 3 * a + 1) = d2CdPydt;
 		}
 
 		// calculate A and y to solve A*lambda = y
@@ -187,9 +120,10 @@ namespace phys {
 
 				// apply corrective forces and torques
 				for (int i = 0; i < n; ++i){
-					bodies[i]->forces.x += F_c(3 * i + 0);
-					bodies[i]->forces.y += F_c(3 * i + 1);
-					bodies[i]->torques += F_c(3 * i + 2);
+					const vec2 forces = {F_c(3 * i + 0), F_c(3 * i + 1)};
+					const float torques = F_c(3 * i + 2);
+					bodies[i]->applyForce(forces);
+					bodies[i]->applyTorque(torques);
 				}
 
 			} else {
@@ -201,12 +135,11 @@ namespace phys {
 
 		// accelerate and move all bodies
 		for (const auto& body : bodies){
-			body->velocity += body->forces * body->inverse_mass * dt;
+			body->velocity += body->forces * body->inverse_mass * dt + body->impulses;
 			body->position += body->velocity * dt;
-			body->angular_velocity += body->torques * body->inverse_moment * dt;
+			body->angular_velocity += body->torques * body->inverse_moment * dt + body->angular_impulses;
 			body->angle += body->angular_velocity * dt;
-			body->forces = {0.0f, 0.0f};
-			body->torques = 0.0f;
+			body->resetAccumulators();
 		}
 	}
 	

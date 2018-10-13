@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.9.0)
+cmake_minimum_required(VERSION 3.10.0)
 
 set(FONTS_PATH "${CMAKE_SOURCE_DIR}/fonts")
 configure_file(
@@ -17,6 +17,9 @@ set(ui-srcs
 )
 
 add_library(ui STATIC ${ui-headers} ${ui-srcs})
+
+# use C++17 standard
+set_property(TARGET ui PROPERTY CXX_STANDARD 17)
 
 set_target_properties(ui PROPERTIES LINKER_LANGUAGE CXX)
 

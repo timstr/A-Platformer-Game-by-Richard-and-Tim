@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.9.0)
+cmake_minimum_required(VERSION 3.10.0)
 
 add_library(worlds INTERFACE)
 add_library(worlds-base INTERFACE)

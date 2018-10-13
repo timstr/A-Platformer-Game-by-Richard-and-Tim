@@ -7,9 +7,11 @@ namespace phys {
 		velocity({0.0f, 0.0f}),
 		position({0.0f, 0.0f}),
 		forces({0.0f, 0.0f}),
+		impulses({0.0f, 0.0f}),
 		angle(0.0f),
 		angular_velocity(0.0f),
 		torques(0.0f),
+		angular_impulses(0.0f),
 		mass(_mass),
 		inverse_mass(_mass == 0.0f ? 0.0f : (1.0f / _mass)),
 		moment(_moment),
@@ -25,9 +27,12 @@ namespace phys {
 	}
 
 	void RigidBody::applyForceAt(vec2 force, vec2 point_world_space){
-		forces += force;
-		vec2 rad = (point_world_space - position);
-		torques += rad.x * force.y - rad.y * force.x;
+		applyForce(force);
+		vec2 rad = point_world_space - position;
+		// TODO: I'm pretty sure this is just the cross product of
+		// point_world_space - position and force
+		// Simplify using cross()
+		applyTorque(rad.x * force.y - rad.y * force.x);
 	}
 
 	void RigidBody::applyForce(vec2 force){
@@ -36,6 +41,23 @@ namespace phys {
 
 	void RigidBody::applyTorque(float torque){
 		torques += torque;
+	}
+
+	void RigidBody::applyImpulseAt(vec2 impulse, vec2 point_world_space){
+		applyImpulse(impulse);
+		vec2 rad = point_world_space - position;
+		// TODO: I'm pretty sure this is just the cross product of
+		// point_world_space - position and impulse
+		// Simplify using cross()
+		applyAngularImpulse(rad.x * impulse.y - rad.y * impulse.x);
+	}
+
+	void RigidBody::applyImpulse(vec2 impulse){
+		impulses += impulse;
+	}
+
+	void RigidBody::applyAngularImpulse(float impulse){
+		angular_impulses += impulse;
 	}
 
 	const vec2& RigidBody::getPosition() const {
@@ -80,6 +102,21 @@ namespace phys {
 			inv_transform_needs_update = false;
 		}
 		return inv_transform;
+	}
+
+	vec2 RigidBody::getEffectiveForces(float dt) const {
+		return forces + impulses / dt;
+	}
+
+	float RigidBody::getEffectiveTorques(float dt) const {
+		return torques + angular_impulses / dt;
+	}
+
+	void RigidBody::resetAccumulators(){
+		forces = {0.0f, 0.0f};
+		impulses = {0.0f, 0.0f};
+		torques = 0.0f;
+		angular_impulses = 0.0f;
 	}
 
 } // namespace phys

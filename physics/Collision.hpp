@@ -6,6 +6,8 @@
 #include "ConvexBody.hpp"
 #include "RasterBody.hpp"
 
+#include <optional>
+
 namespace phys {
 
 	struct Collision {
@@ -19,6 +21,7 @@ namespace phys {
 	};
 
 	// TODO: refactor these functions so they can optionally return no collision
+	using MaybeCollision = std::optional<Collision>;
 
 	Collision collideCircleCircle(RigidBody& a, RigidBody& b);
 	
