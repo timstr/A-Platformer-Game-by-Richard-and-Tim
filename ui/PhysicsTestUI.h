@@ -12,6 +12,18 @@ struct PhysicsTestUI : ui::FreeElement {
 	PhysicsTestUI(vec2 _size) : paused(true) {
 		setSize(_size, true);
 
+		/*auto s1 = std::make_unique<CircleGuy>(25.0f, _size * 0.5f - vec2{100.0f, 0.0f});
+		auto s2 = std::make_unique<CircleGuy>(25.0f, _size * 0.5f + vec2{100.0f, 0.0f});
+
+		s1->body.setVelocity({1.0f, 0.0f});
+		s2->body.setVelocity({-1.0f, 0.0f});
+
+		physics_engine.addRigidBody(s1->body);
+		physics_engine.addRigidBody(s2->body);
+
+		shapes.emplace_back(std::move(s1));
+		shapes.emplace_back(std::move(s2));*/
+
 		int n = 100;
 		std::uniform_real_distribution<float> dist {0.0f, 1.0f};
 

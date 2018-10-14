@@ -1,5 +1,9 @@
 #include "PhysicsEngine.hpp"
 
+#define _SILENCE_CXX17_NEGATORS_DEPRECATION_WARNING
+#include <Eigen/Sparse>
+#include <Eigen/SparseLU>
+
 namespace phys {
 
 	Engine::Engine() :
@@ -38,29 +42,37 @@ namespace phys {
 	}
 
 	void Engine::tick(float dt){
+		resolveCollisions();
+		solveConstraints(dt);
+		moveBodies(dt);
+	}
 
-		// user-defined forces should have been applied
-
+	void Engine::resolveCollisions() {
 		// find collisions
 		std::vector<Collision> collisions;
 
 		for (int i = 0; i < bodies.size(); ++i){
 			for (int j = i + 1; j < bodies.size(); ++j){
 				if (bodies[i]->getBoundingBox().collidesWith(bodies[j]->getBoundingBox())){
-					collisions.emplace_back(collide(*bodies[i], *bodies[j]));
+					auto collision = findCollision(*bodies[i], *bodies[j]);
+					if (collision.has_value()){
+						collisions.emplace_back(*collision);
+					}
 				}
 			}
 		}
 
 		// resolve collisions by applying impulses
 		for (const auto& collision : collisions){
-			
+			applyImpulse(collision);
 		}
+	}
+
+	void Engine::solveConstraints(float dt) {
 
 		// TODO: add custom constraints such as joints, springs, etc
 
 		// solve constraints, apply corrective forces
-
 		using namespace Eigen;
 
 		const int n = (int)bodies.size();
@@ -76,12 +88,12 @@ namespace phys {
 		VectorXf C {m}; // Constraint functions
 		VectorXf Cdot {m}; // derivative of constraint functions w.r.t. time
 
-		// TODO: tune these
+						   // TODO: tune these
 		float k_s = 0.005f; // feedback spring constant
 		float k_d = 0.1f; // feedback damping constant
 
 
-		// initialize M_inv
+						  // initialize M_inv
 		for (int i = 0; i < n; ++i){
 			M_inv.insert(3 * i + 0, 3 * i + 0) = bodies[i]->inverse_mass;
 			M_inv.insert(3 * i + 1, 3 * i + 1) = bodies[i]->inverse_mass;
@@ -132,18 +144,20 @@ namespace phys {
 		} else {
 			//throw std::runtime_error("Constraint computation failed");
 		}
+	}
 
+	void Engine::moveBodies(float dt) {
 		// accelerate and move all bodies
 		for (const auto& body : bodies){
-			body->velocity += body->forces * body->inverse_mass * dt + body->impulses;
+			body->velocity += (body->forces * dt + body->impulses) * body->inverse_mass;
 			body->position += body->velocity * dt;
-			body->angular_velocity += body->torques * body->inverse_moment * dt + body->angular_impulses;
+			body->angular_velocity += (body->torques * dt + body->angular_impulses) * body->inverse_moment;
 			body->angle += body->angular_velocity * dt;
 			body->resetAccumulators();
 		}
 	}
 	
-	Collision Engine::collide(RigidBody& a, RigidBody& b){
+	MaybeCollision Engine::findCollision(RigidBody& a, RigidBody& b) {
 		auto pair = std::make_pair(a.type, b.type);
 		auto it = collision_table.find(pair);
 		if (it != collision_table.end()){
@@ -157,6 +171,22 @@ namespace phys {
 		const BoundingBox abb = a.getBoundingBox();
 		const BoundingBox bbb = b.getBoundingBox();
 		return abb.collidesWith(bbb);
+	}
+
+	void Engine::applyImpulse(const Collision& c) {
+		const float restitution = std::min(c.a.elasticity, c.b.elasticity);
+		const float term_a = dot(c.normal, orthogonalClockwise(c.radius_a)) * cross(c.radius_a, c.normal);
+		const float term_b = dot(c.normal, orthogonalClockwise(c.radius_b)) * cross(c.radius_b, c.normal);
+		const vec2 v_a = c.a.velocity + c.a.angular_velocity * orthogonalClockwise(c.radius_a);
+		const vec2 v_b = c.b.velocity + c.b.angular_velocity * orthogonalClockwise(c.radius_b);
+		const vec2 v_rel = v_b - v_a;
+		const float v_norm = dot(v_rel, c.normal);
+		if (v_norm > 0.0f){
+			return;
+		}
+		const float j = (1.0f + restitution) * v_norm / (c.a.inverse_mass + c.b.inverse_mass + term_a + term_b);
+		c.a.applyImpulseAt(j * c.normal, c.a.position + c.radius_a);
+		c.b.applyImpulseAt(-j * c.normal, c.b.position + c.radius_b);
 	}
 
 } // namespace phys

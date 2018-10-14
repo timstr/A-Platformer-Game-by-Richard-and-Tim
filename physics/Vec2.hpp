@@ -26,4 +26,8 @@ float cross(const vec2& v1, const vec2& v2);
 
 vec2 projectOnto(const vec2& v1, const vec2& v2);
 
+vec2 orthogonalClockwise(const vec2& v);
+
+vec2 orthogonalCounterclockwise(const vec2& v);
+
 float abs(const vec2& v);

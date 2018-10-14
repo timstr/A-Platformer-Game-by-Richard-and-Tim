@@ -7,8 +7,6 @@
 #include <map>
 #include <functional>
 #include <algorithm>
-#include <Eigen/Sparse>
-#include <Eigen/SparseLU>
 
 namespace phys {
 
@@ -21,15 +19,23 @@ namespace phys {
 
 		void tick(float dt);
 
-		private:
+	private:
 
-		Collision collide(RigidBody& a, RigidBody& b);
+		void resolveCollisions();
+
+		void solveConstraints(float dt);
+
+		void moveBodies(float dt);
+
+		MaybeCollision findCollision(RigidBody& a, RigidBody& b);
 
 		bool possibleCollision(const RigidBody& a, const RigidBody& b) const;
 
+		void applyImpulse(const Collision& collision);
+
 		std::vector<RigidBody*> bodies;
 
-		using CollisionFunction = Collision(*)(RigidBody&, RigidBody&);
+		using CollisionFunction = MaybeCollision(*)(RigidBody&, RigidBody&);
 		const std::map<std::pair<RigidBody::Type, RigidBody::Type>, CollisionFunction> collision_table;
 	};
 

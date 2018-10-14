@@ -20,8 +20,6 @@ TestSpaceWindow::TestSpaceWindow() {
 void TestSpaceWindow::render(sf::RenderWindow& rw) {
 	setSize(ui::getScreenSize(), true);
 
-	// TODO: Make the view transform track the player
-
 	vec2 center = viewtransform.getInverse().transformPoint(getSize() * 0.5f);
 	vec2 diff = center - space.guy->getPosition();
 	viewtransform.translate(diff / 20.0f);
@@ -54,15 +52,15 @@ void TestSpaceWindow::render(sf::RenderWindow& rw) {
 	}
 
 	if (play) {
-			if (keyDown(ui::Key::Left)) {
-				space.guy->runLeft();
-			}
-			if (keyDown(ui::Key::Right)) {
-				space.guy->runRight();
-			}
-			if (keyDown(ui::Key::Up)) {
-				space.guy->jump();
-			}
+		if (keyDown(ui::Key::Left)) {
+			space.guy->runLeft();
+		}
+		if (keyDown(ui::Key::Right)) {
+			space.guy->runRight();
+		}
+		if (keyDown(ui::Key::Up)) {
+			space.guy->jump();
+		}
 
 		// gravitation mouse fling
 		if (leftMouseDown() && (keyDown(ui::Key::LShift) || keyDown(ui::Key::RShift))) {
@@ -110,7 +108,11 @@ bool TestSpaceWindow::onKeyDown(ui::Key key) {
 	case ui::Key::Num5:
 		space.addCreatures<HermannHorst>(1, p);
 		break;
-	} 
+	case ui::Key::T:
+		if (!play){
+			space.tick();
+		}
+	}
 	return true;
 }
 

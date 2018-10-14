@@ -19,6 +19,7 @@ namespace phys {
 
 		const Type type;
 
+		// TODO: rename to restitution
 		const float elasticity;
 
 		const float mass;

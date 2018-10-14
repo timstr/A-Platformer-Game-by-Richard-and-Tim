@@ -28,11 +28,7 @@ namespace phys {
 
 	void RigidBody::applyForceAt(vec2 force, vec2 point_world_space){
 		applyForce(force);
-		vec2 rad = point_world_space - position;
-		// TODO: I'm pretty sure this is just the cross product of
-		// point_world_space - position and force
-		// Simplify using cross()
-		applyTorque(rad.x * force.y - rad.y * force.x);
+		applyTorque(cross(point_world_space - position, force));
 	}
 
 	void RigidBody::applyForce(vec2 force){
@@ -45,11 +41,7 @@ namespace phys {
 
 	void RigidBody::applyImpulseAt(vec2 impulse, vec2 point_world_space){
 		applyImpulse(impulse);
-		vec2 rad = point_world_space - position;
-		// TODO: I'm pretty sure this is just the cross product of
-		// point_world_space - position and impulse
-		// Simplify using cross()
-		applyAngularImpulse(rad.x * impulse.y - rad.y * impulse.x);
+		applyAngularImpulse(cross(point_world_space - position, impulse));
 	}
 
 	void RigidBody::applyImpulse(vec2 impulse){
