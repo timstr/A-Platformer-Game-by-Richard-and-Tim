@@ -53,7 +53,7 @@ namespace phys {
 
 		for (int i = 0; i < bodies.size(); ++i){
 			for (int j = i + 1; j < bodies.size(); ++j){
-				if (bodies[i]->getBoundingBox().collidesWith(bodies[j]->getBoundingBox())){
+				if (possibleCollision(*bodies[i], *bodies[j])){
 					auto collision = findCollision(*bodies[i], *bodies[j]);
 					if (collision.has_value()){
 						collisions.emplace_back(*collision);
@@ -175,14 +175,15 @@ namespace phys {
 
 	void Engine::applyImpulse(const Collision& c) {
 		const float restitution = std::min(c.a.elasticity, c.b.elasticity);
-		const float term_a = dot(c.normal, orthogonalClockwise(c.radius_a)) * cross(c.radius_a, c.normal);
-		const float term_b = dot(c.normal, orthogonalClockwise(c.radius_b)) * cross(c.radius_b, c.normal);
+		// TODO: correctly implement the following
+		const float term_a = pow(cross(c.radius_a, c.normal), 2.0f) * c.a.inverse_moment;
+		const float term_b = pow(cross(c.radius_b, c.normal), 2.0f) * c.b.inverse_moment;
 		const vec2 v_a = c.a.velocity + c.a.angular_velocity * orthogonalClockwise(c.radius_a);
 		const vec2 v_b = c.b.velocity + c.b.angular_velocity * orthogonalClockwise(c.radius_b);
 		const vec2 v_rel = v_b - v_a;
 		const float v_norm = dot(v_rel, c.normal);
 		if (v_norm > 0.0f){
-			return;
+			//return;
 		}
 		const float j = (1.0f + restitution) * v_norm / (c.a.inverse_mass + c.b.inverse_mass + term_a + term_b);
 		c.a.applyImpulseAt(j * c.normal, c.a.position + c.radius_a);

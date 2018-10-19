@@ -13,10 +13,10 @@ namespace phys {
 	}
 
 	BoundingBox RectangleBody::getBoundingBox() const {
-		vec2 topleft = getTransform() * (-m_size * 0.5f);
-		vec2 bottomleft = getTransform() * (vec2(-m_size.x, m_size.y) * 0.5f);
-		vec2 topright = getTransform() * (vec2(-m_size.x, m_size.y) * 0.5f);
-		vec2 bottomright = getTransform() * (m_size * 0.5f);
+		vec2 topleft = getInverseTransform() * (-m_size * 0.5f);
+		vec2 bottomleft = getInverseTransform() * (vec2(-m_size.x, m_size.y) * 0.5f);
+		vec2 topright = getInverseTransform() * (vec2(m_size.x, -m_size.y) * 0.5f);
+		vec2 bottomright = getInverseTransform() * (m_size * 0.5f);
 
 		vec2 min = {
 			std::min<float>({topleft.x, bottomleft.x, topright.x, bottomright.x}),
@@ -33,6 +33,12 @@ namespace phys {
 
 	vec2 RectangleBody::size() const {
 		return m_size;
+	}
+
+	bool RectangleBody::hit(vec2 point_world_space) const {
+		const vec2 p = getInverseTransform() * point_world_space;
+		const vec2 hs = size() * 0.5f;
+		return p.x >= -hs.x && p.x <= hs.x && p.y >= -hs.y && p.y <= hs.y;
 	}
 
 } // namespace phys

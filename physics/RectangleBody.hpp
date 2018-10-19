@@ -11,6 +11,8 @@ namespace phys {
 
 		vec2 size() const;
 
+		bool hit(vec2 point_world_space) const;
+
 	private:
 		const vec2 m_size;
 	};

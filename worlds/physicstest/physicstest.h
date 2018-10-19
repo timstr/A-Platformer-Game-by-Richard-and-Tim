@@ -32,7 +32,7 @@ struct RectangleGuy : ShapeGuy {
 		sf::RectangleShape rs;
 		rs.setSize(body.size());
 		rs.setOrigin(body.size() * 0.5f);
-		rs.setRotation(body.getAngle());
+		rs.setRotation(body.getAngle() * 180.0f / pi);
 		rs.setPosition(body.getPosition());
 
 		rs.setFillColor(getColor());
@@ -59,7 +59,7 @@ struct CircleGuy : ShapeGuy {
 		sf::CircleShape cs;
 		cs.setRadius(body.radius());
 		cs.setOrigin({body.radius(), body.radius()});
-		cs.setRotation(body.getAngle());
+		cs.setRotation(body.getAngle() * 180.0f / pi);
 		cs.setPosition(body.getPosition());
 
 		cs.setFillColor(getColor());

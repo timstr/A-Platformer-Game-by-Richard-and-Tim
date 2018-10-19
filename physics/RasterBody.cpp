@@ -9,10 +9,10 @@ namespace phys {
 	}
 
 	BoundingBox RasterBody::getBoundingBox() const {
-		vec2 topleft = getTransform() * (-m_size * 0.5f);
-		vec2 bottomleft = getTransform() * (vec2(-m_size.x, m_size.y) * 0.5f);
-		vec2 topright = getTransform() * (vec2(-m_size.x, m_size.y) * 0.5f);
-		vec2 bottomright = getTransform() * (m_size * 0.5f);
+		vec2 topleft = getInverseTransform() * (-m_size * 0.5f);
+		vec2 bottomleft = getInverseTransform() * (vec2(-m_size.x, m_size.y) * 0.5f);
+		vec2 topright = getInverseTransform() * (vec2(m_size.x, -m_size.y) * 0.5f);
+		vec2 bottomright = getInverseTransform() * (m_size * 0.5f);
 
 		vec2 min = {
 			std::min<float>({topleft.x, bottomleft.x, topright.x, bottomright.x}),

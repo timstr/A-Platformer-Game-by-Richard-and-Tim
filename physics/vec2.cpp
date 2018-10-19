@@ -68,6 +68,26 @@ vec2 orthogonalCounterclockwise(const vec2& v) {
 	return {-v.y, v.x};
 }
 
+vec2 unit(const vec2& v) {
+	const float mag = abs(v);
+	if (!std::isnormal(mag)){
+		return {0.0f, 0.0f};
+	}
+	return v / mag;
+}
+
+float distanceFromLinePP(const vec2& p1, const vec2& p2, const vec2& q) {
+	return distanceFromLinePN(p1, orthogonalClockwise(p2 - p1), q);
+}
+
+float distanceFromLinePN(const vec2& p, const vec2& n, const vec2& q) {
+	return abs(dot(q - p, n) / abs(n));
+}
+
+float displacementFromLinePN(const vec2& p, const vec2& n, const vec2& q) {
+	return dot(q - p, n) / abs(n);
+}
+
 float abs(const vec2& v){
 	return hypot(v.x, v.y);
 }

@@ -30,4 +30,16 @@ vec2 orthogonalClockwise(const vec2& v);
 
 vec2 orthogonalCounterclockwise(const vec2& v);
 
+vec2 unit(const vec2& v);
+
+// absolute distance between a point q and a line that passes through p1 and p2
+float distanceFromLinePP(const vec2& p1, const vec2& p2, const vec2& q);
+
+// absolute distance between a point q and a line that passes through p and is orthogonal to n
+float distanceFromLinePN(const vec2& p, const vec2& n, const vec2& q);
+
+// displacement between a point q and a line that passes through p and is orthogonal to n
+// displacement is negative if q is on opposite side of line from n
+float displacementFromLinePN(const vec2& p, const vec2& n, const vec2& q);
+
 float abs(const vec2& v);
