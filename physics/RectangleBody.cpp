@@ -36,7 +36,7 @@ namespace phys {
 	}
 
 	bool RectangleBody::hit(vec2 point_world_space) const {
-		const vec2 p = getInverseTransform() * point_world_space;
+		const vec2 p = getTransform() * (point_world_space - getPosition());
 		const vec2 hs = size() * 0.5f;
 		return p.x >= -hs.x && p.x <= hs.x && p.y >= -hs.y && p.y <= hs.y;
 	}

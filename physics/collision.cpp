@@ -22,7 +22,9 @@ namespace phys {
 		vec2 diff = b.getPosition() - a.getPosition();
 		float dist = abs(diff);
 
-		float penetration = dist - a.radius() - b.radius();
+		if (dist > a.radius() + b.radius()){
+			return {};
+		}
 
 		vec2 normal = diff / dist;
 
@@ -87,12 +89,16 @@ namespace phys {
 
 		vec2 intersection_sum = {0.0f, 0.0f};
 		int count = 0;
+		bool a_inside_b = true;
+		bool b_inside_a = true;
 
 		// any corners of a that hit b
 		for (const vec2& p : a_p){
 			if (b.hit(p)){
 				intersection_sum += p;
 				++count;
+			} else {
+				a_inside_b = false;
 			}
 		}
 
@@ -101,42 +107,50 @@ namespace phys {
 			if (a.hit(p)){
 				intersection_sum += p;
 				++count;
+			} else {
+				b_inside_a = false;
 			}
 		}
 
-		// any line segment intersections between a and b
-		for (int i = 0; i < 4; ++i){
-			for (int j = 0; j < 4; ++j){
-				if (auto p = lineSegmentIntersection(a_p[i], a_p[(i + 1) % 4], b_p[j], b_p[(j + 1) % 4])){
-					intersection_sum += *p;
-					++count;
+		vec2 the_point;
+		vec2 the_normal;
+
+		if (a_inside_b || b_inside_a){
+			the_point = (a.getPosition() + b.getPosition()) / 2.0f;
+			the_normal = b.getPosition() - a.getPosition();
+		} else {
+			// any line segment intersections between a and b
+			for (int i = 0; i < 4; ++i){
+				for (int j = 0; j < 4; ++j){
+					if (auto p = lineSegmentIntersection(a_p[i], a_p[(i + 1) % 4], b_p[j], b_p[(j + 1) % 4])){
+						intersection_sum += *p;
+						++count;
+					}
 				}
 			}
-		}
 
-		if (count == 0){
-			return {};
-		}
-
-		float min_dist = 1e6f;
-		vec2 the_normal;
-		
-		const vec2 the_point = intersection_sum / (float)count;
-
-		for (int i = 0; i < 4; ++i){
-			const vec2 n = orthogonalClockwise(a_p[(i + 1) % 4] - a_p[i]);
-			const float dist = distanceFromLinePN(a_p[i], n, the_point);
-			if (dist < min_dist){
-				the_normal = n;
-				min_dist = dist;
+			if (count == 0){
+				return {};
 			}
-		}
-		for (int i = 0; i < 4; ++i){
-			const vec2 n = orthogonalClockwise(b_p[(i + 1) % 4] - b_p[i]);
-			const float dist = distanceFromLinePN(b_p[i], n, the_point);
-			if (dist < min_dist){
-				the_normal = -n;
-				min_dist = dist;
+			the_point = intersection_sum / (float)count;
+
+			float min_dist = 1e6f;
+
+			for (int i = 0; i < 4; ++i){
+				const vec2 n = orthogonalClockwise(a_p[(i + 1) % 4] - a_p[i]);
+				const float dist = distanceFromLinePN(a_p[i], n, the_point);
+				if (dist < min_dist){
+					the_normal = n;
+					min_dist = dist;
+				}
+			}
+			for (int i = 0; i < 4; ++i){
+				const vec2 n = orthogonalClockwise(b_p[(i + 1) % 4] - b_p[i]);
+				const float dist = distanceFromLinePN(b_p[i], n, the_point);
+				if (dist < min_dist){
+					the_normal = -n;
+					min_dist = dist;
+				}
 			}
 		}
 

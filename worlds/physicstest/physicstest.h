@@ -14,7 +14,7 @@ struct ShapeGuy {
 
 	sf::Color getColor() const {
 		uint32_t hash = static_cast<uint32_t>(std::hash<ShapeGuy const*>{}(this));
-		return sf::Color(hash | 0xFF);
+		return sf::Color(hash & 0xFFFFFF00 | 0x80);
 	}
 };
 
@@ -80,6 +80,19 @@ struct CircleGuy : ShapeGuy {
 		cs.setOutlineThickness(1.0f);
 
 		rw.draw(cs);
+
+		sf::CircleShape s;
+		s.setFillColor(sf::Color(0xFF));
+		s.setRadius(2.0f);
+		s.setOrigin({2.0f, 2.0f});
+		s.setPosition(body.getPosition() + body.getInverseTransform() * vec2{-body.radius(), 0.0f});
+		rw.draw(s);
+		s.setPosition(body.getPosition() + body.getInverseTransform() * vec2{body.radius(), 0.0f});
+		rw.draw(s);
+		s.setPosition(body.getPosition() + body.getInverseTransform() * vec2{0.0f, -body.radius()});
+		rw.draw(s);
+		s.setPosition(body.getPosition() + body.getInverseTransform() * vec2{0.0f, body.radius()});
+		rw.draw(s);
 	}
 
 	phys::CircleBody body;
