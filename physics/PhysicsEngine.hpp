@@ -19,6 +19,9 @@ namespace phys {
 
 		void tick(float dt);
 
+		// TODO: remove after testing
+		const std::vector<Collision>& getCollisions() const;
+
 	private:
 
 		void resolveCollisions();
@@ -37,6 +40,8 @@ namespace phys {
 
 		using CollisionFunction = MaybeCollision(*)(RigidBody&, RigidBody&);
 		const std::map<std::pair<RigidBody::Type, RigidBody::Type>, CollisionFunction> collision_table;
+
+		std::vector<Collision> collisions;
 	};
 
 } // namespace phys

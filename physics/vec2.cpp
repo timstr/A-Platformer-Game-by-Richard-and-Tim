@@ -1,5 +1,9 @@
 #include "Vec2.hpp"
 
+namespace {
+	const float epsilon = 1e-6f;
+}
+
 mat2x2::mat2x2() :
 	a(0.0f),
 	b(0.0f),
@@ -86,6 +90,43 @@ float distanceFromLinePN(const vec2& p, const vec2& n, const vec2& q) {
 
 float displacementFromLinePN(const vec2& p, const vec2& n, const vec2& q) {
 	return dot(q - p, n) / abs(n);
+}
+
+std::optional<vec2> lineSegmentIntersection(const vec2& p0, const vec2& p1, const vec2& q0, const vec2& q1){
+	const vec2& p = p0;
+	const vec2& q = q0;
+	const vec2 r = p1 - p0;
+	const vec2 s = q1 - q0;
+
+	const vec2 q_minus_p = q - p;
+	const float r_cross_s = cross(r, s);
+	const float q_minus_p_cross_r = cross(q_minus_p, r);
+
+	if (abs(r_cross_s) < epsilon){
+		if (abs(q_minus_p_cross_r) < epsilon){
+			// the two line segments are colinear
+			const float r_dot_r = dot(r, r);
+			const float t0 = dot(q_minus_p, r) / r_dot_r;
+			const float t1 = t0 + dot(s, r) / r_dot_r;
+			if (t0 >= 0.0f && t0 <= 1.0f && t1 >= 0.0f && t0 <= 0.0f){
+				// line segments overlap
+				return p + t0 * s;
+			} else {
+				// line segments do not overlap
+				return {};
+			}
+		} else {
+			return {};
+		}
+	} else {
+		const float t = cross(q_minus_p, s) / r_cross_s;
+		const float u = q_minus_p_cross_r / r_cross_s;
+		if (t >= 0.0f && t <= 1.0f && u >= 0.0f && u <= 1.0f){
+			return p + t * r;
+		} else {
+			return {};
+		}
+	}
 }
 
 float abs(const vec2& v){

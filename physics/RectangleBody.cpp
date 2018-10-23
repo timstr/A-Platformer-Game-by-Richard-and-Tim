@@ -28,7 +28,7 @@ namespace phys {
 			std::max<float>({topleft.y, bottomleft.y, topright.y, bottomright.y})
 		};
 
-		return BoundingBox(position + min, position + max);
+		return BoundingBox(getPosition() + min, getPosition() + max);
 	}
 
 	vec2 RectangleBody::size() const {

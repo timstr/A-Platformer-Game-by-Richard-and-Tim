@@ -87,10 +87,22 @@ namespace phys {
 		// effective torques from any angular impulses during the time frame
 		float getEffectiveTorques(float dt) const;
 
-	protected:
+		// get the forces acting on the body, not considering impulses
+		vec2 getForces() const;
+
+		// get the impulses acting on the body
+		vec2 getImpulses() const;
+
+		// get the torques acting on the body, not considering angular impulses
+		float getTorques() const;
+
+		// get the angular impulses acting on the body
+		float getAngularImpulses() const;
 
 		// reset forces and impulses to zero
 		void resetAccumulators();
+
+	private:
 
 		vec2 position;
 		vec2 velocity;
@@ -107,8 +119,6 @@ namespace phys {
 
 		mutable bool inv_transform_needs_update;
 		mutable mat2x2 inv_transform;
-
-		friend struct Engine;
 	};
 
 } // namespace phys

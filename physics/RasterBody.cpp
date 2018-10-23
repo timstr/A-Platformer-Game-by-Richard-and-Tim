@@ -24,7 +24,7 @@ namespace phys {
 			std::max<float>({topleft.y, bottomleft.y, topright.y, bottomright.y})
 		};
 
-		return BoundingBox(position + min, position + max);
+		return BoundingBox(getPosition() + min, getPosition() + max);
 	}
 
 	bool RasterBody::hit(vec2 point) const {

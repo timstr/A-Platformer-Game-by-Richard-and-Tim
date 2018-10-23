@@ -15,7 +15,7 @@ namespace phys {
 
 		RigidBody& a;
 		RigidBody& b;
-		const vec2 normal;
+		const vec2 normal; // normal at point of collision, pointing from a to b
 		const vec2 radius_a; // vector from a's center of mass to point of collision (closest point to b), in world coordinates
 		const vec2 radius_b; // vector from b's center of mass to point of collision (closest point to a), in world coordinates
 	};

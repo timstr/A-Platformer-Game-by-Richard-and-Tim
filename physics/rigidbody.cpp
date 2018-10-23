@@ -28,7 +28,7 @@ namespace phys {
 
 	void RigidBody::applyForceAt(vec2 force, vec2 point_world_space){
 		applyForce(force);
-		applyTorque(cross(point_world_space - position, force));
+		applyTorque(cross(position - point_world_space, force));
 	}
 
 	void RigidBody::applyForce(vec2 force){
@@ -41,7 +41,7 @@ namespace phys {
 
 	void RigidBody::applyImpulseAt(vec2 impulse, vec2 point_world_space){
 		applyImpulse(impulse);
-		applyAngularImpulse(cross(point_world_space - position, impulse));
+		applyAngularImpulse(cross(position - point_world_space, impulse));
 	}
 
 	void RigidBody::applyImpulse(vec2 impulse){
@@ -71,6 +71,7 @@ namespace phys {
 	}
 	void RigidBody::setAngle(float _angle){
 		angle = _angle;
+		inv_transform_needs_update = true;
 	}
 
 	float RigidBody::getAngularVelocity() const {
@@ -102,6 +103,22 @@ namespace phys {
 
 	float RigidBody::getEffectiveTorques(float dt) const {
 		return torques + angular_impulses / dt;
+	}
+
+	vec2 RigidBody::getForces() const {
+		return forces;
+	}
+
+	vec2 RigidBody::getImpulses() const {
+		return impulses;
+	}
+
+	float RigidBody::getTorques() const {
+		return torques;
+	}
+
+	float RigidBody::getAngularImpulses() const {
+		return angular_impulses;
 	}
 
 	void RigidBody::resetAccumulators(){

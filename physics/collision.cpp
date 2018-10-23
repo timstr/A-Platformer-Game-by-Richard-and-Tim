@@ -85,73 +85,62 @@ namespace phys {
 			b.getPosition() + (b.getInverseTransform() * vec2{-b.size().x, b.size().y} * 0.5f)
 		};
 
-		vec2 closest_to_a; // closest point on b from a
-		vec2 closest_to_b; // closest point on a from b
-		float min_disp_to_a = -1e10f; // smallest displacement from one of b's corners to a
-		float min_disp_to_b = -1e10f; // smallest displacement from one of a's corners to b
-		vec2 min_disp_normal_a; // normal on a with the smallest displacement
-		vec2 min_disp_normal_b; // normal on b with the smallest displacement
+		vec2 intersection_sum = {0.0f, 0.0f};
+		int count = 0;
 
-		// TODO: play around with min_disp_* and find a way to choose
-		// the best surface from which to create the collision
-
-		// separating axis test for surfaces of a
-		for (int i = 0; i < 4; ++i){
-			// surface normal between points i and i+1
-			vec2 normal = orthogonalClockwise(a_p[(i + 1) % 4] - a_p[i]);
-
-			bool all_outside = true;
-			for (int j = 0; j < 4; ++j){
-				float disp = displacementFromLinePN(a_p[i], normal, b_p[j]);
-				all_outside = all_outside && disp > 0.0f;
-				if (disp <= 0.0f && disp > min_disp_to_a){
-					closest_to_a = b_p[j];
-					min_disp_normal_a = normal;
-					min_disp_to_a = disp;
-				}
-			}
-			if (all_outside){
-				// return empty collision if a separating axis is found
-				return {};
+		// any corners of a that hit b
+		for (const vec2& p : a_p){
+			if (b.hit(p)){
+				intersection_sum += p;
+				++count;
 			}
 		}
+
+		// any corners of b that hit a
+		for (const vec2& p : b_p){
+			if (a.hit(p)){
+				intersection_sum += p;
+				++count;
+			}
+		}
+
+		// any line segment intersections between a and b
+		for (int i = 0; i < 4; ++i){
+			for (int j = 0; j < 4; ++j){
+				if (auto p = lineSegmentIntersection(a_p[i], a_p[(i + 1) % 4], b_p[j], b_p[(j + 1) % 4])){
+					intersection_sum += *p;
+					++count;
+				}
+			}
+		}
+
+		if (count == 0){
+			return {};
+		}
+
+		float min_dist = 1e6f;
+		vec2 the_normal;
 		
-		// separating axis test for surfaces of b
+		const vec2 the_point = intersection_sum / (float)count;
+
 		for (int i = 0; i < 4; ++i){
-			// surface normal between points i and i+1
-			vec2 normal = orthogonalClockwise(b_p[(i + 1) % 4] - b_p[i]);
-
-			bool all_outside = true;
-			for (int j = 0; j < 4; ++j){
-				float disp = displacementFromLinePN(b_p[i], normal, a_p[j]);
-				all_outside = all_outside && disp > 0.0f;
-				if (disp <= 0.0f && disp > min_disp_to_b){
-					closest_to_b = a_p[j];
-					min_disp_normal_b = normal;
-					min_disp_to_b = disp;
-				}
+			const vec2 n = orthogonalClockwise(a_p[(i + 1) % 4] - a_p[i]);
+			const float dist = distanceFromLinePN(a_p[i], n, the_point);
+			if (dist < min_dist){
+				the_normal = n;
+				min_dist = dist;
 			}
-			if (all_outside){
-				// return empty collision if a separating axis is found
-				return {};
+		}
+		for (int i = 0; i < 4; ++i){
+			const vec2 n = orthogonalClockwise(b_p[(i + 1) % 4] - b_p[i]);
+			const float dist = distanceFromLinePN(b_p[i], n, the_point);
+			if (dist < min_dist){
+				the_normal = -n;
+				min_dist = dist;
 			}
 		}
 
-		if (min_disp_to_a > min_disp_to_b){
-			vec2 v_a = a.getTransform() * (closest_to_a - a.getPosition());
-			v_a.x = std::clamp(v_a.x, -a.size().x * 0.5f, a.size().x * 0.5f);
-			v_a.y = std::clamp(v_a.y, -a.size().y * 0.5f, a.size().y * 0.5f);
-			closest_to_a = a.getInverseTransform() * v_a;
-			vec2 normal = unit(-min_disp_normal_a);
-			return Collision{a, b, normal, closest_to_a, closest_to_a + a.getPosition() - b.getPosition()};
-		} else {
-			vec2 v_b = b.getTransform() * (closest_to_b - b.getPosition());
-			v_b.x = std::clamp(v_b.x, -b.size().x * 0.5f, b.size().x * 0.5f);
-			v_b.y = std::clamp(v_b.y, -b.size().y * 0.5f, b.size().y * 0.5f);
-			closest_to_b = b.getInverseTransform() * v_b;
-			vec2 normal = unit(min_disp_normal_b);
-			return Collision{a, b, normal, closest_to_b + a.getPosition() - b.getPosition(), closest_to_b};
-		}
+		return Collision{a, b, unit(the_normal), the_point - a.getPosition(), the_point - b.getPosition()};
 	}
 
 	MaybeCollision collideRectangleConvex(RigidBody& body_a, RigidBody& body_b){

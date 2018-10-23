@@ -32,7 +32,7 @@ struct RectangleGuy : ShapeGuy {
 		sf::RectangleShape rs;
 		rs.setSize(body.size());
 		rs.setOrigin(body.size() * 0.5f);
-		rs.setRotation(body.getAngle() * 180.0f / pi);
+		rs.setRotation(-body.getAngle() * 180.0f / pi);
 		rs.setPosition(body.getPosition());
 
 		rs.setFillColor(getColor());
@@ -40,6 +40,19 @@ struct RectangleGuy : ShapeGuy {
 		rs.setOutlineThickness(1.0f);
 
 		rw.draw(rs);
+
+		sf::CircleShape s;
+		s.setFillColor(sf::Color(0xFF));
+		s.setRadius(2.0f);
+		s.setOrigin({2.0f, 2.0f});
+		s.setPosition(body.getPosition() + body.getInverseTransform() * (0.5f * vec2{-body.size().x, -body.size().y}));
+		rw.draw(s);
+		s.setPosition(body.getPosition() + body.getInverseTransform() * (0.5f * vec2{-body.size().x, body.size().y}));
+		rw.draw(s);
+		s.setPosition(body.getPosition() + body.getInverseTransform() * (0.5f * vec2{body.size().x, -body.size().y}));
+		rw.draw(s);
+		s.setPosition(body.getPosition() + body.getInverseTransform() * (0.5f * vec2{body.size().x, body.size().y}));
+		rw.draw(s);
 	}
 
 	phys::RectangleBody body;

@@ -17,7 +17,7 @@ namespace phys {
 	}
 
 	BoundingBox CircleBody::getBoundingBox() const {
-		return BoundingBox(position.x - m_radius, position.y - m_radius, position.x + m_radius, position.y + m_radius);
+		return BoundingBox(getPosition() - vec2{m_radius, m_radius}, getPosition() + vec2{m_radius, m_radius});
 	}
 
 } // namespace phys
