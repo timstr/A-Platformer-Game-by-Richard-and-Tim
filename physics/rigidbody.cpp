@@ -71,6 +71,7 @@ namespace phys {
 	}
 	void RigidBody::setAngle(float _angle){
 		angle = _angle;
+		transform_needs_update = true;
 		inv_transform_needs_update = true;
 	}
 

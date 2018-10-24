@@ -132,3 +132,7 @@ std::optional<vec2> lineSegmentIntersection(const vec2& p0, const vec2& p1, cons
 float abs(const vec2& v){
 	return hypot(v.x, v.y);
 }
+
+float abssqr(const vec2& v) {
+	return v.x * v.x + v.y * v.y;
+}

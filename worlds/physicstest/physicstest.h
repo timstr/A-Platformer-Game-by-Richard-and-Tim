@@ -14,7 +14,7 @@ struct ShapeGuy {
 
 	sf::Color getColor() const {
 		uint32_t hash = static_cast<uint32_t>(std::hash<ShapeGuy const*>{}(this));
-		return sf::Color(hash & 0xFFFFFF00 | 0x80);
+		return sf::Color(hash | 0xFF);
 	}
 };
 

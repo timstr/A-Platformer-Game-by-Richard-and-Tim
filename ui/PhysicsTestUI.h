@@ -12,25 +12,17 @@ struct PhysicsTestUI : ui::FreeElement {
 	PhysicsTestUI(vec2 _size) : paused(true) {
 		setSize(_size, true);
 
-		// two test circles
-		/*auto s1 = std::make_unique<CircleGuy>(25.0f, _size * 0.5f - vec2{100.0f, 0.0f});
-		auto s2 = std::make_unique<CircleGuy>(25.0f, _size * 0.5f + vec2{100.0f, 0.0f});
-		s1->body.setVelocity({1.0f, 0.0f});
-		s2->body.setVelocity({-1.0f, 0.0f});
-		physics_engine.addRigidBody(s1->body);
-		physics_engine.addRigidBody(s2->body);
-		shapes.emplace_back(std::move(s1));
-		shapes.emplace_back(std::move(s2));*/
-
-		// two test rectangles
-		/*auto s1 = std::make_unique<RectangleGuy>(vec2{300.0f, 25.0f}, _size * 0.5f - vec2{100.0f, 0.0f});
-		auto s2 = std::make_unique<RectangleGuy>(vec2{300.0f, 25.0f}, _size * 0.5f + vec2{100.0f, 0.0f});
+		// two test shapes
+		/*auto s1 = std::make_unique<RectangleGuy>(vec2{50.0f, 50.0f}, _size * 0.5f - vec2{100.0f, 0.0f});
+		//auto s2 = std::make_unique<RectangleGuy>(vec2{300.0f, 25.0f}, _size * 0.5f + vec2{100.0f, 0.0f});
+		//auto s1 = std::make_unique<CircleGuy>(25.0f, _size * 0.5f - vec2{100.0f, 0.0f});
+		auto s2 = std::make_unique<CircleGuy>(25.0f, _size * 0.5f + vec2{100.0f, 10.0f});
 		s1->body.setVelocity({0.5f, 0.0f});
 		s2->body.setVelocity({-0.5f, 0.0f});
-		s1->body.setAngle(-0.2f);
-		s2->body.setAngle(-0.2f);
-		s1->body.setAngularVelocity(0.01f);
-		s2->body.setAngularVelocity(0.01f);
+		s1->body.setAngle(pi * 0.25f);
+		//s2->body.setAngle(-0.2f);
+		//s1->body.setAngularVelocity(0.01f);
+		//s2->body.setAngularVelocity(0.01f);
 		physics_engine.addRigidBody(s1->body);
 		physics_engine.addRigidBody(s2->body);
 		shapes.emplace_back(std::move(s1));
@@ -45,12 +37,12 @@ struct PhysicsTestUI : ui::FreeElement {
 			std::unique_ptr<ShapeGuy> shape;
 			if (bdist(rand_eng)){
 				shape = std::make_unique<CircleGuy>(
-					2.0f + 18.0f * dist(rand_eng),
+					2.0f + 28.0f * dist(rand_eng),
 					vec2(_size.x * dist(rand_eng), _size.y * dist(rand_eng))
 				);
 			} else {
 				shape = std::make_unique<RectangleGuy>(
-					vec2(2.0f + dist(rand_eng) * 18.0f, 2.0f + dist(rand_eng) * 18.0f),
+					vec2(4.0f + dist(rand_eng) * 56.0f, 4.0f + dist(rand_eng) * 56.0f),
 					vec2(_size.x * dist(rand_eng), _size.y * dist(rand_eng))
 				);
 			}
@@ -66,23 +58,17 @@ struct PhysicsTestUI : ui::FreeElement {
 		}
 
 		// cannonball
-		/*auto cannonball = std::make_unique<CircleGuy>(50.0f, vec2{-_size.x * 3.0f, _size.y * 0.5f});
+		auto cannonball = std::make_unique<CircleGuy>(50.0f, vec2{-_size.x * 3.0f, _size.y * 0.5f});
 		cannonball->getBody().setVelocity({10.0f, 0.0f});
 		physics_engine.addRigidBody(cannonball->getBody());
-		shapes.emplace_back(std::move(cannonball));*/
+		shapes.emplace_back(std::move(cannonball));
 
 		// cannonbox
-		auto cannonbox = std::make_unique<RectangleGuy>(vec2{300.0f, 300.0f}, vec2{-_size.x * 1.0f, _size.y * 0.5f});
-		//auto cannonbox = std::make_unique<RectangleGuy>(vec2{300.0f, 300.0f}, _size * 0.5f);
-		cannonbox->getBody().setVelocity({5.0f, 0.0f});
+		auto cannonbox = std::make_unique<RectangleGuy>(vec2{100.0f, 100.0f}, vec2{_size.x * 4.0f, _size.y * 0.5f});
+		cannonbox->getBody().setVelocity({-10.0f, 0.0f});
 		cannonbox->getBody().setAngle(pi * 0.25f);
 		physics_engine.addRigidBody(cannonbox->getBody());
 		shapes.emplace_back(std::move(cannonbox));
-
-		//auto lilguy = std::make_unique<RectangleGuy>(vec2{20.0f, 20.0f}, _size * 0.5f - vec2{100.0f, 0.0f});
-		//lilguy->getBody().setVelocity({2.0f, 0.0f});
-		//physics_engine.addRigidBody(lilguy->getBody());
-		//shapes.emplace_back(std::move(lilguy));
 	}
 	~PhysicsTestUI() {
 		for (const auto& shape : shapes) {

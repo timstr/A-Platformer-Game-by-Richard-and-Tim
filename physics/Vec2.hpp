@@ -47,4 +47,8 @@ float displacementFromLinePN(const vec2& p, const vec2& n, const vec2& q);
 // returns a point where line segments p0-p1 and q0-q1 intersect, or nothing if they do not intersect
 std::optional<vec2> lineSegmentIntersection(const vec2& p0, const vec2& p1, const vec2& q0, const vec2& q1);
 
+// returns the absolute magnitude of the vector
 float abs(const vec2& v);
+
+// returns the squared magnitude of the vector
+float abssqr(const vec2& v);

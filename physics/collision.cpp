@@ -37,10 +37,79 @@ namespace phys {
 	MaybeCollision collideCircleRectangle(RigidBody& body_a, RigidBody& body_b){
 		assert(static_cast<bool>(dynamic_cast<CircleBody*>(&body_a)));
 		assert(static_cast<bool>(dynamic_cast<RectangleBody*>(&body_b)));
-		auto& a = static_cast<CircleBody&>(body_a);
-		auto& b = static_cast<RectangleBody&>(body_b);
-		// TODO
-		return {};
+		auto& circle = static_cast<CircleBody&>(body_a);
+		auto& rect = static_cast<RectangleBody&>(body_b);
+		
+		// cp is the the circle's position in the rectangle's coordinates
+		const vec2 cp = rect.getTransform() * (circle.getPosition() - rect.getPosition());
+
+		// displacement from the circle's edge to the left, right, top, and bottom edges of the rectangle
+		// positive means the circle is outside that edge
+		const float dl = -cp.x - circle.radius() - rect.size().x * 0.5f;
+		const float dr = cp.x - circle.radius() - rect.size().x * 0.5f;
+		const float dt = -cp.y - circle.radius() - rect.size().y * 0.5f;
+		const float db = cp.y - circle.radius() - rect.size().y * 0.5f;
+
+		if (dl > 0.0f || dr > 0.0f || dt > 0.0f || db > 0.f){
+			return {};
+		}
+
+		// TODO: distinguish between face contacts, where the collision normal is the face normal,
+		// and edge contacts, where the collision normal is the 
+
+		const vec2 hitp = (rect.getInverseTransform() * vec2{
+			std::clamp(cp.x, -rect.size().x * 0.5f, rect.size().x * 0.5f),
+			std::clamp(cp.y, -rect.size().y * 0.5f, rect.size().y * 0.5f)
+		}) + rect.getPosition();
+
+		vec2 normal = {1.0f, 0.0f};
+		float mindist = dl;
+		if (dr <= 0.0f && dr > mindist){
+			normal = {-1.0f, 0.0f};
+			mindist = dr;
+		}
+		if (dt <= 0.0f && dt > mindist){
+			normal = {0.0f, 1.0f};
+			mindist = dt;
+		}
+		if (db <= 0.0f && db > mindist){
+			normal = {0.0f, -1.0f};
+			mindist = db;
+		}
+
+		const vec2 tl = vec2{-rect.size().x, -rect.size().y} * 0.5f;
+		const vec2 tr = vec2{rect.size().x, -rect.size().y} * 0.5f;
+		const vec2 bl = vec2{-rect.size().x, rect.size().y} * 0.5f;
+		const vec2 br = vec2{rect.size().x, rect.size().y} * 0.5f;
+
+		const float rs = circle.radius() * circle.radius();
+		const float dtl = abssqr(tl - cp);
+		const float dtr = abssqr(tr - cp);
+		const float dbl = abssqr(bl - cp);
+		const float dbr = abssqr(br - cp);
+
+		mindist = 1e6f;
+
+		if (dtl < rs && dtl < mindist){
+			mindist = dtl;
+			normal = unit(tl - cp);
+		}
+		if (dtr < rs && dtr < mindist){
+			mindist = dtr;
+			normal = unit(tr - cp);
+		}
+		if (dbl < rs && dbl < mindist){
+			mindist = dbl;
+			normal = unit(bl - cp);
+		}
+		if (dbr < rs && dbr < mindist){
+			mindist = dbr;
+			normal = unit(br - cp);
+		}
+
+		normal = rect.getInverseTransform() * normal;
+
+		return Collision{circle, rect, normal, hitp - circle.getPosition(), hitp - rect.getPosition()};
 	}
 
 	MaybeCollision collideCircleConvex(RigidBody& body_a, RigidBody& body_b){
