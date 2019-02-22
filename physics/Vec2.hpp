@@ -26,11 +26,15 @@ float dot(const vec2& v1, const vec2& v2);
 
 float cross(const vec2& v1, const vec2& v2);
 
+// clamps the normal component of v to zero if it is negative
+// leaves the tangent component unchanged
+vec2 clampToNormal(const vec2& v, const vec2& n);
+
 vec2 projectOnto(const vec2& v1, const vec2& v2);
 
-vec2 orthogonalClockwise(const vec2& v);
+vec2 orthogonalCW(const vec2& v);
 
-vec2 orthogonalCounterclockwise(const vec2& v);
+vec2 orthogonalCCW(const vec2& v);
 
 vec2 unit(const vec2& v);
 

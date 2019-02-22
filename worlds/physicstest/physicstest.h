@@ -4,23 +4,30 @@
 #include "gui/gui.h"
 
 struct ShapeGuy {
+	ShapeGuy(sf::Color color) : m_color(color) {
+	
+	}
 	virtual ~ShapeGuy(){
 
 	}
 
 	virtual phys::RigidBody& getBody() = 0;
 
-	virtual void draw(sf::RenderWindow& rw) = 0;
+	virtual void render(sf::RenderWindow& rw, bool show_corners) = 0;
 
 	sf::Color getColor() const {
-		uint32_t hash = static_cast<uint32_t>(std::hash<ShapeGuy const*>{}(this));
-		return sf::Color(hash | 0xFF);
+		//uint32_t hash = static_cast<uint32_t>(std::hash<ShapeGuy const*>{}(this));
+		//return sf::Color(hash | 0xFF);
+		return m_color;
 	}
+
+private:
+	sf::Color m_color;
 };
 
 struct RectangleGuy : ShapeGuy {
-	RectangleGuy(vec2 size, vec2 pos)
-		: body(size, 1.0, 0.5) {
+	RectangleGuy(vec2 size, vec2 pos, sf::Color color, float density = 1.0f)
+		: ShapeGuy(color), body(size, density, 0.5f) {
 		body.setPosition(pos);
 	}
 
@@ -28,7 +35,7 @@ struct RectangleGuy : ShapeGuy {
 		return body;
 	}
 
-	void draw(sf::RenderWindow& rw) override {
+	void render(sf::RenderWindow& rw, bool show_corners) override {
 		sf::RectangleShape rs;
 		rs.setSize(body.size());
 		rs.setOrigin(body.size() * 0.5f);
@@ -41,26 +48,28 @@ struct RectangleGuy : ShapeGuy {
 
 		rw.draw(rs);
 
-		sf::CircleShape s;
-		s.setFillColor(sf::Color(0xFF));
-		s.setRadius(2.0f);
-		s.setOrigin({2.0f, 2.0f});
-		s.setPosition(body.getPosition() + body.getInverseTransform() * (0.5f * vec2{-body.size().x, -body.size().y}));
-		rw.draw(s);
-		s.setPosition(body.getPosition() + body.getInverseTransform() * (0.5f * vec2{-body.size().x, body.size().y}));
-		rw.draw(s);
-		s.setPosition(body.getPosition() + body.getInverseTransform() * (0.5f * vec2{body.size().x, -body.size().y}));
-		rw.draw(s);
-		s.setPosition(body.getPosition() + body.getInverseTransform() * (0.5f * vec2{body.size().x, body.size().y}));
-		rw.draw(s);
+        if (show_corners){
+		    sf::CircleShape s;
+		    s.setFillColor(sf::Color(0xFF));
+		    s.setRadius(2.0f);
+		    s.setOrigin({2.0f, 2.0f});
+		    s.setPosition(body.getPosition() + body.getInverseTransform() * (0.5f * vec2{-body.size().x, -body.size().y}));
+		    rw.draw(s);
+		    s.setPosition(body.getPosition() + body.getInverseTransform() * (0.5f * vec2{-body.size().x, body.size().y}));
+		    rw.draw(s);
+		    s.setPosition(body.getPosition() + body.getInverseTransform() * (0.5f * vec2{body.size().x, -body.size().y}));
+		    rw.draw(s);
+		    s.setPosition(body.getPosition() + body.getInverseTransform() * (0.5f * vec2{body.size().x, body.size().y}));
+		    rw.draw(s);
+        }
 	}
 
 	phys::RectangleBody body;
 };
 
 struct CircleGuy : ShapeGuy {
-	CircleGuy(float radius, vec2 pos)
-		: body(radius, 1.0, 0.5) {
+	CircleGuy(float radius, vec2 pos, sf::Color color)
+		: ShapeGuy(color), body(radius, 1.0, 0.5) {
 		body.setPosition(pos);
 	}
 
@@ -68,7 +77,7 @@ struct CircleGuy : ShapeGuy {
 		return body;
 	}
 
-	void draw(sf::RenderWindow& rw) override {
+	void render(sf::RenderWindow& rw, bool show_corners) override {
 		sf::CircleShape cs;
 		cs.setRadius(body.radius());
 		cs.setOrigin({body.radius(), body.radius()});
@@ -81,18 +90,20 @@ struct CircleGuy : ShapeGuy {
 
 		rw.draw(cs);
 
-		sf::CircleShape s;
-		s.setFillColor(sf::Color(0xFF));
-		s.setRadius(2.0f);
-		s.setOrigin({2.0f, 2.0f});
-		s.setPosition(body.getPosition() + body.getInverseTransform() * vec2{-body.radius(), 0.0f});
-		rw.draw(s);
-		s.setPosition(body.getPosition() + body.getInverseTransform() * vec2{body.radius(), 0.0f});
-		rw.draw(s);
-		s.setPosition(body.getPosition() + body.getInverseTransform() * vec2{0.0f, -body.radius()});
-		rw.draw(s);
-		s.setPosition(body.getPosition() + body.getInverseTransform() * vec2{0.0f, body.radius()});
-		rw.draw(s);
+        if (show_corners){
+		    sf::CircleShape s;
+		    s.setFillColor(sf::Color(0xFF));
+		    s.setRadius(2.0f);
+		    s.setOrigin({2.0f, 2.0f});
+		    s.setPosition(body.getPosition() + body.getInverseTransform() * vec2{-body.radius(), 0.0f});
+		    rw.draw(s);
+		    s.setPosition(body.getPosition() + body.getInverseTransform() * vec2{body.radius(), 0.0f});
+		    rw.draw(s);
+		    s.setPosition(body.getPosition() + body.getInverseTransform() * vec2{0.0f, -body.radius()});
+		    rw.draw(s);
+		    s.setPosition(body.getPosition() + body.getInverseTransform() * vec2{0.0f, body.radius()});
+		    rw.draw(s);
+        }
 	}
 
 	phys::CircleBody body;

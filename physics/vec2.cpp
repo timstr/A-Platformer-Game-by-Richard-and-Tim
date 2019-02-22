@@ -56,6 +56,14 @@ float cross(const vec2& v1, const vec2& v2) {
 	return (v1.x * v2.y - v1.y * v2.x);
 }
 
+vec2 clampToNormal(const vec2& v, const vec2& n) {
+    const vec2 normal = unit(n);
+    const vec2 tangent = orthogonalCW(normal);
+    const float v_n = dot(v, normal);
+    const float v_t = dot(v, tangent);
+    return std::max(0.0f, v_n) * normal + v_t * tangent;
+}
+
 vec2 projectOnto(const vec2& v1, const vec2& v2) {
 	if (v2.x == 0 && v2.y == 0){
 		return {0, 0};
@@ -64,11 +72,11 @@ vec2 projectOnto(const vec2& v1, const vec2& v2) {
 	return v2 * (float)(dot(v1, v2) / dot(v2, v2));
 }
 
-vec2 orthogonalClockwise(const vec2& v) {
+vec2 orthogonalCW(const vec2& v) {
 	return {v.y, -v.x};
 }
 
-vec2 orthogonalCounterclockwise(const vec2& v) {
+vec2 orthogonalCCW(const vec2& v) {
 	return {-v.y, v.x};
 }
 
@@ -81,7 +89,7 @@ vec2 unit(const vec2& v) {
 }
 
 float distanceFromLinePP(const vec2& p1, const vec2& p2, const vec2& q) {
-	return distanceFromLinePN(p1, orthogonalClockwise(p2 - p1), q);
+	return distanceFromLinePN(p1, orthogonalCW(p2 - p1), q);
 }
 
 float distanceFromLinePN(const vec2& p, const vec2& n, const vec2& q) {

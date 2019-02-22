@@ -19,6 +19,9 @@ namespace phys {
 
 		const Type type;
 
+		// TODO: make the following const members into non-const private members
+		// with get/set functions
+
 		// TODO: rename to restitution
 		const float elasticity;
 
@@ -29,13 +32,13 @@ namespace phys {
 		const float inverse_moment;
 		
 		// apply a force to the body at some general point in space
-		void applyForceAt(vec2 force, vec2 point_world_space);
+		void applyForceAt(vec2 force, vec2 point_world_space, float dt);
 
 		// apply a force to the body's center of mass
-		void applyForce(vec2 force);
+		void applyForce(vec2 force, float dt);
 
 		// apply a torque to the body
-		void applyTorque(float torque);
+		void applyTorque(float torque, float dt);
 
 		// apply an impulse to the body at some general point in space
 		void applyImpulseAt(vec2 impulse, vec2 point_world_space);
@@ -52,8 +55,11 @@ namespace phys {
 		// set the body's position
 		void setPosition(vec2 _position);
 
-		// get the body's velocity
+		// get the body's velocity at the center of mass
 		const vec2& getVelocity() const;
+
+		// get the body's velocity at a specific point, in world coordinates
+		const vec2 getVelocityAt(vec2 point_world_space) const;
 
 		// set the body's velocity
 		void setVelocity(vec2 _velocity);
@@ -78,41 +84,14 @@ namespace phys {
 
 		// get the smallest rectangle containing the body, in world space
 		virtual BoundingBox getBoundingBox() const = 0;
-
-		// get the forces currently acting on the body, plus the
-		// effective forces from any impulses during the time frame
-		vec2 getEffectiveForces(float dt) const;
-
-		// get the torques currently acting on the body, plus the
-		// effective torques from any angular impulses during the time frame
-		float getEffectiveTorques(float dt) const;
-
-		// get the forces acting on the body, not considering impulses
-		vec2 getForces() const;
-
-		// get the impulses acting on the body
-		vec2 getImpulses() const;
-
-		// get the torques acting on the body, not considering angular impulses
-		float getTorques() const;
-
-		// get the angular impulses acting on the body
-		float getAngularImpulses() const;
-
-		// reset forces and impulses to zero
-		void resetAccumulators();
-
+        
 	private:
 
 		vec2 position;
 		vec2 velocity;
-		vec2 forces;
-		vec2 impulses;
 
 		float angle;
 		float angular_velocity;
-		float torques;
-		float angular_impulses;
 
 		mutable bool transform_needs_update;
 		mutable mat2x2 transform;

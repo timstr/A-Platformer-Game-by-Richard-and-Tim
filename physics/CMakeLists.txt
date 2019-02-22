@@ -3,7 +3,8 @@ cmake_minimum_required(VERSION 3.10.0)
 set(physics-headers
 	BoundingBox.hpp
 	CircleBody.hpp
-	Collision.hpp
+	CollisionDetection.hpp
+	Constraint.hpp
 	ConvexBody.hpp
 	PhysicsEngine.hpp
 	RasterBody.hpp
@@ -15,7 +16,8 @@ set(physics-headers
 set(physics-srcs
 	BoundingBox.cpp
 	CircleBody.cpp
-	Collision.cpp
+	CollisionDetection.cpp
+	Constraint.cpp
 	ConvexBody.cpp
 	PhysicsEngine.cpp
 	RasterBody.cpp

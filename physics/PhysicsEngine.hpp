@@ -1,7 +1,11 @@
 #pragma once
 
 #include "RigidBody.hpp"
-#include "Collision.hpp"
+#include "RectangleBody.hpp"
+#include "CircleBody.hpp"
+#include "ConvexBody.hpp"
+#include "RasterBody.hpp"
+#include "Constraint.hpp"
 #include <vector>
 #include <memory>
 #include <map>
@@ -20,28 +24,30 @@ namespace phys {
 		void tick(float dt);
 
 		// TODO: remove after testing
-		const std::vector<Collision>& getCollisions() const;
+		const std::vector<CollisionConstraint>& getCollisions() const;
 
 	private:
 
-		void resolveCollisions();
+        // search for collisions and add constraints as needed
+        void detectCollisions();
 
+        // globally solve all constraints iteratively
 		void solveConstraints(float dt);
 
+        // displace and rotate bodies according to their velocities
 		void moveBodies(float dt);
 
-		MaybeCollision findCollision(RigidBody& a, RigidBody& b);
+        void findCollisions(RigidBody& a, RigidBody& b);
 
 		bool possibleCollision(const RigidBody& a, const RigidBody& b) const;
 
-		void applyImpulse(const Collision& collision);
-
 		std::vector<RigidBody*> bodies;
 
-		using CollisionFunction = MaybeCollision(*)(RigidBody&, RigidBody&);
+		using CollisionFunction = void(*)(RigidBody&, RigidBody&, std::vector<CollisionConstraint>&);
 		const std::map<std::pair<RigidBody::Type, RigidBody::Type>, CollisionFunction> collision_table;
 
-		std::vector<Collision> collisions;
+		std::vector<CollisionConstraint> collisions;
+		std::vector<std::unique_ptr<Constraint>> constraints; // TODO
 	};
 
 } // namespace phys

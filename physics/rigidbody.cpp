@@ -6,12 +6,8 @@ namespace phys {
 		type(_type),
 		velocity({0.0f, 0.0f}),
 		position({0.0f, 0.0f}),
-		forces({0.0f, 0.0f}),
-		impulses({0.0f, 0.0f}),
 		angle(0.0f),
 		angular_velocity(0.0f),
-		torques(0.0f),
-		angular_impulses(0.0f),
 		mass(_mass),
 		inverse_mass(_mass == 0.0f ? 0.0f : (1.0f / _mass)),
 		moment(_moment),
@@ -26,17 +22,17 @@ namespace phys {
 
 	}
 
-	void RigidBody::applyForceAt(vec2 force, vec2 point_world_space){
-		applyForce(force);
-		applyTorque(cross(position - point_world_space, force));
+	void RigidBody::applyForceAt(vec2 force, vec2 point_world_space, float dt){
+		applyForce(force, dt);
+		applyTorque(cross(position - point_world_space, force), dt);
 	}
 
-	void RigidBody::applyForce(vec2 force){
-		forces += force;
+	void RigidBody::applyForce(vec2 force, float dt){
+		velocity += force * inverse_mass * dt;
 	}
 
-	void RigidBody::applyTorque(float torque){
-		torques += torque;
+	void RigidBody::applyTorque(float torque, float dt){
+		angular_velocity += torque * inverse_moment * dt;
 	}
 
 	void RigidBody::applyImpulseAt(vec2 impulse, vec2 point_world_space){
@@ -45,11 +41,11 @@ namespace phys {
 	}
 
 	void RigidBody::applyImpulse(vec2 impulse){
-		impulses += impulse;
+		velocity += impulse * inverse_mass;
 	}
 
 	void RigidBody::applyAngularImpulse(float impulse){
-		angular_impulses += impulse;
+		angular_velocity += impulse * inverse_moment;
 	}
 
 	const vec2& RigidBody::getPosition() const {
@@ -62,6 +58,11 @@ namespace phys {
 	const vec2& RigidBody::getVelocity() const {
 		return velocity;
 	}
+
+	const vec2 RigidBody::getVelocityAt(vec2 point_world_space) const {
+		return getVelocity() + orthogonalCW(unit(point_world_space - getPosition())) * getAngularVelocity();
+	}
+
 	void RigidBody::setVelocity(vec2 _velocity){
 		velocity = _velocity;
 	}
@@ -96,37 +97,6 @@ namespace phys {
 			inv_transform_needs_update = false;
 		}
 		return inv_transform;
-	}
-
-	vec2 RigidBody::getEffectiveForces(float dt) const {
-		return forces + impulses / dt;
-	}
-
-	float RigidBody::getEffectiveTorques(float dt) const {
-		return torques + angular_impulses / dt;
-	}
-
-	vec2 RigidBody::getForces() const {
-		return forces;
-	}
-
-	vec2 RigidBody::getImpulses() const {
-		return impulses;
-	}
-
-	float RigidBody::getTorques() const {
-		return torques;
-	}
-
-	float RigidBody::getAngularImpulses() const {
-		return angular_impulses;
-	}
-
-	void RigidBody::resetAccumulators(){
-		forces = {0.0f, 0.0f};
-		impulses = {0.0f, 0.0f};
-		torques = 0.0f;
-		angular_impulses = 0.0f;
 	}
 
 } // namespace phys
