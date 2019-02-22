@@ -34,6 +34,9 @@ namespace phys {
         // globally solve all constraints iteratively
 		void solveConstraints(float dt);
 
+		// apply friction to contacts using the impulses calculated by constraint solving
+		void applyFriction();
+
         // displace and rotate bodies according to their velocities
 		void moveBodies(float dt);
 

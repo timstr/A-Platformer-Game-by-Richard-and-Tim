@@ -68,8 +68,8 @@ struct RectangleGuy : ShapeGuy {
 };
 
 struct CircleGuy : ShapeGuy {
-	CircleGuy(float radius, vec2 pos, sf::Color color)
-		: ShapeGuy(color), body(radius, 1.0, 0.5) {
+	CircleGuy(float radius, vec2 pos, sf::Color color, float density = 1.0f)
+		: ShapeGuy(color), body(radius, density, 0.5f) {
 		body.setPosition(pos);
 	}
 

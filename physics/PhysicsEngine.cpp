@@ -39,7 +39,7 @@ namespace phys {
         collisions.clear(); // TODO: consider using previous collisions to aid detection
 		detectCollisions();
 		solveConstraints(dt);
-        // TODO: correct positions to solve overlap
+        applyFriction();
 		moveBodies(dt);
 	}
 
@@ -69,6 +69,39 @@ namespace phys {
 				c->solve(dt);
 			}
         }
+	}
+
+	void Engine::applyFriction() {
+		for (auto& c : collisions){
+			float coeff = std::min(c.a.getFriction(), c.b.getFriction());
+			float mag = c.impulse * coeff;
+			vec2 tan = orthogonalCW(c.normal);
+			vec2 vel_a = c.a.getVelocityAt(c.a.getPosition() + c.radius_a);
+			vec2 vel_b = c.b.getVelocityAt(c.b.getPosition() + c.radius_b);
+			vec2 rel_velo = vel_b - vel_a;
+			float tan_velo = dot(rel_velo, tan);
+			
+			if (tan_velo < 0.0f){
+				tan_velo *= -1.0f;
+				tan *= -1.0f;
+			}
+			
+			///////////////////////
+			const float term_a = pow(cross(c.radius_a, tan), 2.0f) * c.a.inverse_moment;
+			const float term_b = pow(cross(c.radius_b, tan), 2.0f) * c.b.inverse_moment;
+			const float denom = c.a.inverse_mass + c.b.inverse_mass + term_a + term_b;
+			///////////////////////
+
+			// the friction impulse may not accelerate the bodies relative to eachother at the contact point, only decelerate
+			// i.e. tan_velo may only decrease
+
+			float tan_velo_delta = -mag * denom;
+			float new_velo = std::max(tan_velo + tan_velo_delta, 0.0f);
+			float delta = new_velo - tan_velo;
+			float impulse = -delta / denom;
+			c.a.applyImpulseAt(impulse * tan, c.a.getPosition() + c.radius_a);
+			c.b.applyImpulseAt(-impulse * tan, c.b.getPosition() + c.radius_b);
+		}
 	}
 
 	void Engine::moveBodies(float dt) {

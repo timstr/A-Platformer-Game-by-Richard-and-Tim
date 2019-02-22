@@ -17,7 +17,9 @@ namespace phys {
         vec2 diff = b.getPosition() - a.getPosition();
         float dist = abs(diff);
 
-        if (dist > a.radius() + b.radius()){
+		float depth = a.radius() + b.radius() - dist;
+
+        if (depth < 0.0f){
             return;
         }
 
@@ -26,7 +28,7 @@ namespace phys {
         vec2 r_a = normal * a.radius();
         vec2 r_b = -normal * b.radius();
 
-		collisions.emplace_back(CollisionConstraint{a, b, normal, r_a, r_b});
+		collisions.emplace_back(CollisionConstraint{a, b, normal, r_a, r_b, depth});
     }
 
     void collideCircleRectangle(RigidBody& body_a, RigidBody& body_b, std::vector<CollisionConstraint>& collisions){
@@ -54,54 +56,56 @@ namespace phys {
             std::clamp(cp.y, -rect.size().y * 0.5f, rect.size().y * 0.5f)
         }) + rect.getPosition();
 
-            vec2 normal = {1.0f, 0.0f};
-            float mindist = dl;
-            if (dr <= 0.0f && dr > mindist){
-                normal = {-1.0f, 0.0f};
-                mindist = dr;
-            }
-            if (dt <= 0.0f && dt > mindist){
-                normal = {0.0f, 1.0f};
-                mindist = dt;
-            }
-            if (db <= 0.0f && db > mindist){
-                normal = {0.0f, -1.0f};
-                mindist = db;
-            }
+        vec2 normal = {1.0f, 0.0f};
+        float mindist = dl;
+        if (dr <= 0.0f && dr > mindist){
+            normal = {-1.0f, 0.0f};
+            mindist = dr;
+        }
+        if (dt <= 0.0f && dt > mindist){
+            normal = {0.0f, 1.0f};
+            mindist = dt;
+        }
+        if (db <= 0.0f && db > mindist){
+            normal = {0.0f, -1.0f};
+            mindist = db;
+        }
 
-            const vec2 tl = vec2{-rect.size().x, -rect.size().y} * 0.5f;
-            const vec2 tr = vec2{rect.size().x, -rect.size().y} * 0.5f;
-            const vec2 bl = vec2{-rect.size().x, rect.size().y} * 0.5f;
-            const vec2 br = vec2{rect.size().x, rect.size().y} * 0.5f;
+		float depth = -mindist;
 
-            const float rs = circle.radius() * circle.radius();
-            const float dtl = abssqr(tl - cp);
-            const float dtr = abssqr(tr - cp);
-            const float dbl = abssqr(bl - cp);
-            const float dbr = abssqr(br - cp);
+        const vec2 tl = vec2{-rect.size().x, -rect.size().y} * 0.5f;
+        const vec2 tr = vec2{rect.size().x, -rect.size().y} * 0.5f;
+        const vec2 bl = vec2{-rect.size().x, rect.size().y} * 0.5f;
+        const vec2 br = vec2{rect.size().x, rect.size().y} * 0.5f;
 
-            mindist = 1e6f;
+        const float rs = circle.radius() * circle.radius();
+        const float dtl = abssqr(tl - cp);
+        const float dtr = abssqr(tr - cp);
+        const float dbl = abssqr(bl - cp);
+        const float dbr = abssqr(br - cp);
 
-            if (dtl < rs && dtl < mindist){
-                mindist = dtl;
-                normal = unit(tl - cp);
-            }
-            if (dtr < rs && dtr < mindist){
-                mindist = dtr;
-                normal = unit(tr - cp);
-            }
-            if (dbl < rs && dbl < mindist){
-                mindist = dbl;
-                normal = unit(bl - cp);
-            }
-            if (dbr < rs && dbr < mindist){
-                mindist = dbr;
-                normal = unit(br - cp);
-            }
+        mindist = 1e6f;
 
-            normal = rect.getInverseTransform() * normal;
+        if (dtl < rs && dtl < mindist){
+            mindist = dtl;
+            normal = unit(tl - cp);
+        }
+        if (dtr < rs && dtr < mindist){
+            mindist = dtr;
+            normal = unit(tr - cp);
+        }
+        if (dbl < rs && dbl < mindist){
+            mindist = dbl;
+            normal = unit(bl - cp);
+        }
+        if (dbr < rs && dbr < mindist){
+            mindist = dbr;
+            normal = unit(br - cp);
+        }
 
-			collisions.emplace_back(CollisionConstraint{circle, rect, normal, hitp - circle.getPosition(), hitp - rect.getPosition()});
+        normal = rect.getInverseTransform() * normal;
+
+		collisions.emplace_back(CollisionConstraint{circle, rect, normal, hitp - circle.getPosition(), hitp - rect.getPosition(), depth});
     }
 
     void collideCircleConvex(RigidBody& body_a, RigidBody& body_b, std::vector<CollisionConstraint>& collisions){
@@ -169,7 +173,8 @@ namespace phys {
    				vec2 normal = unit(orthogonalCW(b_p[max] - b_p[(max + 1) % 4]));
 				vec2 r_a = a_p[i] - a.getPosition();
 				vec2 r_b = a_p[i] - b.getPosition();
-				collisions.emplace_back(CollisionConstraint{a, b, normal, r_a, r_b});
+				float depth = displacementFromLinePN(b_p[max], normal, a_p[i]);
+				collisions.emplace_back(CollisionConstraint{a, b, normal, r_a, r_b, depth});
 			}
 		}
 
@@ -194,7 +199,8 @@ namespace phys {
 				vec2 normal = unit(orthogonalCCW(a_p[max] - a_p[(max + 1) % 4]));
 				vec2 r_a = b_p[i] - a.getPosition();
 				vec2 r_b = b_p[i] - b.getPosition();
-				collisions.emplace_back(CollisionConstraint{a, b, normal, r_a, r_b});
+				float depth = displacementFromLinePN(a_p[max], -normal, b_p[i]);
+				collisions.emplace_back(CollisionConstraint{a, b, normal, r_a, r_b, depth});
 			}
 		}
     }

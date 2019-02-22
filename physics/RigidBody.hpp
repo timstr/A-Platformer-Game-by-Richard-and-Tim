@@ -31,6 +31,12 @@ namespace phys {
 		const float moment;
 		const float inverse_moment;
 		
+		// set the body's coefficient of friction
+		void setFriction(float friction);
+
+		// get the body's coefficient of friction
+		float getFriction() const;
+
 		// apply a force to the body at some general point in space
 		void applyForceAt(vec2 force, vec2 point_world_space, float dt);
 
@@ -98,6 +104,8 @@ namespace phys {
 
 		mutable bool inv_transform_needs_update;
 		mutable mat2x2 inv_transform;
+
+		float friction;
 	};
 
 } // namespace phys

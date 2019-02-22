@@ -13,6 +13,7 @@ namespace phys {
 		moment(_moment),
 		inverse_moment(_moment == 0.0f ? 0.0f : (1.0f / _moment)),
 		elasticity(_elasticity),
+		friction(0.5f),
 		transform_needs_update(true),
 		inv_transform_needs_update(true) {
 
@@ -20,6 +21,14 @@ namespace phys {
 
 	RigidBody::~RigidBody() {
 
+	}
+
+	void RigidBody::setFriction(float _friction) {
+		friction = _friction;
+	}
+
+	float RigidBody::getFriction() const {
+		return friction;
 	}
 
 	void RigidBody::applyForceAt(vec2 force, vec2 point_world_space, float dt){
@@ -60,7 +69,7 @@ namespace phys {
 	}
 
 	const vec2 RigidBody::getVelocityAt(vec2 point_world_space) const {
-		return getVelocity() + orthogonalCW(unit(point_world_space - getPosition())) * getAngularVelocity();
+		return getVelocity() + orthogonalCW(point_world_space - getPosition()) * getAngularVelocity();
 	}
 
 	void RigidBody::setVelocity(vec2 _velocity){

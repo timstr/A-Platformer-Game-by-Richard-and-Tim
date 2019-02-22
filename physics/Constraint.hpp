@@ -21,19 +21,20 @@ namespace phys {
     //-----------------------------------------
 
 	struct CollisionConstraint : Constraint {
-        CollisionConstraint(RigidBody& _a, RigidBody& _b, vec2 _normal, vec2 _radius_a, vec2 _radius_b);
+        CollisionConstraint(RigidBody& _a, RigidBody& _b, vec2 _normal, vec2 _radius_a, vec2 _radius_b, float depth);
 
         void solve(float dt) override;
 
-        vec2 computeImpulse(float dt) const;
+        float computeImpulse(float dt) const;
 
         RigidBody& a;
         RigidBody& b;
         const vec2 normal; // normal at point of collision, pointing from a to b
         const vec2 radius_a; // vector from a's center of mass to point of collision (closest point to b), in world coordinates
         const vec2 radius_b; // vector from b's center of mass to point of collision (closest point to a), in world coordinates
+		const float depth; // penetration depth
 
-        vec2 impulse; // accumulated impulse over the course of many iterations
+        float impulse; // accumulated impulse over the course of many iterations
 	};
 
 	// constrains two bodies to have zero relative motion

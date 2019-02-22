@@ -1,32 +1,28 @@
 #include "Constraint.hpp"
 
-phys::CollisionConstraint::CollisionConstraint(RigidBody& _a, RigidBody& _b, vec2 _normal, vec2 _radius_a, vec2 _radius_b) :
+phys::CollisionConstraint::CollisionConstraint(RigidBody& _a, RigidBody& _b, vec2 _normal, vec2 _radius_a, vec2 _radius_b, float _depth) :
     a(_a),
     b(_b),
     normal(_normal),
     radius_a(_radius_a),
     radius_b(_radius_b),
-    impulse({0.0f, 0.0f}) {
-
+	depth(_depth),
+    impulse(0.0f) {
 }
 
 void phys::CollisionConstraint::solve(float dt) {
-    const vec2 old_impulse = impulse;
-    vec2 delta = computeImpulse(dt);
+    const float old_impulse = impulse;
+    float delta = computeImpulse(dt);
     impulse += delta;
-    impulse = clampToNormal(impulse, normal);
+	impulse = std::max(0.0f, impulse);
     delta = impulse - old_impulse;
-    a.applyImpulseAt(-delta, a.getPosition() + radius_a);
-    b.applyImpulseAt(delta, b.getPosition() + radius_b);
 
-	/*const vec2 delta = clampToNormal(computeImpulse(), normal);
-	a.applyImpulseAt(-delta, a.getPosition() + radius_a);
-	b.applyImpulseAt(delta, b.getPosition() + radius_b);*/
+	a.applyImpulseAt(-delta * normal, a.getPosition() + radius_a);
+    b.applyImpulseAt(delta * normal, b.getPosition() + radius_b);
 }
 
-vec2 phys::CollisionConstraint::computeImpulse(float dt) const {
-    //const float depth = dot(a.getPosition() + radius_a - b.getPosition() - radius_b, normal);
-    //const float depth_correction = 0.2f;
+float phys::CollisionConstraint::computeImpulse(float dt) const {
+	const float corr = 0.05f * depth * dt; // TODO: tune this value
 
     const float restitution = std::min(a.elasticity, b.elasticity);
     const float term_a = pow(cross(radius_a, normal), 2.0f) * a.inverse_moment;
@@ -37,9 +33,9 @@ vec2 phys::CollisionConstraint::computeImpulse(float dt) const {
     const float v_norm = dot(v_rel, normal);
 	const float denom = a.inverse_mass + b.inverse_mass + term_a + term_b;
 	if (abs(denom) < 1e-6f){
-		return {0.0f, 0.0f};
+		return 0.0f;
 	}
-	return -(1.0f + restitution) * v_norm / denom * normal;
+	return (-(1.0f + restitution) * v_norm + corr) / denom;
 }
 
 phys::GlueConstraint::GlueConstraint(RigidBody& _a, RigidBody& _b, vec2 _displacement, float _angle) :
