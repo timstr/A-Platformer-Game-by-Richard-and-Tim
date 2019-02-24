@@ -5,7 +5,7 @@
 namespace phys {
 
 	/*
-    Every constraint has a position equation which describes how far away from the desired
+    Every constraint has an equation which describes how far away from the desired
     state the system is. This equation depends on the positions of a number of rigid bodies,
     and should be zero if and only if the constraint is satisfied.
 
@@ -16,6 +16,8 @@ namespace phys {
 
 	struct Constraint {
         virtual void solve(float dt) = 0;
+
+		inline static float velocity_steering = 0.2f;
 	};
 
     //-----------------------------------------
@@ -38,6 +40,9 @@ namespace phys {
 	};
 
 	// constrains two bodies to have zero relative motion
+	// TODO: should this be instead done by grouping bodies together into a composite
+	// body within which the bodies do not collide with each other and which has
+	// a common center of mass, mass, and moment?
 	struct GlueConstraint : Constraint {
 		GlueConstraint(RigidBody& _a, RigidBody& _b, vec2 _displacement, float _angle);
 
@@ -49,12 +54,10 @@ namespace phys {
         const float angle; // difference in angle
 	};
 
-    // TODO: glue constraint with arbitrary number of bodies fixed to eachother, for larger structures?
-
 	// constrains two points on two bodies to be a fixed
 	// distance apart
-	struct DistanceJointConstraint : Constraint {
-		DistanceJointConstraint(RigidBody& _a, RigidBody& _b, vec2 _radius_a, vec2 _radius_b, float _distance);
+	struct HingeConstraint : Constraint {
+		HingeConstraint(RigidBody& _a, RigidBody& _b, vec2 _radius_a, vec2 _radius_b, float _distance);
 
         void solve(float dt) override;
         

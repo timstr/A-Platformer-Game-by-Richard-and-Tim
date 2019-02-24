@@ -34,78 +34,74 @@ namespace phys {
     void collideCircleRectangle(RigidBody& body_a, RigidBody& body_b, std::vector<CollisionConstraint>& collisions){
         assert(static_cast<bool>(dynamic_cast<CircleBody*>(&body_a)));
         assert(static_cast<bool>(dynamic_cast<RectangleBody*>(&body_b)));
-        auto& circle = static_cast<CircleBody&>(body_a);
+        auto& circ = static_cast<CircleBody&>(body_a);
         auto& rect = static_cast<RectangleBody&>(body_b);
 
         // cp is the the circle's position in the rectangle's coordinates
-        const vec2 cp = rect.getTransform() * (circle.getPosition() - rect.getPosition());
+        const vec2 cp = rect.getTransform() * (circ.getPosition() - rect.getPosition());
+
+		const vec2 corners[4] = {
+			{-rect.size().x * 0.5f, -rect.size().y * 0.5f},
+			{-rect.size().x * 0.5f, rect.size().y * 0.5f},
+			{rect.size().x * 0.5f, -rect.size().y * 0.5f},
+			{rect.size().x * 0.5f, rect.size().y * 0.5f}
+		};
+
+		// distance squared from each corner to circle's center
+		float dists_sqr[4];
+		for (int i = 0; i < 4; ++i){
+			vec2 disp = cp - corners[i];
+			dists_sqr[i] = abssqr(disp);
+		}
+
+		int min_corner = std::min_element(dists_sqr, dists_sqr + 4) - dists_sqr;
+
+		if (dists_sqr[min_corner] <= circ.radius() * circ.radius()){
+			// found a corner collision
+			float dist = sqrt(dists_sqr[min_corner]);
+			float depth = circ.radius() - dist;
+			vec2 normal = rect.getInverseTransform() * ((corners[min_corner] - cp) / dist);
+			vec2 r_rect = rect.getInverseTransform() * corners[min_corner];
+			vec2 r_circ = r_rect + rect.getPosition() - circ.getPosition();
+			collisions.emplace_back(CollisionConstraint{circ, rect, normal, r_circ, r_rect, depth});
+			return;
+		}
 
         // displacement from the circle's edge to the left, right, top, and bottom edges of the rectangle
         // positive means the circle is outside that edge
-        const float dl = -cp.x - circle.radius() - rect.size().x * 0.5f;
-        const float dr = cp.x - circle.radius() - rect.size().x * 0.5f;
-        const float dt = -cp.y - circle.radius() - rect.size().y * 0.5f;
-        const float db = cp.y - circle.radius() - rect.size().y * 0.5f;
+		const float face_disp[4] = {
+			-cp.x - circ.radius() - rect.size().x * 0.5f,
+			cp.x - circ.radius() - rect.size().x * 0.5f,
+			-cp.y - circ.radius() - rect.size().y * 0.5f,
+			cp.y - circ.radius() - rect.size().y * 0.5f
+		};
 
-        if (dl > 0.0f || dr > 0.0f || dt > 0.0f || db > 0.f){
-            return;
-        }
+		int max_face = std::max_element(face_disp, face_disp + 4) - face_disp;
 
-        const vec2 hitp = (rect.getInverseTransform() * vec2{
-            std::clamp(cp.x, -rect.size().x * 0.5f, rect.size().x * 0.5f),
-            std::clamp(cp.y, -rect.size().y * 0.5f, rect.size().y * 0.5f)
-        }) + rect.getPosition();
+		if (face_disp[max_face] > 0.0f){
+			return;
+		}
 
-        vec2 normal = {1.0f, 0.0f};
-        float mindist = dl;
-        if (dr <= 0.0f && dr > mindist){
-            normal = {-1.0f, 0.0f};
-            mindist = dr;
-        }
-        if (dt <= 0.0f && dt > mindist){
-            normal = {0.0f, 1.0f};
-            mindist = dt;
-        }
-        if (db <= 0.0f && db > mindist){
-            normal = {0.0f, -1.0f};
-            mindist = db;
-        }
+		if (abs(cp.x) > rect.size().x * 0.5f && abs(cp.y) > rect.size().y * 0.5f){
+			return;
+		}
 
-		float depth = -mindist;
+		vec2 r_rect = rect.getInverseTransform() * vec2{
+			std::clamp(cp.x, -rect.size().x * 0.5f, rect.size().x * 0.5f),
+			std::clamp(cp.y, -rect.size().y * 0.5f, rect.size().y * 0.5f)
+		};
 
-        const vec2 tl = vec2{-rect.size().x, -rect.size().y} * 0.5f;
-        const vec2 tr = vec2{rect.size().x, -rect.size().y} * 0.5f;
-        const vec2 bl = vec2{-rect.size().x, rect.size().y} * 0.5f;
-        const vec2 br = vec2{rect.size().x, rect.size().y} * 0.5f;
+		const vec2 normals[4] = {
+			{-1.0f, 0.0f},
+			{1.0f, 0.0f},
+			{0.0f, -1.0f},
+			{0.0f, 1.0f}
+		};
 
-        const float rs = circle.radius() * circle.radius();
-        const float dtl = abssqr(tl - cp);
-        const float dtr = abssqr(tr - cp);
-        const float dbl = abssqr(bl - cp);
-        const float dbr = abssqr(br - cp);
-
-        mindist = 1e6f;
-
-        if (dtl < rs && dtl < mindist){
-            mindist = dtl;
-            normal = unit(tl - cp);
-        }
-        if (dtr < rs && dtr < mindist){
-            mindist = dtr;
-            normal = unit(tr - cp);
-        }
-        if (dbl < rs && dbl < mindist){
-            mindist = dbl;
-            normal = unit(bl - cp);
-        }
-        if (dbr < rs && dbr < mindist){
-            mindist = dbr;
-            normal = unit(br - cp);
-        }
-
-        normal = rect.getInverseTransform() * normal;
-
-		collisions.emplace_back(CollisionConstraint{circle, rect, normal, hitp - circle.getPosition(), hitp - rect.getPosition(), depth});
+		float depth = -face_disp[max_face];
+		vec2 normal = rect.getInverseTransform() * -normals[max_face];
+		vec2 r_circ = r_rect + rect.getPosition() - circ.getPosition();
+		collisions.emplace_back(CollisionConstraint{circ, rect, normal, r_circ, r_rect, depth});
     }
 
     void collideCircleConvex(RigidBody& body_a, RigidBody& body_b, std::vector<CollisionConstraint>& collisions){
@@ -162,7 +158,8 @@ namespace phys {
 					vec2 normal = unit(orthogonalCCW(b_p[j] - b_p[(j + 1) % 4]));
 					float dist = 0.0f;
 					for (int k = 0; k < 4; ++k){
-						dist += displacementFromLinePN(b_p[j], normal, a_p[k]);
+						float disp = displacementFromLinePN(b_p[j], normal, a_p[k]);;
+						dist += disp < 0.0f ? 1000.0f * disp : disp;
 					}
 					if (dist > maxdist){
 						maxdist = dist;
@@ -188,7 +185,8 @@ namespace phys {
 					vec2 normal = unit(orthogonalCCW(a_p[j] - a_p[(j + 1) % 4]));
 					float dist = 0.0f;
 					for (int k = 0; k < 4; ++k){
-						dist += displacementFromLinePN(a_p[j], normal, b_p[k]);
+						float disp = displacementFromLinePN(a_p[j], normal, b_p[k]);
+						dist += disp < 0.0f ? 1000.0f * disp : disp;
 					}
 					if (dist > maxdist){
 						maxdist = dist;

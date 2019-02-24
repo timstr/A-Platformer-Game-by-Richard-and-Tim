@@ -31,7 +31,12 @@ namespace phys {
 		return friction;
 	}
 
-	void RigidBody::applyForceAt(vec2 force, vec2 point_world_space, float dt){
+	void RigidBody::applyForceAt(vec2 force, vec2 point, float dt){
+		applyForce(force, dt);
+		applyTorque(cross(-point, force), dt);
+	}
+
+	void RigidBody::applyForceAtW(vec2 force, vec2 point_world_space, float dt) {
 		applyForce(force, dt);
 		applyTorque(cross(position - point_world_space, force), dt);
 	}
@@ -44,7 +49,12 @@ namespace phys {
 		angular_velocity += torque * inverse_moment * dt;
 	}
 
-	void RigidBody::applyImpulseAt(vec2 impulse, vec2 point_world_space){
+	void RigidBody::applyImpulseAt(vec2 impulse, vec2 point) {
+		applyImpulse(impulse);
+		applyAngularImpulse(cross(-point, impulse));
+	}
+
+	void RigidBody::applyImpulseAtW(vec2 impulse, vec2 point_world_space){
 		applyImpulse(impulse);
 		applyAngularImpulse(cross(position - point_world_space, impulse));
 	}
@@ -68,7 +78,11 @@ namespace phys {
 		return velocity;
 	}
 
-	const vec2 RigidBody::getVelocityAt(vec2 point_world_space) const {
+	const vec2 RigidBody::getVelocityAt(vec2 point) const {
+		return getVelocity() + orthogonalCW(point) * getAngularVelocity();
+	}
+
+	const vec2 RigidBody::getVelocityAtW(vec2 point_world_space) const {
 		return getVelocity() + orthogonalCW(point_world_space - getPosition()) * getAngularVelocity();
 	}
 
@@ -90,6 +104,14 @@ namespace phys {
 	}
 	void RigidBody::setAngularVelocity(float _angular_velocity){
 		angular_velocity = _angular_velocity;
+	}
+
+	float RigidBody::getApparentInverseMassAt(vec2 point, vec2 line) const {
+		return pow(cross(point, unit(line)), 2.0f) * inverse_moment + inverse_mass;
+	}
+
+	float RigidBody::getApparentInverseMassAtW(vec2 point_world_space, vec2 line) const {
+		return pow(cross(point_world_space - getPosition(), unit(line)), 2.0f) * inverse_moment + inverse_mass;
 	}
 
 	const mat2x2& RigidBody::getTransform() const {

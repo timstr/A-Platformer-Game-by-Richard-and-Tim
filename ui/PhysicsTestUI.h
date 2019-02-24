@@ -12,29 +12,29 @@ struct PhysicsTestUI : ui::FreeElement {
 	PhysicsTestUI(vec2 _size) :
 		paused(true),
 		gravity_dir(0),
-		timestamp(0.0f),
 		recording(false),
 		screenshot_counter(0),
-		show_corners(false),
-		show_contacts(false) {
+		show_corners(true),
+		show_contacts(true) {
 
 		setSize(_size, true);
 
 		// friction test
-		{
+		/*{
 			auto s1 = std::make_unique<RectangleGuy>(vec2{200.0f, 100.0f}, vec2{150.0f, 400.0f}, sf::Color(0x808080FF), 0.0f);
 			//auto s2 = std::make_unique<RectangleGuy>(vec2{100.0f, 100.0f}, vec2{300.0f, 200.0f}, sf::Color(0xC0C0C0FF));
 			auto s2 = std::make_unique<CircleGuy>(25.0f, vec2{150.0f, 200.0f}, sf::Color(0xC0C0C0FF));
-			s2->body.setAngularVelocity(0.1f);
+			s2->body.setAngularVelocity(0.11f);
 			s1->body.setAngle(pi * -0.125f);
 			addBody(std::move(s1));
 			addBody(std::move(s2));
 		}
 		{
-			auto s1 = std::make_unique<RectangleGuy>(vec2{400.0f, 100.0f}, vec2{500.0f, 400.0f}, sf::Color(0x808080FF), 0.0f);
+			auto s1 = std::make_unique<RectangleGuy>(vec2{900.0f, 10.0f}, vec2{500.0f, 400.0f}, sf::Color(0x808080FF), 0.0f);
 			auto s2 = std::make_unique<RectangleGuy>(vec2{100.0f, 100.0f}, vec2{500.0f, 200.0f}, sf::Color(0xC0C0C0FF));
 			//auto s2 = std::make_unique<CircleGuy>(25.0f, vec2{500.0f, 200.0f}, sf::Color(0xC0C0C0FF));
 			s1->body.setAngle(pi * 0.125f);
+			s2->body.setFriction(0.0f);
 			addBody(std::move(s1));
 			addBody(std::move(s2));
 		}
@@ -44,7 +44,7 @@ struct PhysicsTestUI : ui::FreeElement {
 			s1->body.setAngle(pi * 0.125f);
 			addBody(std::move(s1));
 			addBody(std::move(s2));
-		}
+		}*/
 
 		// penetration test
 		/*{
@@ -170,12 +170,38 @@ struct PhysicsTestUI : ui::FreeElement {
 			addBody(std::move(s1));
 		}*/
 
+		// chain test
+		{
+
+			float pos = 200.0f;
+			std::unique_ptr<RectangleGuy> prev = std::make_unique<RectangleGuy>(vec2{20.0f, 10.0f}, vec2{pos, 300.0f}, sf::Color(0x8117D1FF));
+			std::unique_ptr<RectangleGuy> next;
+			for (int i = 0; i < 29; ++i){
+				pos += 25.0f;
+				next = std::make_unique<RectangleGuy>(vec2{20.0f, 10.0f}, vec2{pos, 300.0f}, sf::Color(0x8117D1FF));
+				physics_engine.addConstraint(std::make_unique<phys::HingeConstraint>(prev->getBody(), next->getBody(), vec2{10.0f, 0.0f}, vec2{-10.0f, 0.0f}, 5.0f));
+				addBody(std::move(prev));
+				prev = std::move(next);
+			}
+			auto ball = std::make_unique<CircleGuy>(20.0f, vec2{pos + 35.0f, 300.0f}, sf::Color(0x712378FF));
+			physics_engine.addConstraint(std::make_unique<phys::HingeConstraint>(prev->getBody(), ball->getBody(), vec2{10.0f, 0.0f}, vec2{-20.0f, 0.0f}, 5.0f));
+			addBody(std::move(ball));
+			addBody(std::move(prev));
+
+			//auto s3 = std::make_unique<RectangleGuy>(vec2{300.0f, 50.0f}, vec2{650.0f, 500.0f}, sf::Color(0xC0C0C0FF), 0.0f);
+			//s3->body.setAngle(pi * 0.125f);
+			auto s3 = std::make_unique<CircleGuy>(100.0f, vec2{650.0f, 450.0f}, sf::Color(0x604040FF), 0.0f);
+			addBody(std::move(s3));
+		}
+
 		// many random shapes
         /*{
-            int n = 10;
-            const float rad = 10.0f;
-			const int cols = 25;
-			const float padding = 30.0f;
+            int n = 40;
+			const float min_rad = 30.0f;
+			const float max_rad = 50.0f;
+			const int cols = 8;
+			const float padding = 10.0f;
+			const float spacing = (_size.x - 2.0f * padding) / (float)cols;
 
             std::uniform_real_distribution<float> dist {0.0f, 1.0f};
 			std::uniform_int_distribution<int> bdist {0, 1};
@@ -183,19 +209,17 @@ struct PhysicsTestUI : ui::FreeElement {
 
             for (int i = 0; i < n; ++i){
                 std::unique_ptr<ShapeGuy> shape;
-                vec2 pos;// = vec2(_size.x * dist(rand_eng), _size.y * dist(rand_eng));
-                {
-                    const float spacing = (_size.x - 2.0f * padding) / (float)cols;
-                    pos.x = ((float)(i % cols) + 0.5f) * spacing + padding + dist(rand_eng) * 0.001f;
-                    pos.y = ((float)(i / cols) + 0.5f) * spacing + padding + dist(rand_eng) * 0.001f;
-                }
+                vec2 pos = {
+                    ((float)(i % cols) + 0.5f) * spacing + padding + dist(rand_eng) * 1.0f,
+                    _size.y - ((float)(i / cols) + 0.5f) * spacing - padding - dist(rand_eng) * 1.0f
+                };
 
 				auto color = sf::Color(idist(rand_eng), idist(rand_eng), idist(rand_eng), 255);
 
                 if (bdist(rand_eng)){
-                    shape = std::make_unique<CircleGuy>(rad + dist(rand_eng) * 10.0f, pos, color);
+				    shape = std::make_unique<CircleGuy>(min_rad + dist(rand_eng) * (max_rad - min_rad), pos, color);
                 } else {
-                    shape = std::make_unique<RectangleGuy>(vec2(2.0f * rad + dist(rand_eng) * 10.0f, 2.0f * rad + dist(rand_eng) * 10.0f), pos, color);
+				    shape = std::make_unique<RectangleGuy>(vec2(2.0f * (min_rad + dist(rand_eng) * (max_rad - min_rad)), 2.0f * (min_rad + dist(rand_eng) * (max_rad - min_rad))), pos, color);
                 }
 
                 //vec2 velo = shape->getBody().getPosition() - _size * 0.5f;
@@ -205,9 +229,7 @@ struct PhysicsTestUI : ui::FreeElement {
                 //shape->getBody().setAngle(dist(rand_eng) * 2.0f * pi);
                 //shape->getBody().setAngularVelocity((-1.0f + 2.0f * dist(rand_eng)) * 0.1f);
 
-                physics_engine.addRigidBody(shape->getBody());
-
-                shapes.emplace_back(std::move(shape));
+                addBody(std::move(shape));
             }
         }*/
 
@@ -225,39 +247,35 @@ struct PhysicsTestUI : ui::FreeElement {
 		shapes.emplace_back(std::move(cannonbox));*/
 
 		// border boxes
-		/*auto topwall = std::make_unique<RectangleGuy>(vec2{_size.x, 10.0f}, vec2{_size.x * 0.5f, 5.0f}, sf::Color(0x804040FF), 0.0f);
+		auto topwall = std::make_unique<RectangleGuy>(vec2{_size.x, 10.0f}, vec2{_size.x * 0.5f, 5.0f}, sf::Color(0x804040FF), 0.0f);
 		auto bottomwall = std::make_unique<RectangleGuy>(vec2{_size.x, 10.0f}, vec2{_size.x * 0.5f, _size.y - 5.0f}, sf::Color(0x804040FF), 0.0f);
 		auto leftwall = std::make_unique<RectangleGuy>(vec2{10.0f, _size.y - 20.0f}, vec2{5.0f, _size.y * 0.5f}, sf::Color(0x804040FF), 0.0f);
 		auto rightwall = std::make_unique<RectangleGuy>(vec2{10.0f, _size.y - 20.0f}, vec2{_size.x - 5.0f, _size.y * 0.5f}, sf::Color(0x804040FF), 0.0f);
-		physics_engine.addRigidBody(topwall->getBody());
-		physics_engine.addRigidBody(bottomwall->getBody());
-		physics_engine.addRigidBody(leftwall->getBody());
-		physics_engine.addRigidBody(rightwall->getBody());
+		physics_engine.addRigidBody(&topwall->getBody());
+		physics_engine.addRigidBody(&bottomwall->getBody());
+		physics_engine.addRigidBody(&leftwall->getBody());
+		physics_engine.addRigidBody(&rightwall->getBody());
 		shapes.emplace_back(std::move(topwall));
 		shapes.emplace_back(std::move(bottomwall));
 		shapes.emplace_back(std::move(leftwall));
-		shapes.emplace_back(std::move(rightwall));*/
-
-        // label
-        label = add<ui::FreeElement>();
-        label->setPos({20.0f, 20.0f});
+		shapes.emplace_back(std::move(rightwall));
 	}
 	~PhysicsTestUI() {
 		for (const auto& shape : shapes) {
-			physics_engine.removeRigidBody(shape->getBody());
+			physics_engine.removeRigidBody(&shape->getBody());
 		}
 		shapes.clear();
 	}
 
 	void addBody(std::unique_ptr<ShapeGuy> shape){
-		physics_engine.addRigidBody(shape->getBody());
+		physics_engine.addRigidBody(&shape->getBody());
 		shapes.emplace_back(std::move(shape));
 	}
 
 	void tick(){
 
         // slow motion if shift is held
-        float delta = (keyDown(ui::Key::LShift) || keyDown(ui::Key::RShift)) ? 0.1f : 1.0f;
+        float delta = 2.0f * (keyDown(ui::Key::LShift) || keyDown(ui::Key::RShift)) ? 0.1f : 1.0f;
 
         const vec2 directions[] = {
             {0.0f, 1.0f},
@@ -274,13 +292,6 @@ struct PhysicsTestUI : ui::FreeElement {
 		
 		// simulate
 		physics_engine.tick(delta);
-
-        const float now = ui::getProgramTime();
-        const int fps = (int)std::floor(1.0f / (now - timestamp));
-        timestamp = now;
-
-        label->clear();
-        label->write(std::to_string(fps), getFont());
 
         if (recording){
             sf::Texture tex;
@@ -359,12 +370,10 @@ struct PhysicsTestUI : ui::FreeElement {
 
 private:
 
-	ui::Ref<ui::Element> label;
 	bool paused;
     bool recording;
     int screenshot_counter;
     int gravity_dir;
-    float timestamp;
     bool show_corners;
 	bool show_contacts;
 	std::vector<std::unique_ptr<ShapeGuy>> shapes;

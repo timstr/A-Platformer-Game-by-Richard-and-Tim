@@ -37,8 +37,11 @@ namespace phys {
 		// get the body's coefficient of friction
 		float getFriction() const;
 
-		// apply a force to the body at some general point in space
-		void applyForceAt(vec2 force, vec2 point_world_space, float dt);
+		// apply a force to the body at a point relative to the center of mass
+		void applyForceAt(vec2 force, vec2 point, float dt);
+
+		// apply a force to the body at some point in world space
+		void applyForceAtW(vec2 force, vec2 point_world_space, float dt);
 
 		// apply a force to the body's center of mass
 		void applyForce(vec2 force, float dt);
@@ -46,8 +49,11 @@ namespace phys {
 		// apply a torque to the body
 		void applyTorque(float torque, float dt);
 
-		// apply an impulse to the body at some general point in space
-		void applyImpulseAt(vec2 impulse, vec2 point_world_space);
+		// apply an impulse to the body at a point relative to the center of mass
+		void applyImpulseAt(vec2 impulse, vec2 point);
+
+		// apply an impulse to the body at some point in world space
+		void applyImpulseAtW(vec2 impulse, vec2 point_world_space);
 
 		// apply an impulse to the body's center of mass
 		void applyImpulse(vec2 impulse);
@@ -64,8 +70,11 @@ namespace phys {
 		// get the body's velocity at the center of mass
 		const vec2& getVelocity() const;
 
+		// get the body's velocity at a specific point relative to the center of mass
+		const vec2 getVelocityAt(vec2 point) const;
+
 		// get the body's velocity at a specific point, in world coordinates
-		const vec2 getVelocityAt(vec2 point_world_space) const;
+		const vec2 getVelocityAtW(vec2 point_world_space) const;
 
 		// set the body's velocity
 		void setVelocity(vec2 _velocity);
@@ -81,6 +90,12 @@ namespace phys {
 
 		// set the body's angular velocity
 		void setAngularVelocity(float _angular_velocity);
+
+		// get the apparent inverse mass along a line and at a point relative to the center of mass
+		float getApparentInverseMassAt(vec2 point, vec2 line) const;
+
+		// get the apparent inverse mass along a line and at a point in world coordinates
+		float getApparentInverseMassAtW(vec2 point_world_space, vec2 line) const;
 
 		// get the transformation mapping from world space to the body's local space
 		const mat2x2& getTransform() const;

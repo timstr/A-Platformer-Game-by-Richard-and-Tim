@@ -18,8 +18,10 @@ namespace phys {
 
 		Engine();
 
-		void addRigidBody(RigidBody& body);
-		void removeRigidBody(RigidBody& body);
+		void addRigidBody(RigidBody* body);
+		void removeRigidBody(RigidBody* body);
+
+		void addConstraint(std::unique_ptr<Constraint> constraint);
 
 		void tick(float dt);
 
@@ -50,7 +52,7 @@ namespace phys {
 		const std::map<std::pair<RigidBody::Type, RigidBody::Type>, CollisionFunction> collision_table;
 
 		std::vector<CollisionConstraint> collisions;
-		std::vector<std::unique_ptr<Constraint>> constraints; // TODO
+		std::vector<std::unique_ptr<Constraint>> constraints;
 	};
 
 } // namespace phys
