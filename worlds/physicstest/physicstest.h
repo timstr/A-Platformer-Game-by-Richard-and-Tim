@@ -81,7 +81,7 @@ struct CircleGuy : ShapeGuy {
 		sf::CircleShape cs;
 		cs.setRadius(body.radius());
 		cs.setOrigin({body.radius(), body.radius()});
-		cs.setRotation(body.getAngle() * 180.0f / pi);
+		cs.setRotation(-body.getAngle() * 180.0f / pi);
 		cs.setPosition(body.getPosition());
 
 		cs.setFillColor(getColor());
@@ -109,3 +109,40 @@ struct CircleGuy : ShapeGuy {
 	phys::CircleBody body;
 };
 
+struct ConvexGuy : ShapeGuy {
+	ConvexGuy(std::vector<vec2> points, vec2 pos, sf::Color color, float density = 1.0f)
+		: ShapeGuy(color), body(std::move(points), density, 0.5f) {
+		body.setPosition(pos);
+	}
+
+	phys::RigidBody& getBody() override {
+		return body;
+	}
+
+	void render(sf::RenderWindow& rw, bool show_corners) override {
+		const auto& points = body.getPoints();
+		sf::ConvexShape cs {points.size()};
+		for (int i = 0; i < points.size(); ++i){
+			cs.setPoint(i, body.getInverseTransform() * points[i]);
+		}
+		cs.setPosition(body.getPosition());
+		cs.setFillColor(getColor());
+		cs.setOutlineColor(sf::Color(0xFF));
+		cs.setOutlineThickness(1.0f);
+
+		rw.draw(cs);
+
+		if (show_corners){
+			sf::CircleShape s;
+			s.setFillColor(sf::Color(0xFF));
+			s.setRadius(2.0f);
+			s.setOrigin({2.0f, 2.0f});
+			for (const auto& p : points){
+				s.setPosition(body.getPosition() + body.getInverseTransform() * p);
+				rw.draw(s);
+			}
+		}
+	}
+
+	phys::ConvexBody body;
+};

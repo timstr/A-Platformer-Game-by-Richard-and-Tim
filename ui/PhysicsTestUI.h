@@ -170,8 +170,74 @@ struct PhysicsTestUI : ui::FreeElement {
 			addBody(std::move(s1));
 		}*/
 
-		// chain test
+		// convex body test
 		{
+			auto points = std::vector<vec2>{
+				{-50.0f, -50.0f},
+				{50.0f, -50.0f},
+				{0.0f, 50.0f}
+			};
+			auto s = std::make_unique<ConvexGuy>(std::move(points), vec2{300.0f, 200.0f}, sf::Color(0x405080FF));
+			//s->body.setAngle(pi);
+			addBody(std::move(s));
+		}
+		{
+			const float rad = 50.0f;
+			float pos = 70.0f;
+			size_t n_points = 3;
+			
+			while (pos + rad + 10.0f < _size.x){
+				std::vector<vec2> points {n_points};
+				for (int i = 0; i < n_points; ++ i){
+					float theta = 2.0f * pi * static_cast<float>(i) / static_cast<float>(n_points);
+					points[i] = vec2{
+						rad * cos(theta),
+						rad * sin(theta),
+					};
+				}
+				auto s = std::make_unique<ConvexGuy>(std::move(points), vec2{pos, 400.0f}, sf::Color(0x405080FF));
+				addBody(std::move(s));
+
+				pos += rad * 2.0f + 10.0f;
+				++n_points;
+			}
+		}
+		{
+			// amoeba
+			const float rad = 50.0f;
+			size_t n_points = 40;
+
+			std::vector<vec2> points {n_points};
+			for (int i = 0; i < n_points; ++ i){
+				float theta = 2.0f * pi * static_cast<float>(i) / static_cast<float>(n_points);
+				points[i] = vec2{
+					1.5f * rad * cos(theta) + 2.0f * cos(theta * 7.0f) + 0.5f * cos(theta * 13.0f),
+					rad * sin(theta) + 2.0f * sin(theta * 5.0f) + 0.5f * sin(theta * 11.0f),
+				};
+			}
+			auto s = std::make_unique<ConvexGuy>(std::move(points), vec2{600.0f, 200.0f}, sf::Color(0x99DD30FF), 0.1f);
+			s->body.setFriction(0.0f);
+			addBody(std::move(s));
+		}
+		/*{
+			auto points = std::vector<vec2>{
+				{-120.0f, -20.0f},
+				{100.0f, -50.0f},
+				{100.0f, 30.0f},
+				{-90.0f, 50.0f}
+			};
+			auto s = std::make_unique<ConvexGuy>(std::move(points), vec2{200.0f, 400.0f}, sf::Color(0x405080FF), 0.0f);
+			addBody(std::move(s));
+		}*/
+
+		// just a circle
+		{
+			addBody(std::make_unique<CircleGuy>(30.0f, vec2{301.0f, 50.0f}, sf::Color(0xdf8353FF)));
+		}
+
+
+		// chain test
+		/*{
 
 			float pos = 200.0f;
 			std::unique_ptr<RectangleGuy> prev = std::make_unique<RectangleGuy>(vec2{20.0f, 10.0f}, vec2{pos, 300.0f}, sf::Color(0x8117D1FF));
@@ -187,19 +253,28 @@ struct PhysicsTestUI : ui::FreeElement {
 			physics_engine.addConstraint(std::make_unique<phys::HingeConstraint>(prev->getBody(), ball->getBody(), vec2{10.0f, 0.0f}, vec2{-20.0f, 0.0f}, 5.0f));
 			addBody(std::move(ball));
 			addBody(std::move(prev));
+		}*/
+		{
 
-			//auto s3 = std::make_unique<RectangleGuy>(vec2{300.0f, 50.0f}, vec2{650.0f, 500.0f}, sf::Color(0xC0C0C0FF), 0.0f);
-			//s3->body.setAngle(pi * 0.125f);
-			auto s3 = std::make_unique<CircleGuy>(100.0f, vec2{650.0f, 450.0f}, sf::Color(0x604040FF), 0.0f);
-			addBody(std::move(s3));
+			float pos = 200.0f;
+			std::unique_ptr<CircleGuy> prev = std::make_unique<CircleGuy>(10.0f, vec2{pos, 300.0f}, sf::Color(0x8117D1FF));
+			std::unique_ptr<CircleGuy> next;
+			for (int i = 0; i < 29; ++i){
+				pos += 25.0f;
+				next = std::make_unique<CircleGuy>(10.0f, vec2{pos, 300.0f}, sf::Color(0x8117D1FF));
+				physics_engine.addConstraint(std::make_unique<phys::HingeConstraint>(prev->getBody(), next->getBody(), vec2{10.0f, 0.0f}, vec2{-10.0f, 0.0f}, 5.0f));
+				addBody(std::move(prev));
+				prev = std::move(next);
+			}
+			addBody(std::move(prev));
 		}
 
 		// many random shapes
         /*{
-            int n = 40;
-			const float min_rad = 30.0f;
-			const float max_rad = 50.0f;
-			const int cols = 8;
+            int n = 200;
+			const float min_rad = 5.0f;
+			const float max_rad = 20.0f;
+			const int cols = 25;
 			const float padding = 10.0f;
 			const float spacing = (_size.x - 2.0f * padding) / (float)cols;
 
@@ -210,8 +285,8 @@ struct PhysicsTestUI : ui::FreeElement {
             for (int i = 0; i < n; ++i){
                 std::unique_ptr<ShapeGuy> shape;
                 vec2 pos = {
-                    ((float)(i % cols) + 0.5f) * spacing + padding + dist(rand_eng) * 1.0f,
-                    _size.y - ((float)(i / cols) + 0.5f) * spacing - padding - dist(rand_eng) * 1.0f
+                    ((float)(i % cols) + 0.5f) * spacing + padding,// + dist(rand_eng) * 1.0f,
+                    _size.y - ((float)(i / cols) + 0.5f) * spacing - padding// - dist(rand_eng) * 1.0f
                 };
 
 				auto color = sf::Color(idist(rand_eng), idist(rand_eng), idist(rand_eng), 255);
@@ -232,6 +307,14 @@ struct PhysicsTestUI : ui::FreeElement {
                 addBody(std::move(shape));
             }
         }*/
+
+		// wheel
+		{
+			auto s = std::make_unique<CircleGuy>(120.0f, vec2{850.0f, 150.0f}, sf::Color(0x402020FF), 0.5f);
+			s->body.setFriction(0.9f);
+			wheel = &s->body;
+			addBody(std::move(s));
+		}
 
 		// cannonball
 		/*auto cannonball = std::make_unique<CircleGuy>(250.0f, vec2{-_size.x * 3.0f, _size.y * 0.5f});
@@ -290,8 +373,26 @@ struct PhysicsTestUI : ui::FreeElement {
 			body.applyForce(directions[gravity_dir] * 0.01f * body.mass, delta);
 		}
 		
+		// spin the wheel
+		bool left = keyDown(ui::Key::Left);
+		bool right = keyDown(ui::Key::Right);
+		if (left || right){
+			float dir = left && !right ? 1.0f : right ? -1.0f : 0.0f;
+			float max_speed = 0.1f;
+			float strength = 0.1f;
+			float speed = wheel->getAngularVelocity();
+			float delta = (dir * max_speed - speed) * strength;
+			wheel->setAngularVelocity(speed + delta);
+		}
+
 		// simulate
-		physics_engine.tick(delta);
+		if (keyDown(ui::Key::LControl) || keyDown(ui::Key::RControl)){
+			for (int i = 0; i < 10; ++i){
+				physics_engine.tick(delta * 0.1f);
+			}
+		} else {
+			physics_engine.tick(delta);
+		}
 
         if (recording){
             sf::Texture tex;
@@ -363,6 +464,23 @@ struct PhysicsTestUI : ui::FreeElement {
 			}
 		}
 
+		// hit test with mouse position
+		/*auto mouse = localMousePos();
+		for (const auto& s : shapes){
+			if (s->getBody().hit(mouse)){
+				std::cout << "Hit a shape: ";
+				using BodyType = phys::RigidBody::Type;
+				static const std::map<BodyType, std::string> names = {
+					{BodyType::Circle, "Circle"},
+					{BodyType::Rectangle, "Rectangle"},
+					{BodyType::Convex, "Convex"},
+					{BodyType::Raster, "Raster"},
+				};
+				auto it = names.find(s->getBody().type);
+				std::cout << (it == names.end() ? "???" : it->second) << '\n';
+			}
+		}*/
+
 		if (!paused) {
 			tick();
 		}
@@ -378,4 +496,6 @@ private:
 	bool show_contacts;
 	std::vector<std::unique_ptr<ShapeGuy>> shapes;
 	phys::Engine physics_engine;
+
+	phys::CircleBody* wheel;
 };

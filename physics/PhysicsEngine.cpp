@@ -56,9 +56,9 @@ namespace phys {
 		for (int i = 0; i < bodies.size(); ++i){
 			for (int j = i + 1; j < bodies.size(); ++j){
 				// TODO: double-check bounding box logic, render boxes around bodies to be sure
-				//if (possibleCollision(*bodies[i], *bodies[j])){
+				if (possibleCollision(*bodies[i], *bodies[j])){
 					findCollisions(*bodies[i], *bodies[j]);
-				//}
+				}
 			}
 		}
 	}
@@ -87,7 +87,7 @@ namespace phys {
 				tan *= -1.0f;
 			}
 
-			const float inv_mass = c.a.getApparentInverseMassAt(c.radius_a, tan) + c.a.getApparentInverseMassAt(c.radius_b, tan);
+			const float inv_mass = c.a.getApparentInverseMassAt(c.radius_a, tan) + c.b.getApparentInverseMassAt(c.radius_b, tan);
 			if (abs(inv_mass) < 1e-6f){
 				continue;
 			}

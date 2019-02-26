@@ -20,4 +20,8 @@ namespace phys {
 		return BoundingBox(getPosition() - vec2{m_radius, m_radius}, getPosition() + vec2{m_radius, m_radius});
 	}
 
+	bool CircleBody::hit(vec2 point_world_space) const {
+		return abs(point_world_space - getPosition()) <= m_radius;
+	}
+
 } // namespace phys

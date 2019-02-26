@@ -79,16 +79,16 @@ namespace phys {
 		// set the body's velocity
 		void setVelocity(vec2 _velocity);
 
-		// get the body's angle
+		// get the body's angle, in radians
 		float getAngle() const;
 
-		// set the body's angle
+		// set the body's angle, in radians
 		void setAngle(float _angle);
 
-		// get the body's angular velocity
+		// get the body's angular velocity, in radians per second
 		float getAngularVelocity() const;
 
-		// set the body's angular velocity
+		// set the body's angular velocity, in radians per second
 		void setAngularVelocity(float _angular_velocity);
 
 		// get the apparent inverse mass along a line and at a point relative to the center of mass
@@ -106,6 +106,9 @@ namespace phys {
 		// get the smallest rectangle containing the body, in world space
 		virtual BoundingBox getBoundingBox() const = 0;
         
+		// true if the hit falls inside the body
+		virtual bool hit(vec2 point_world_space) const = 0;
+
 	private:
 
 		vec2 position;

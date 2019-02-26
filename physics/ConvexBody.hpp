@@ -13,6 +13,10 @@ namespace phys {
 
 		BoundingBox getBoundingBox() const override;
 
+		bool hit(vec2 point_world_space) const override;
+
+		const std::vector<vec2>& getPoints() const;
+
 	private:
 
 		// move points' center of mass to the origin

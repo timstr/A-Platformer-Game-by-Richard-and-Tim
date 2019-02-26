@@ -17,7 +17,7 @@ namespace phys {
 	struct Constraint {
         virtual void solve(float dt) = 0;
 
-		inline static float velocity_steering = 0.2f;
+		inline static float velocity_steering = 0.1f;
 	};
 
     //-----------------------------------------

@@ -11,6 +11,8 @@ namespace phys {
 
 		BoundingBox getBoundingBox() const override;
 
+		bool hit(vec2 point_world_space) const override;
+
 	private:
 
 		const float m_radius;

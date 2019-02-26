@@ -10,7 +10,7 @@ namespace phys {
 		BoundingBox getBoundingBox() const override;
 
 		// returns true if the point (in world coordinates) intersects with the body
-		bool hit(vec2 point) const;
+		bool hit(vec2 point) const override;
 
 	private:
 
