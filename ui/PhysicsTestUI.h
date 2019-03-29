@@ -240,33 +240,47 @@ struct PhysicsTestUI : ui::FreeElement {
 		/*{
 
 			float pos = 200.0f;
-			std::unique_ptr<RectangleGuy> prev = std::make_unique<RectangleGuy>(vec2{20.0f, 10.0f}, vec2{pos, 300.0f}, sf::Color(0x8117D1FF));
+			std::unique_ptr<RectangleGuy> prev = std::make_unique<RectangleGuy>(vec2{20.0f, 10.0f}, vec2{pos, 280.0f}, sf::Color(0x8117D1FF));
 			std::unique_ptr<RectangleGuy> next;
 			for (int i = 0; i < 29; ++i){
 				pos += 25.0f;
-				next = std::make_unique<RectangleGuy>(vec2{20.0f, 10.0f}, vec2{pos, 300.0f}, sf::Color(0x8117D1FF));
-				physics_engine.addConstraint(std::make_unique<phys::HingeConstraint>(prev->getBody(), next->getBody(), vec2{10.0f, 0.0f}, vec2{-10.0f, 0.0f}, 5.0f));
+				next = std::make_unique<RectangleGuy>(vec2{20.0f, 10.0f}, vec2{pos, 280.0f}, sf::Color(0x8117D1FF));
+				physics_engine.addConstraint(std::make_unique<phys::HingeConstraint>(prev->getBody(), next->getBody(), vec2{10.0f, 0.0f}, vec2{-10.0f, 0.0f}, 2.0f));
 				addBody(std::move(prev));
 				prev = std::move(next);
 			}
-			auto ball = std::make_unique<CircleGuy>(20.0f, vec2{pos + 35.0f, 300.0f}, sf::Color(0x712378FF));
+			auto ball = std::make_unique<CircleGuy>(20.0f, vec2{pos + 35.0f, 280.0f}, sf::Color(0x712378FF));
 			physics_engine.addConstraint(std::make_unique<phys::HingeConstraint>(prev->getBody(), ball->getBody(), vec2{10.0f, 0.0f}, vec2{-20.0f, 0.0f}, 5.0f));
 			addBody(std::move(ball));
 			addBody(std::move(prev));
-		}*/
+		}
 		{
 
-			float pos = 200.0f;
-			std::unique_ptr<CircleGuy> prev = std::make_unique<CircleGuy>(10.0f, vec2{pos, 300.0f}, sf::Color(0x8117D1FF));
+			float pos = 100.0f;
+			std::unique_ptr<CircleGuy> prev = std::make_unique<CircleGuy>(10.0f, vec2{pos, 300.0f}, sf::Color(0xFF9900FF));
 			std::unique_ptr<CircleGuy> next;
 			for (int i = 0; i < 29; ++i){
 				pos += 25.0f;
-				next = std::make_unique<CircleGuy>(10.0f, vec2{pos, 300.0f}, sf::Color(0x8117D1FF));
+				next = std::make_unique<CircleGuy>(10.0f, vec2{pos, 300.0f}, sf::Color(0xFF9900FF));
 				physics_engine.addConstraint(std::make_unique<phys::HingeConstraint>(prev->getBody(), next->getBody(), vec2{10.0f, 0.0f}, vec2{-10.0f, 0.0f}, 5.0f));
 				addBody(std::move(prev));
 				prev = std::move(next);
 			}
 			addBody(std::move(prev));
+		}*/
+
+		// glue test
+		{
+			auto s1 = std::make_unique<RectangleGuy>(vec2{20.0f, 20.0f}, vec2{100.0f, 100.0f}, sf::Color(0x004444FF), 2.0f);
+			auto s2 = std::make_unique<RectangleGuy>(vec2{20.0f, 20.0f}, vec2{130.0f, 100.0f}, sf::Color(0xBB4444FF));
+			auto c = std::make_unique<phys::GlueConstraint>(s1->getBody(), s2->getBody(), vec2{30.0f, 0.0f}, 0.0f);
+			s1->body.setVelocity({0.0f, 1.0f});
+			s2->body.setVelocity({0.0f, 0.0f});
+			s1->body.setAngularVelocity(0.0f);
+			s2->body.setAngularVelocity(0.0f);
+			addBody(std::move(s1));
+			addBody(std::move(s2));
+			physics_engine.addConstraint(std::move(c));
 		}
 
 		// many random shapes
@@ -310,8 +324,8 @@ struct PhysicsTestUI : ui::FreeElement {
 
 		// wheel
 		{
-			auto s = std::make_unique<CircleGuy>(120.0f, vec2{850.0f, 150.0f}, sf::Color(0x402020FF), 0.5f);
-			s->body.setFriction(0.9f);
+			auto s = std::make_unique<CircleGuy>(20.0f, vec2{850.0f, 150.0f}, sf::Color(0x402020FF), 0.5f);
+			s->body.setFriction(1.0f);
 			wheel = &s->body;
 			addBody(std::move(s));
 		}
@@ -378,7 +392,7 @@ struct PhysicsTestUI : ui::FreeElement {
 		bool right = keyDown(ui::Key::Right);
 		if (left || right){
 			float dir = left && !right ? 1.0f : right ? -1.0f : 0.0f;
-			float max_speed = 0.1f;
+			float max_speed = 0.5f;
 			float strength = 0.1f;
 			float speed = wheel->getAngularVelocity();
 			float delta = (dir * max_speed - speed) * strength;

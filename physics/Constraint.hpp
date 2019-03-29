@@ -50,7 +50,7 @@ namespace phys {
 
         RigidBody& a;
         RigidBody& b;
-        const vec2 displacement; // offset from a to b in a's coordinates
+        const vec2 displacement; // offset from a's COM to b's COM, in a's coordinates
         const float angle; // difference in angle
 	};
 

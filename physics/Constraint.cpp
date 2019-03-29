@@ -49,8 +49,52 @@ namespace phys {
 	}
 
 	void GlueConstraint::solve(float dt) {
-		// TODO
+		/*{
+			vec2 mid = (a.getPosition() * a.mass + b.getPosition() * b.mass) / (a.mass + b.mass);
+
+			//vec2 v_rel_a = a.getVelocityAtW(b.getPosition()) - b.getVelocity();
+			//vec2 v_rel_b = b.getVelocityAtW(a.getPosition()) - a.getVelocity();
+			vec2 v_rel_a = a.getVelocityAtW(mid);
+			vec2 v_rel_b = b.getVelocityAtW(mid);
+
+			vec2 v_rel = v_rel_b - v_rel_a;
+
+			float inv_mass_a = a.getApparentInverseMassAtW(mid, v_rel);
+			float inv_mass_b = b.getApparentInverseMassAtW(mid, v_rel);
+			float denom = inv_mass_a + inv_mass_b;
+
+			vec2 impulse = -v_rel / denom;
+			//a.applyImpulseAtW(-impulse, b.getPosition());
+			//b.applyImpulseAtW(impulse, a.getPosition());
+			a.applyImpulseAtW(-impulse, mid);
+			b.applyImpulseAtW(impulse, mid);
+		}*/
+		{
+			vec2 v_rel_a = a.getVelocityAtW(b.getPosition()) - b.getVelocity();
+			vec2 v_rel_b = b.getVelocityAtW(a.getPosition()) - a.getVelocity();
+			vec2 v_rel = v_rel_b - v_rel_a;
+			vec2 disp = b.getPosition() - a.getPosition();
+
+			float inv_mass_a = a.getApparentInverseMassAtW(b.getPosition(), orthogonalCW(disp));
+			float inv_mass_b = b.getApparentInverseMassAtW(a.getPosition(), orthogonalCW(disp));
+			float denom = inv_mass_a + inv_mass_b;
+
+			vec2 impulse = v_rel / denom;
+			a.applyImpulseAtW(impulse, b.getPosition());
+			b.applyImpulseAtW(-impulse, a.getPosition());
+		}
+		/*{
+			vec2 v_rel_a = a.getVelocityAtW(b.getPosition()) - b.getVelocity();
+			vec2 v_rel_b = b.getVelocityAtW(a.getPosition()) - a.getVelocity();
+
+			float inv_mass_a = a.getApparentInverseMassAtW(b.getPosition(), v_rel_a);
+			float inv_mass_b = b.getApparentInverseMassAtW(a.getPosition(), v_rel_b);
+
+			a.applyImpulseAtW(-v_rel_a / inv_mass_a, b.getPosition());
+			b.applyImpulseAtW(-v_rel_b / inv_mass_b, a.getPosition());
+		}*/
 	}
+
 
 	HingeConstraint::HingeConstraint(RigidBody& _a, RigidBody& _b, vec2 _radius_a, vec2 _radius_b, float _distance) :
 		a(_a),
@@ -72,7 +116,6 @@ namespace phys {
 		const vec2 v_rel = b.getVelocityAt(r_b) - a.getVelocityAt(r_a);
 
 		const vec2 normal = unit(disp);
-		// TODO: what if the distance should be zero, in which case disp should be zero?
 
 		const float invmass_a = a.getApparentInverseMassAt(r_a, normal);
 		const float invmass_b = b.getApparentInverseMassAt(r_b, normal);

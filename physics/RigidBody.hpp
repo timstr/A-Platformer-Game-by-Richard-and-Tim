@@ -7,6 +7,9 @@ namespace phys {
 		
 	struct RigidBody {
 
+		// TODO: add 'Composite', which consists of multiple bodies grouped together,
+		// such that they are rigidly fixed in place relative to one another and do not
+		// collide with one another
 		enum Type {
 			Rectangle,
 			Circle,

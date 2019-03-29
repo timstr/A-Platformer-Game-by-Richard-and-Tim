@@ -64,7 +64,7 @@ namespace phys {
 	}
 
 	void Engine::solveConstraints(float dt) {
-        const int num_iterations = 50; // TODO: make this configurable
+        const int num_iterations = 1;//50; // TODO: make this configurable
         for (int i = 0; i < num_iterations; ++i){
 			for (auto& c : collisions){
 				c.solve(dt);
